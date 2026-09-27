@@ -20,3 +20,7 @@ desire-lines:
 qol:
   double-doors:
     enabled: true
+
+waystones:
+  enabled: true
+  anchor-material: LODESTONE

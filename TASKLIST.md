@@ -23,7 +23,8 @@
 | LW-033 | M3 | Add Desire Lines recovery/regrowth policy | implemented not validated | LW-030, calendar | unused worn terrain can recover without world scans by reusing tracked state and logical-day cadence | clean IntelliJ/Gradle gates; untouched/touched/multi-day ledger decay tests; live gameplay smoke pending | local master |
 | LW-031 | M3 | Implement double-door QoL | implemented not validated | M0 | paired compatible doors act together without surprising unrelated blocks | clean IntelliJ/Gradle gates; pair-policy tests pass; live-player click smoke still pending | local master |
 | LW-032 | M3 | Define and implement waystone core | validated | M0 | activation/travel lifecycle and safe destination rules specified/tested | clean IntelliJ/Gradle gates; domain, codec, online-player access, safety and async travel-order tests | local master |
-| LW-034 | M3 | Add physical waystone activation and player-facing travel entrypoint | pending | LW-032 | explicit anchor/material policy activates/registers waystones; player can select activated destinations through a minimal translated interface | not validated | local master |
+| LW-034 | M3 | Add physical waystone activation and player-facing travel entrypoint | implemented not validated | LW-032 | explicit anchor/material policy activates/registers waystones; player can select activated destinations through a minimal translated interface | clean IntelliJ/Gradle gates + Paper boot to Done/shutdown; live-player click/list/travel smoke pending | local master |
+| LW-035 | M3 | Runtime gameplay smoke for World Memory & QoL | blocked | LW-030, LW-031, LW-033, LW-034 | real player validates Desire Lines wear/recovery, double-door interaction and waystone activation/list/travel on Paper | requires a connected player; automated/domain gates already pass | local master |
 
 ## Scope discipline
 
@@ -31,4 +32,4 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**LW-034 — add physical waystone activation and player-facing travel entrypoint.**
+**LW-035 — runtime gameplay smoke for World Memory & QoL.**

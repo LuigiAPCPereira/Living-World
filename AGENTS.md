@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **LW-034 — physical waystone activation and player-facing travel entrypoint**.
+Current task: **LW-035 — runtime gameplay smoke for World Memory & QoL**.
 
 Do not implement later roadmap modules opportunistically.
 

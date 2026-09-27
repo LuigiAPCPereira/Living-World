@@ -23,6 +23,10 @@ public final class WaystoneService {
         registry.register(Objects.requireNonNull(waystone, "waystone"));
     }
 
+    public Optional<Waystone> find(WaystoneId id) {
+        return registry.find(Objects.requireNonNull(id, "waystone"));
+    }
+
     public boolean activate(UUID playerId, WaystoneId waystoneId) {
         Objects.requireNonNull(playerId, "jogador");
         Objects.requireNonNull(waystoneId, "waystone");

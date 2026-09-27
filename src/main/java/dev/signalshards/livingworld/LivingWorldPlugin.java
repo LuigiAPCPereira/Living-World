@@ -16,6 +16,14 @@ import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesM
 import dev.signalshards.livingworld.features.desirelines.paper.PaperPathWearSettingsLoader;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
 import dev.signalshards.livingworld.features.seasons.domain.SeasonCycle;
+import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
+import dev.signalshards.livingworld.features.waystones.paper.PaperPlayerWaystoneAccessStore;
+import dev.signalshards.livingworld.features.waystones.paper.PaperSafeWaystoneDestination;
+import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneModule;
+import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneRegistry;
+import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneSettings;
+import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneSettingsLoader;
+import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneTravelService;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -59,6 +67,17 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 PaperPathWearSettingsLoader.load(getConfig())
         );
 
+        PaperWaystoneSettings waystoneSettings = PaperWaystoneSettingsLoader.load(getConfig());
+        WaystoneService waystones = new WaystoneService(
+                new PaperWaystoneRegistry(this),
+                new PaperPlayerWaystoneAccessStore(this)
+        );
+        PaperWaystoneTravelService waystoneTravel = new PaperWaystoneTravelService(
+                getServer(),
+                waystones,
+                new PaperSafeWaystoneDestination(waystoneSettings.anchorMaterial())
+        );
+
         moduleManager = new ModuleManager(
                 desireLines,
                 new PaperCalendarModule(
@@ -71,6 +90,13 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)
+                ),
+                new PaperWaystoneModule(
+                        this,
+                        waystoneSettings,
+                        waystones,
+                        waystoneTravel,
+                        messages
                 )
         );
 

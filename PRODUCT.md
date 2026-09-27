@@ -69,7 +69,9 @@ These are product directions, not promises that all are implemented in the curre
 - A player must activate/discover a waystone before it can be used as that player's travel destination.
 - Waystone registry data belongs to the loaded world PDC; online-player discoveries belong to Player PDC.
 - Travel must avoid synchronous destination chunk loading and reject unsafe/blocked/liquid/out-of-border destinations.
-- Material, recipe, GUI, cost/cooldown and naming interaction are deliberately deferred until the core lifecycle is validated.
+- Physical activation defaults to a configurable Lodestone anchor. First interaction registers a stable coordinate-derived identity and activates it for that player.
+- The initial travel UI is intentionally minimal: `/lw list` and `/lw travel <number>`.
+- Custom naming, recipe, GUI, cost/cooldown and richer presentation remain deferred.
 
 ## Explicitly out of scope
 

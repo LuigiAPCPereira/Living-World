@@ -2,12 +2,27 @@ package dev.signalshards.livingworld.features.waystones.paper;
 
 import dev.signalshards.livingworld.features.waystones.domain.Waystone;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public final class PaperSafeWaystoneDestination {
+    private final Material requiredAnchorMaterial;
+
+    public PaperSafeWaystoneDestination() {
+        this.requiredAnchorMaterial = null;
+    }
+
+    public PaperSafeWaystoneDestination(Material requiredAnchorMaterial) {
+        this.requiredAnchorMaterial = Objects.requireNonNull(
+                requiredAnchorMaterial,
+                "material da âncora"
+        );
+    }
+
     public Optional<Location> resolveLoaded(World world, Waystone waystone) {
         int feetY = waystone.y() + 1;
         int headY = feetY + 1;
@@ -31,6 +46,9 @@ public final class PaperSafeWaystoneDestination {
         Block feet = world.getBlockAt(waystone.x(), feetY, waystone.z());
         Block head = world.getBlockAt(waystone.x(), headY, waystone.z());
 
+        if (requiredAnchorMaterial != null && support.getType() != requiredAnchorMaterial) {
+            return Optional.empty();
+        }
         if (support.isPassable() || support.isLiquid()) {
             return Optional.empty();
         }

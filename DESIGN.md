@@ -153,7 +153,11 @@ Loaded worlds are the registry owners. Each waystone is stored under its own nam
 
 Travel resolves only an activated waystone. It asynchronously requests/generates the destination chunk before reading destination blocks, then validates the world border, a solid/non-liquid anchor below the player, and passable/non-liquid feet/head spaces. The final teleport uses Paper `teleportAsync(..., PLUGIN)`; no synchronous destination chunk load is required by Living World.
 
-The first core does not choose a waystone material, crafting recipe, economy, cooldown or GUI. Those are presentation/gameplay policies to add only after the persistence and travel contracts are proven.
+The first player-facing slice uses a configurable physical anchor with `LODESTONE` as the default. Right-clicking an anchor with the main hand deterministically derives its UUID from world+coordinates, registers it on first contact, and activates it for the player. This makes identity stable across restarts without a scan.
+
+The minimal command interface uses Paper's current `BasicCommand` API registered by the JavaPlugin: `/livingworld list` (alias `/lw list`) and `/lw travel <number>`. Numeric selection is intentionally simple and unambiguous for the first slice. GUI, custom naming, crafting recipe, economy and cooldown remain separate policies.
+
+Travel through this physical interface additionally requires the configured anchor material to still exist at the stored coordinate; destroying/replacing the anchor makes the destination unsafe instead of silently teleporting to a stale point.
 
 ## Open design questions
 

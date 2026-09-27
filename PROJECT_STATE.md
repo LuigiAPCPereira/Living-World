@@ -6,15 +6,15 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-034
-- **Current acceptance:** configurable physical anchors register/activate waystones and players can list/travel to activated destinations through a minimal translated Paper command interface
+- **Current task:** LW-035
+- **Current acceptance:** a real player validates Desire Lines wear/recovery, double-door interaction and waystone activation/list/travel on Paper
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `master`
-- **Observed HEAD:** `592d437` — first local checkpoint before LW-032
+- **Observed HEAD:** `5a004e4` — checkpoint before LW-034
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
-- **Implementation:** M0/M1 validated; M2 implementation through LW-024 complete with LW-022 runtime command/sleep validation partial; LW-030/LW-031/LW-033 implemented with gameplay smoke pending; LW-032 core validated
-- **Validation:** clean Gradle gates cover calendar/PDC, climate sampling and daily weather coordination; calendar runtime starts on Paper and logs its persisted date; direct console `/time` validation could not complete because Paper 26.3 build 49 threw an internal console-dispatch NPE for console commands in that run
+- **Implementation:** M0/M1 validated; M2 implementation through LW-024 complete with LW-022 runtime command/sleep validation partial; M3 implementation through LW-034 complete, with live gameplay validation pending
+- **Validation:** clean IntelliJ/Gradle gates pass; controlled Paper 26.3 build 49 boot reached Done with Living World enabled and shut down cleanly after SIGTERM; live-player interactions are not yet exercised
 - **Merge:** not integrated / no remote merge observed
 - **Deploy:** not applicable
-- **Blockers:** LW-022 still needs a real command/sleep runtime validation once the Paper 26.3 console path is usable; this does not block M3 work
-- **Next action:** implement LW-034 with configurable anchor material, translated activation feedback and Paper BasicCommand travel/list entrypoint
+- **Blockers:** LW-035 requires a connected Minecraft player; LW-022 still needs real command/sleep validation once the Paper 26.3 console command path is usable
+- **Next action:** run LW-035 with a real player before expanding into M4 ecology/richer evolution
