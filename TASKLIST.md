@@ -49,3 +49,9 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 ## Current task
 
 **M5 complete — prepare stability/performance hardening milestone before broader simulation.**
+
+| LW-060 | M6 | Establish Paper/spark runtime baseline | validated | M5 | measure representative runtime before optimizing hot paths | spark baseline: TPS 20.0; 10s MSPT min/med/p95/max 2.8/4.4/5.9/13.7 ms; 1m 2.8/4.3/6.2/24.1 ms; no evidence justifying speculative optimization | local master |
+| LW-061 | M6 | Add /lw status operator diagnostics | validated | LW-060 | player/console can inspect runtime state and performance without files or unsafe reloads | clean gates + console-path unit test + live MCPFabric player smoke; output confirmed calendar/runtime counters/TPS/MSPT and latest.log stayed clean | local master |
+| LW-062 | M6 | Harden graceful module shutdown | validated | M0 | all enabled modules get a shutdown attempt; multiple failures are aggregated and logged without escaping plugin onDisable | clean gates; reverse-order aggregate-failure test passes; plugin boundary catches/logs shutdown aggregate | local master |
+
+**M6 complete — diagnostics, profiling baseline and graceful shutdown validated.**

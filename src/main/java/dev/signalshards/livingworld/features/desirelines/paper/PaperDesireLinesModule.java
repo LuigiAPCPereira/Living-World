@@ -129,6 +129,10 @@ public final class PaperDesireLinesModule implements LivingWorldModule, Listener
         }
     }
 
+    public int cachedChunkCount() {
+        return cache.size();
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChunkUnload(ChunkUnloadEvent event) {
         if (event.getWorld() != world) {

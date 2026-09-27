@@ -2,6 +2,8 @@ package dev.signalshards.livingworld;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.ModuleManager;
+import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
+import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarModule;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarWorldResolver;
 import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
@@ -44,6 +46,8 @@ import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneSettin
 import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneTravelService;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 public final class LivingWorldPlugin extends JavaPlugin {
     private ModuleManager moduleManager;
@@ -160,6 +164,30 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new FireSpreadSuitabilityPolicy()
         );
 
+        LivingWorldStatusProvider statusProvider = () -> {
+            var date = calendarModule.currentDate();
+            var season = calendarModule.currentSeason();
+            return new LivingWorldStatusSnapshot(
+                    getPluginMeta().getVersion(),
+                    calendarWorld.getName(),
+                    messages.text(switch (season) {
+                        case PRIMAVERA -> "season.spring";
+                        case VERAO -> "season.summer";
+                        case OUTONO -> "season.autumn";
+                        case INVERNO -> "season.winter";
+                    }),
+                    date.year(),
+                    date.month(),
+                    date.day(),
+                    getServer().getOnlinePlayers().size(),
+                    hud.activeSessionCount(),
+                    desireLines.cachedChunkCount(),
+                    waystones.allWaystones().size(),
+                    getServer().getTPS()[0],
+                    getServer().getAverageTickTime()
+            );
+        };
+
         moduleManager = new ModuleManager(
                 desireLines,
                 calendarModule,
@@ -177,7 +205,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         waystoneSettings,
                         waystones,
                         waystoneTravel,
-                        messages
+                        messages,
+                        statusProvider
                 ),
                 hud
         );
@@ -194,7 +223,15 @@ public final class LivingWorldPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         if (moduleManager != null) {
-            moduleManager.disableAll();
+            try {
+                moduleManager.disableAll();
+            } catch (RuntimeException exception) {
+                getLogger().log(
+                        Level.SEVERE,
+                        "Falha ao desabilitar um ou mais módulos do Living World",
+                        exception
+                );
+            }
         }
     }
 }

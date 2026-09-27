@@ -55,6 +55,41 @@ class ModuleManagerTest {
         ), events);
     }
 
+    @Test
+    void tentaDesabilitarTodosEAgregaFalhasDeShutdown() {
+        List<String> events = new ArrayList<>();
+        LivingWorldModule first = module("first", events);
+        LivingWorldModule second = failingDisableModule(
+                "second",
+                events,
+                "falha-second"
+        );
+        LivingWorldModule third = failingDisableModule(
+                "third",
+                events,
+                "falha-third"
+        );
+        ModuleManager manager = new ModuleManager(first, second, third);
+        manager.enableAll();
+
+        RuntimeException failure = assertThrows(
+                RuntimeException.class,
+                manager::disableAll
+        );
+
+        assertEquals("falha-third", failure.getMessage());
+        assertEquals(1, failure.getSuppressed().length);
+        assertEquals("falha-second", failure.getSuppressed()[0].getMessage());
+        assertEquals(List.of(
+                "enable:first",
+                "enable:second",
+                "enable:third",
+                "disable:third",
+                "disable:second",
+                "disable:first"
+        ), events);
+    }
+
     private static LivingWorldModule module(String id, List<String> events) {
         return new LivingWorldModule() {
             @Override
@@ -65,6 +100,25 @@ class ModuleManagerTest {
             @Override
             public void disable() {
                 events.add("disable:" + id);
+            }
+        };
+    }
+
+    private static LivingWorldModule failingDisableModule(
+            String id,
+            List<String> events,
+            String message
+    ) {
+        return new LivingWorldModule() {
+            @Override
+            public void enable() {
+                events.add("enable:" + id);
+            }
+
+            @Override
+            public void disable() {
+                events.add("disable:" + id);
+                throw new IllegalStateException(message);
             }
         };
     }

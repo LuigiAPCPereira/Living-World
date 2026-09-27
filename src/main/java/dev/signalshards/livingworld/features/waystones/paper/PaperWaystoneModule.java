@@ -2,6 +2,7 @@ package dev.signalshards.livingworld.features.waystones.paper;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
+import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneAnchorIndex;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import dev.signalshards.livingworld.features.waystones.domain.Waystone;
@@ -31,6 +32,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
     private final WaystoneService waystones;
     private final PaperWaystoneTravelService travel;
     private final MessageCatalog messages;
+    private final LivingWorldStatusProvider statusProvider;
     private final WaystoneAnchorIndex anchorIndex = new WaystoneAnchorIndex();
 
     public PaperWaystoneModule(
@@ -38,13 +40,18 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
             PaperWaystoneSettings settings,
             WaystoneService waystones,
             PaperWaystoneTravelService travel,
-            MessageCatalog messages
+            MessageCatalog messages,
+            LivingWorldStatusProvider statusProvider
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(settings, "configuração de waystones");
         this.waystones = Objects.requireNonNull(waystones, "serviço de waystones");
         this.travel = Objects.requireNonNull(travel, "viagem de waystones");
         this.messages = Objects.requireNonNull(messages, "catálogo de mensagens");
+        this.statusProvider = Objects.requireNonNull(
+                statusProvider,
+                "diagnóstico do Living World"
+        );
     }
 
     @Override
@@ -60,7 +67,12 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
                 "livingworld",
                 "Comandos do Living World",
                 List.of("lw"),
-                new PaperWaystoneCommand(waystones, travel, messages)
+                new PaperWaystoneCommand(
+                        waystones,
+                        travel,
+                        messages,
+                        statusProvider
+                )
         );
     }
 

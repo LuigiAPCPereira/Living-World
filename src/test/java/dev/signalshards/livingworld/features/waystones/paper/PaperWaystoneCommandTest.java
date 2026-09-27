@@ -1,0 +1,144 @@
+package dev.signalshards.livingworld.features.waystones.paper;
+
+import dev.signalshards.livingworld.core.i18n.MessageCatalog;
+import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
+import dev.signalshards.livingworld.features.waystones.application.WaystoneAccessStore;
+import dev.signalshards.livingworld.features.waystones.application.WaystoneRegistry;
+import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
+import dev.signalshards.livingworld.features.waystones.domain.Waystone;
+import dev.signalshards.livingworld.features.waystones.domain.WaystoneId;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
+import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class PaperWaystoneCommandTest {
+    @Test
+    void statusAceitaConsoleSemPassarPeloPlayerOnly() {
+        AtomicInteger messagesSent = new AtomicInteger();
+        CommandSender console = proxy(
+                CommandSender.class,
+                (proxy, method, args) -> {
+                    if (method.getName().equals("sendMessage")) {
+                        messagesSent.incrementAndGet();
+                        return null;
+                    }
+                    return defaultValue(proxy, method.getName(), args);
+                }
+        );
+        CommandSourceStack source = proxy(
+                CommandSourceStack.class,
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getSender" -> console;
+                    default -> defaultValue(proxy, method.getName(), args);
+                }
+        );
+
+        PaperWaystoneCommand command = command();
+        command.execute(source, new String[]{"status"});
+
+        assertEquals(9, messagesSent.get());
+        assertEquals(List.of("status"), List.copyOf(command.suggest(source, new String[0])));
+    }
+
+    private PaperWaystoneCommand command() {
+        WaystoneRegistry registry = new WaystoneRegistry() {
+            @Override
+            public void register(Waystone waystone) {
+            }
+
+            @Override
+            public Optional<Waystone> find(WaystoneId id) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<Waystone> findAt(UUID worldId, int x, int y, int z) {
+                return Optional.empty();
+            }
+
+            @Override
+            public List<Waystone> all() {
+                return new ArrayList<>();
+            }
+
+            @Override
+            public boolean remove(WaystoneId id) {
+                return false;
+            }
+        };
+        WaystoneAccessStore access = new WaystoneAccessStore() {
+            @Override
+            public Set<WaystoneId> load(UUID playerId) {
+                return Set.of();
+            }
+
+            @Override
+            public boolean add(UUID playerId, WaystoneId waystoneId) {
+                return false;
+            }
+        };
+        WaystoneService service = new WaystoneService(registry, access);
+        Server server = proxy(
+                Server.class,
+                (proxy, method, args) -> defaultValue(proxy, method.getName(), args)
+        );
+        PaperWaystoneTravelService travel = new PaperWaystoneTravelService(
+                server,
+                service,
+                new PaperSafeWaystoneDestination()
+        );
+
+        return new PaperWaystoneCommand(
+                service,
+                travel,
+                MessageCatalog.fromLanguageTag("pt-BR"),
+                () -> new LivingWorldStatusSnapshot(
+                        "teste",
+                        "world",
+                        "Primavera",
+                        1,
+                        2,
+                        3,
+                        1,
+                        1,
+                        2,
+                        3,
+                        20.0D,
+                        4.2D
+                )
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T proxy(Class<T> type, java.lang.reflect.InvocationHandler handler) {
+        return (T) Proxy.newProxyInstance(
+                type.getClassLoader(),
+                new Class<?>[]{type},
+                handler
+        );
+    }
+
+    private Object defaultValue(Object proxy, String methodName, Object[] args) {
+        if (methodName.equals("toString")) {
+            return "Fake";
+        }
+        if (methodName.equals("hashCode")) {
+            return System.identityHashCode(proxy);
+        }
+        if (methodName.equals("equals")) {
+            return proxy == args[0];
+        }
+        return null;
+    }
+}

@@ -206,6 +206,14 @@ Farmland moisture ecology listens only to cancellable `MoistureChangeEvent` tran
 
 Fire ecology listens only to cancellable `BlockIgniteEvent` events whose cause is exactly `SPREAD`. The target block's effective climate feeds a pure fire-spread suitability policy (default strength 0.65). Hot/dry conditions can preserve the vanilla acceptance chance while cold/wet conditions reject some spread attempts. FLINT_AND_STEEL, LAVA, LIGHTNING, FIREBALL, ARROW, EXPLOSION and other non-SPREAD causes are untouched.
 
+## Runtime diagnostics
+
+Performance work follows measurement rather than speculation. The first M6 spark baseline held 20 TPS with 10-second tick durations of 2.8/4.4/5.9/13.7 ms (min/median/p95/max) and one-minute values of 2.8/4.3/6.2/24.1 ms under a short elevated-random-tick profile. This does not justify hot-path optimization by itself.
+
+`/lw status` is a read-only diagnostic surface available to both players and console. A narrow core status snapshot is assembled in the composition root from existing module read models; modules do not depend on one another. It reports plugin/world/calendar state, online/HUD counts, Desire Lines cache size, registered Waystones and Paper TPS/MSPT. Living World intentionally does not expose plugin hot-reload; config changes require restart because server/plugin reload is unsafe and deprecated in Paper.
+
+Module shutdown is best-effort across every enabled module. `ModuleManager.disableAll()` continues in reverse order after individual failures, returns the first failure with later failures suppressed, and clears its enabled set. The plugin boundary catches/logs that aggregate during `onDisable` so a cleanup failure is visible without aborting the remainder of Bukkit's plugin shutdown sequence.
+
 Player apparent temperature is biome/coordinate temperature plus season and a bounded direct-exposure modifier. The first microclimate slice uses only Paper's player-local state: lava adds +20 °C, burning adds +8 °C and water subtracts 4 °C, with priority lava → water → fire → neutral so contradictory states are not stacked. The result still respects the HUD clamp of -40..55 °C.
 
 Nearby heat-source influence such as merely standing beside lava or campfires remains deferred. Supporting that would require a cached/bounded sampling design; the HUD must not scan an area around every player on each refresh.

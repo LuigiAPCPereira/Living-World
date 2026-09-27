@@ -109,6 +109,10 @@ public final class PaperHudModule implements LivingWorldModule, Listener {
         detach(event.getPlayer());
     }
 
+    public int activeSessionCount() {
+        return sessions.size();
+    }
+
     private void attach(Player player) {
         if (sessions.containsKey(player.getUniqueId())) {
             return;

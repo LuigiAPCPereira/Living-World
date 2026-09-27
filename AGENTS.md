@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **M6 inventory — stability, profiling & operator controls**.
+Current task: **M7 planning — choose next product slice from validated gameplay evidence**.
 
 Do not implement later roadmap modules opportunistically.
 

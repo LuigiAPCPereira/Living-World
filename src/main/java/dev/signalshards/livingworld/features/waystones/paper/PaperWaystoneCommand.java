@@ -1,11 +1,13 @@
 package dev.signalshards.livingworld.features.waystones.paper;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
+import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneTravelResult;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.jspecify.annotations.NullMarked;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -19,19 +21,30 @@ public final class PaperWaystoneCommand implements BasicCommand {
     private final WaystoneService waystones;
     private final PaperWaystoneTravelService travel;
     private final MessageCatalog messages;
+    private final LivingWorldStatusProvider statusProvider;
 
     public PaperWaystoneCommand(
             WaystoneService waystones,
             PaperWaystoneTravelService travel,
-            MessageCatalog messages
+            MessageCatalog messages,
+            LivingWorldStatusProvider statusProvider
     ) {
         this.waystones = Objects.requireNonNull(waystones, "serviço de waystones");
         this.travel = Objects.requireNonNull(travel, "viagem de waystones");
         this.messages = Objects.requireNonNull(messages, "catálogo de mensagens");
+        this.statusProvider = Objects.requireNonNull(
+                statusProvider,
+                "diagnóstico do Living World"
+        );
     }
 
     @Override
     public void execute(CommandSourceStack source, String[] args) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("status")) {
+            status(source.getSender());
+            return;
+        }
+
         if (!(source.getSender() instanceof Player player)) {
             source.getSender().sendMessage(messages.component(
                     NamedTextColor.RED,
@@ -59,12 +72,15 @@ public final class PaperWaystoneCommand implements BasicCommand {
 
     @Override
     public Collection<String> suggest(CommandSourceStack source, String[] args) {
-        if (!(source.getSender() instanceof Player player)) {
-            return List.of();
+        if (args.length <= 1) {
+            if (source.getSender() instanceof Player) {
+                return List.of("status", "list", "travel");
+            }
+            return List.of("status");
         }
 
-        if (args.length <= 1) {
-            return List.of("list", "travel");
+        if (!(source.getSender() instanceof Player player)) {
+            return List.of();
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("travel")) {
@@ -77,6 +93,58 @@ public final class PaperWaystoneCommand implements BasicCommand {
         }
 
         return List.of();
+    }
+
+    private void status(CommandSender sender) {
+        var snapshot = statusProvider.snapshot();
+        sender.sendMessage(messages.component(
+                NamedTextColor.GOLD,
+                "status.header",
+                snapshot.version()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                "status.world",
+                snapshot.worldName()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.AQUA,
+                "status.calendar",
+                snapshot.seasonName(),
+                snapshot.year(),
+                snapshot.month(),
+                snapshot.day()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                "status.players",
+                snapshot.onlinePlayers()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                "status.hud",
+                snapshot.hudSessions()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                "status.desire-lines",
+                snapshot.desireLineCachedChunks()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                "status.waystones",
+                snapshot.registeredWaystones()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.GREEN,
+                "status.performance",
+                snapshot.tpsOneMinute(),
+                snapshot.averageTickTimeMillis()
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.YELLOW,
+                "status.restart-required"
+        ));
     }
 
     private void list(Player player) {
