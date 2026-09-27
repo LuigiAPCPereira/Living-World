@@ -6,9 +6,10 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | --- | --- | --- | --- | --- |
 | M0 — Foundation | buildable/testable modular Paper plugin with i18n foundation and runtime smoke boot | none | LW-001..LW-003 | validated |
 | M1 — World Time | coherent world clock, calendar and seasons core | M0 | LW-010..LW-012 | validated |
-| M2 — Environment | climate model and first environmental events integrated with seasons at runtime | M1 | LW-020..LW-024 | implemented; runtime validation partial |
-| M3 — World Memory & QoL | first reactive-world and convenience mechanics such as desire lines, double doors and waystones | M0; feature-specific dependencies | LW-030..LW-035 | implemented; live gameplay validation pending |
-| M4 — Ecology & richer evolution | only after profiling/gameplay evidence justifies deeper ecological simulation | prior foundations | not inventoried yet | future |
+| M2 — Environment | climate model and first environmental events integrated with seasons at runtime | M1 | LW-020..LW-024 | validated |
+| M3 — World Memory & QoL | first reactive-world and convenience mechanics such as desire lines, double doors and waystones | M0; feature-specific dependencies | LW-030..LW-036 | validated |
+| M4 — Player HUD & environmental feedback | surface existing calendar/climate/navigation state through optional boss bars/action bar without coupling presentation into domain logic | M1, M2 | LW-040..LW-044 | validated |
+| M5 — Ecology & richer evolution | first bounded ecological response: natural vegetation growth reacts to effective local climate/season without scans or artificial forced growth | M2, M4 gameplay evidence | LW-050..LW-052 | in progress |
 
 ## Sequencing principles
 

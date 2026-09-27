@@ -26,6 +26,9 @@
 | `features.waystones.domain` | stable waystone identity, display name and anchor coordinates | Paper storage, GUI or teleport APIs |
 | `features.waystones.application` | registration, activation visibility and travel result contracts | player/world PDC details |
 | `features.waystones.paper` | World/Player PDC adapters, safe destination validation and async Paper teleport | economy, GUI or physical activation presentation |
+| future `features.hud.paper` | owns player-facing boss bars/action bar lifecycle and renders read-only projections of calendar/climate/navigation state | calendar/climate rules or persistent gameplay state |
+| future `features.ecology.domain` | pure suitability/acceptance policy for ecological reactions from effective climate | Paper events, random source or block mutation |
+| future `features.ecology.paper` | adapts vanilla natural-growth events into climate-policy decisions with bounded event-local work | world scanning, forced growth or fertilization handling |
 | future `features.*` packages | one gameplay capability and its state/listeners/tasks | unrelated feature internals |
 | Paper API | external server framework boundary | Living World domain decisions |
 
@@ -153,11 +156,39 @@ Loaded worlds are the registry owners. Each waystone is stored under its own nam
 
 Travel resolves only an activated waystone. It asynchronously requests/generates the destination chunk before reading destination blocks, then validates the world border, a solid/non-liquid anchor below the player, and passable/non-liquid feet/head spaces. The final teleport uses Paper `teleportAsync(..., PLUGIN)`; no synchronous destination chunk load is required by Living World.
 
-The first player-facing slice uses a configurable physical anchor with `LODESTONE` as the default. Right-clicking an anchor with the main hand deterministically derives its UUID from world+coordinates, registers it on first contact, and activates it for the player. This makes identity stable across restarts without a scan.
+The first player-facing slice uses a configurable physical anchor with `LODESTONE` as the default. Right-clicking an unregistered anchor creates a random persistent UUID and activates it for the player. Existing anchors are found from the loaded-world registry by world+coordinates; this keeps previously persisted waystones compatible without making coordinates the permanent identity.
+
+Breaking a registered anchor immediately removes its registry entry and sends translated feedback to the breaker. Because a replacement anchor receives a new UUID, stale player discovery IDs cannot silently resurrect access to a destroyed waystone. Player lists already derive from currently registered waystones, so destroyed entries disappear immediately from `/lw list`.
+
+Legacy orphan cleanup is chunk-bounded and never forces a chunk load. On module enable, Living World builds an in-memory index from registered waystones and validates only anchors whose chunks are already loaded. Later `ChunkLoadEvent` callbacks inspect only registered anchors indexed for that naturally loaded chunk. Missing anchors are removed from the registry; stale player activation UUIDs remain harmless because listings intersect current registry entries.
 
 The minimal command interface uses Paper's current `BasicCommand` API registered by the JavaPlugin: `/livingworld list` (alias `/lw list`) and `/lw travel <number>`. Numeric selection is intentionally simple and unambiguous for the first slice. GUI, custom naming, crafting recipe, economy and cooldown remain separate policies.
 
 Travel through this physical interface additionally requires the configured anchor material to still exist at the stored coordinate; destroying/replacing the anchor makes the destination unsafe instead of silently teleporting to a stale point.
+
+## Future Player HUD
+
+HUD must be an adapter/read-model layer, not a new source of truth. Calendar boss bars read the logical calendar/season state; navigation reads player position/yaw; temperature reads a dedicated apparent-temperature policy derived from the existing climate inputs.
+
+The first HUD layout uses exactly one persistent boss bar for calendar/season. Navigation, coordinates and temperature share one composed action bar instead of creating additional boss bars. Each segment can be disabled independently.
+
+HUD color is semantic rather than decorative noise. The calendar title colors the season while the boss-bar fill also changes by season; action-bar heading is aqua, coordinates are neutral gray, separators are dark gray, and temperature changes color by degree band. Player-facing Waystone messages use the same Adventure component approach with consistent success/info/warning/error tones instead of legacy chat color codes.
+
+Paper exposes Adventure natively, so HUD implementation should prefer `Component`, `Audience.showBossBar/hideBossBar` and `Audience.sendActionBar` rather than legacy string/Bungee APIs. A single HUD module should own visibility/update lifecycle for these channels to prevent calendar, climate and navigation features from independently overwriting one another.
+
+Boss bars are persistent mutable UI objects and should be created per player/surface, updated only when their rendered state changes, and hidden on disable/player quit. Action bar is a shared transient channel, so temperature must be configurable and refreshed at a bounded cadence; future integrations with other plugins may require a suppression/priority policy rather than unconditional writes every tick.
+
+Numeric degrees require a named policy such as `ApparentTemperaturePolicy`. The policy may use coordinate temperature/humidity, season and bounded climate anomalies, but its output is Living World gameplay temperature rather than a claim that Paper's biome-temperature scalar maps canonically to Celsius.
+
+Initial apparent-temperature policy is intentionally explicit and simple: Paper temperature 0.8 maps to 15 °C before seasonal adjustment; one Paper temperature unit maps to 20 °C; Primavera/Verão/Outono/Inverno apply +2/+6/0/-6 °C; final output is clamped to -40..55 °C. These are Living World gameplay constants, covered by tests and expected to be tuned from playtest evidence.
+
+## Ecology
+
+The first ecological integration hooks only vanilla natural growth. Paper's `BlockGrowEvent` is cancellable and is fired for natural block growth, so Living World can reduce growth success without polling or creating an independent plant scheduler. The Paper adapter will ignore non-`Ageable` growth in the first slice and will not handle explicit fertilization events.
+
+For each relevant event, the adapter samples temperature/humidity only at that block coordinate, classifies the local base profile, applies the existing season-aware `ClimatePolicy`, then asks a pure growth-suitability policy for an acceptance probability. A small injected random source decides whether to cancel the event. This keeps tests deterministic and confines randomness to the adapter boundary.
+
+The initial ecology contract only slows growth in unsuitable conditions; suitability never exceeds 1.0, so Living World does not grow crops faster than vanilla. This keeps the first balance change bounded and reversible.
 
 ## Open design questions
 

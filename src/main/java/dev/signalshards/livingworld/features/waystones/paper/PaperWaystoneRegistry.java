@@ -65,6 +65,18 @@ public final class PaperWaystoneRegistry implements WaystoneRegistry {
     }
 
     @Override
+    public Optional<Waystone> findAt(UUID worldId, int x, int y, int z) {
+        Objects.requireNonNull(worldId, "mundo");
+
+        return all().stream()
+                .filter(waystone -> waystone.worldId().equals(worldId))
+                .filter(waystone -> waystone.x() == x)
+                .filter(waystone -> waystone.y() == y)
+                .filter(waystone -> waystone.z() == z)
+                .findFirst();
+    }
+
+    @Override
     public List<Waystone> all() {
         List<Waystone> result = new ArrayList<>();
         for (World world : server.getWorlds()) {

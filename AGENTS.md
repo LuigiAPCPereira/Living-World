@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **LW-035 — runtime gameplay smoke for World Memory & QoL**.
+Current task: **LW-050 — climate-sensitive natural growth policy**.
 
 Do not implement later roadmap modules opportunistically.
 

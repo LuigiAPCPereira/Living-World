@@ -27,6 +27,19 @@ public final class WaystoneService {
         return registry.find(Objects.requireNonNull(id, "waystone"));
     }
 
+    public Optional<Waystone> findAt(UUID worldId, int x, int y, int z) {
+        Objects.requireNonNull(worldId, "mundo");
+        return registry.findAt(worldId, x, y, z);
+    }
+
+    public boolean remove(WaystoneId id) {
+        return registry.remove(Objects.requireNonNull(id, "waystone"));
+    }
+
+    public List<Waystone> allWaystones() {
+        return registry.all();
+    }
+
     public boolean activate(UUID playerId, WaystoneId waystoneId) {
         Objects.requireNonNull(playerId, "jogador");
         Objects.requireNonNull(waystoneId, "waystone");

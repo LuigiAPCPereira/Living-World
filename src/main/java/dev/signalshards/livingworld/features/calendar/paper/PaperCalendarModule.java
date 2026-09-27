@@ -7,7 +7,10 @@ import dev.signalshards.livingworld.features.calendar.application.CalendarProgre
 import dev.signalshards.livingworld.features.calendar.application.CalendarProgressTracker;
 import dev.signalshards.livingworld.features.calendar.application.CalendarRuntime;
 import dev.signalshards.livingworld.features.calendar.application.CalendarTimeSkipCause;
+import dev.signalshards.livingworld.features.calendar.application.CalendarView;
 import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
+import dev.signalshards.livingworld.features.calendar.domain.CalendarDate;
+import dev.signalshards.livingworld.features.seasons.domain.Season;
 import dev.signalshards.livingworld.features.seasons.domain.SeasonCycle;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -22,12 +25,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
-public final class PaperCalendarModule implements LivingWorldModule, Listener {
+public final class PaperCalendarModule implements LivingWorldModule, Listener, CalendarView {
     private static final long SAMPLE_PERIOD_TICKS = 20L;
 
     private final JavaPlugin plugin;
     private final World world;
     private final MessageCatalog messages;
+    private final CalendarRules rules;
+    private final SeasonCycle seasons;
     private final List<CalendarProgressListener> progressListeners;
 
     private CalendarRuntime runtime;
@@ -38,11 +43,15 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener {
             JavaPlugin plugin,
             World world,
             MessageCatalog messages,
+            CalendarRules rules,
+            SeasonCycle seasons,
             CalendarProgressListener... progressListeners
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.world = Objects.requireNonNull(world, "mundo");
         this.messages = Objects.requireNonNull(messages, "catálogo de mensagens");
+        this.rules = Objects.requireNonNull(rules, "regras do calendário");
+        this.seasons = Objects.requireNonNull(seasons, "ciclo de estações");
         this.progressListeners = List.of(progressListeners);
     }
 
@@ -50,8 +59,8 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener {
     public void enable() {
         PaperCalendarStateStore store = PaperCalendarStateStore.forWorld(plugin, world);
         runtime = CalendarRuntime.load(
-                CalendarRules.livingWorldDefaults(),
-                SeasonCycle.livingWorldDefaults(),
+                rules,
+                seasons,
                 store
         );
         tracker = new CalendarProgressTracker(world.getFullTime());
@@ -72,6 +81,22 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener {
                 date.month(),
                 date.day()
         ));
+    }
+
+    @Override
+    public CalendarDate currentDate() {
+        ensureEnabled();
+        return runtime.currentDate();
+    }
+
+    @Override
+    public Season currentSeason() {
+        return seasons.seasonFor(currentDate());
+    }
+
+    @Override
+    public int daysPerMonth() {
+        return rules.daysPerMonth();
     }
 
     @Override
@@ -134,6 +159,12 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener {
                         exception
                 );
             }
+        }
+    }
+
+    private void ensureEnabled() {
+        if (runtime == null) {
+            throw new IllegalStateException("O calendário ainda não foi habilitado");
         }
     }
 }

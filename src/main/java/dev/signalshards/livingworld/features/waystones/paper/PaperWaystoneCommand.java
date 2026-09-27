@@ -7,6 +7,7 @@ import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +33,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
     @Override
     public void execute(CommandSourceStack source, String[] args) {
         if (!(source.getSender() instanceof Player player)) {
-            source.getSender().sendPlainMessage(messages.text("waystone.player-only"));
+            source.getSender().sendMessage(messages.component(
+                    NamedTextColor.RED,
+                    "waystone.player-only"
+            ));
             return;
         }
 
@@ -47,7 +51,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
             return;
         }
 
-        player.sendPlainMessage(messages.text("waystone.command-usage"));
+        player.sendMessage(messages.component(
+                NamedTextColor.YELLOW,
+                "waystone.command-usage"
+        ));
     }
 
     @Override
@@ -75,13 +82,21 @@ public final class PaperWaystoneCommand implements BasicCommand {
     private void list(Player player) {
         var activated = waystones.activatedWaystones(player.getUniqueId());
         if (activated.isEmpty()) {
-            player.sendPlainMessage(messages.text("waystone.list-empty"));
+            player.sendMessage(messages.component(
+                    NamedTextColor.YELLOW,
+                    "waystone.list-empty"
+            ));
             return;
         }
 
-        player.sendPlainMessage(messages.text("waystone.list-header", activated.size()));
+        player.sendMessage(messages.component(
+                NamedTextColor.GOLD,
+                "waystone.list-header",
+                activated.size()
+        ));
         for (int index = 0; index < activated.size(); index++) {
-            player.sendPlainMessage(messages.text(
+            player.sendMessage(messages.component(
+                    NamedTextColor.AQUA,
                     "waystone.list-entry",
                     index + 1,
                     activated.get(index).name()
@@ -91,7 +106,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
 
     private void travel(Player player, String[] args) {
         if (args.length != 2) {
-            player.sendPlainMessage(messages.text("waystone.travel-usage"));
+            player.sendMessage(messages.component(
+                    NamedTextColor.YELLOW,
+                    "waystone.travel-usage"
+            ));
             return;
         }
 
@@ -99,18 +117,28 @@ public final class PaperWaystoneCommand implements BasicCommand {
         try {
             selection = Integer.parseInt(args[1]);
         } catch (NumberFormatException exception) {
-            player.sendPlainMessage(messages.text("waystone.travel-invalid"));
+            player.sendMessage(messages.component(
+                    NamedTextColor.RED,
+                    "waystone.travel-invalid"
+            ));
             return;
         }
 
         var activated = waystones.activatedWaystones(player.getUniqueId());
         if (selection < 1 || selection > activated.size()) {
-            player.sendPlainMessage(messages.text("waystone.travel-invalid"));
+            player.sendMessage(messages.component(
+                    NamedTextColor.RED,
+                    "waystone.travel-invalid"
+            ));
             return;
         }
 
         var target = activated.get(selection - 1);
-        player.sendPlainMessage(messages.text("waystone.travel-start", target.name()));
+        player.sendMessage(messages.component(
+                NamedTextColor.AQUA,
+                "waystone.travel-start",
+                target.name()
+        ));
         travel.travel(player, target.id()).thenAccept(result -> sendResult(player, target.name(), result));
     }
 
@@ -119,16 +147,31 @@ public final class PaperWaystoneCommand implements BasicCommand {
             return;
         }
 
-        String key = switch (result) {
-            case SUCCESS -> "waystone.travel-success";
-            case NOT_ACTIVATED -> "waystone.travel-not-activated";
-            case WORLD_UNAVAILABLE -> "waystone.travel-world-unavailable";
-            case DESTINATION_UNSAFE -> "waystone.travel-unsafe";
+        StyledResult styled = switch (result) {
+            case SUCCESS -> new StyledResult("waystone.travel-success", NamedTextColor.GREEN);
+            case NOT_ACTIVATED -> new StyledResult(
+                    "waystone.travel-not-activated",
+                    NamedTextColor.RED
+            );
+            case WORLD_UNAVAILABLE -> new StyledResult(
+                    "waystone.travel-world-unavailable",
+                    NamedTextColor.RED
+            );
+            case DESTINATION_UNSAFE -> new StyledResult(
+                    "waystone.travel-unsafe",
+                    NamedTextColor.YELLOW
+            );
             case PLAYER_OFFLINE -> null;
-            case TELEPORT_REJECTED -> "waystone.travel-rejected";
+            case TELEPORT_REJECTED -> new StyledResult(
+                    "waystone.travel-rejected",
+                    NamedTextColor.RED
+            );
         };
-        if (key != null) {
-            player.sendPlainMessage(messages.text(key, name));
+        if (styled != null) {
+            player.sendMessage(messages.component(styled.color(), styled.key(), name));
         }
+    }
+
+    private record StyledResult(String key, NamedTextColor color) {
     }
 }

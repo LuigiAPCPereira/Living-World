@@ -129,6 +129,16 @@ class PaperWaystoneTravelServiceTest {
             }
 
             @Override
+            public Optional<Waystone> findAt(UUID worldId, int x, int y, int z) {
+                return waystone.worldId().equals(worldId)
+                        && waystone.x() == x
+                        && waystone.y() == y
+                        && waystone.z() == z
+                        ? Optional.of(waystone)
+                        : Optional.empty();
+            }
+
+            @Override
             public List<Waystone> all() {
                 return List.of(waystone);
             }

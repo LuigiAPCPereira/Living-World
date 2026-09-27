@@ -24,3 +24,14 @@ qol:
 waystones:
   enabled: true
   anchor-material: LODESTONE
+
+hud:
+  enabled: true
+  # 10 ticks = 0,5 s. A action bar precisa ser renovada para permanecer visível.
+  update-period-ticks: 10
+  calendar-boss-bar:
+    enabled: true
+  action-bar:
+    navigation: true
+    coordinates: true
+    temperature: true

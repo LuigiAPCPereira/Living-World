@@ -28,6 +28,7 @@ These are product directions, not promises that all are implemented in the curre
 - waystones and travel QoL;
 - double doors and other focused convenience mechanics;
 - environmental reactions and long-term world memory.
+- optional player HUD surfaces for calendar/season, navigation and environmental feedback.
 
 ## Calendar direction
 
@@ -69,9 +70,29 @@ These are product directions, not promises that all are implemented in the curre
 - A player must activate/discover a waystone before it can be used as that player's travel destination.
 - Waystone registry data belongs to the loaded world PDC; online-player discoveries belong to Player PDC.
 - Travel must avoid synchronous destination chunk loading and reject unsafe/blocked/liquid/out-of-border destinations.
-- Physical activation defaults to a configurable Lodestone anchor. First interaction registers a stable coordinate-derived identity and activates it for that player.
+- Physical activation defaults to a configurable Lodestone anchor. First interaction creates a persistent random identity associated with that anchor and activates it for that player.
+- Destroying a registered anchor removes the waystone immediately and gives player feedback; recreating an anchor at the same coordinates creates a new identity instead of reviving old access.
+- Legacy orphaned records from older plugin behavior are cleaned lazily when their chunks are already/naturally loaded; cleanup must never scan terrain or force chunk loads.
 - The initial travel UI is intentionally minimal: `/lw list` and `/lw travel <number>`.
 - Custom naming, recipe, GUI, cost/cooldown and richer presentation remain deferred.
+
+## Player HUD direction
+
+- HUD is optional and modular; gameplay state must remain correct with every HUD surface disabled.
+- Calendar/season belongs naturally in a boss bar because it is persistent, low-frequency world context. Its progress may represent a documented calendar unit such as progress through the current month/season rather than an arbitrary decorative value.
+- Navigation shares the action bar with contextual temperature instead of consuming another boss bar. Heading, coordinates and temperature remain independently toggleable so players/servers can choose a cleaner screen.
+- Temperature belongs in the action bar because it is contextual to the player's current location and can change as the player moves.
+- A numeric temperature in degrees must be explicitly defined as a **Living World apparent temperature**, derived from climate/season/location policy. It must not be presented as an official or canonical Minecraft Celsius conversion.
+- HUD updates must be bounded per player and should update only at a reasonable cadence and/or when the represented state changes; never scan terrain/world state to render HUD.
+- Boss bar/action bar presentation should use modern Adventure Components and remain behind one HUD owner so independent features do not fight over the same client channels.
+
+## Ecology direction
+
+- The first ecological mechanic modifies **natural** vegetation growth rather than creating a separate simulation loop.
+- Vanilla remains responsible for deciding when a plant attempts to grow. Living World may reject some natural Ageable growth attempts when the effective local climate is unsuitable.
+- Effective climate already includes season, so ecology should consume the existing climate model instead of duplicating seasonal rules.
+- The first slice must not accelerate growth above vanilla, force growth, scan chunks, or modify explicit player fertilization; poor conditions only reduce the chance that a natural growth attempt succeeds.
+- Growth-impact settings are balance-affecting and must be configurable/disableable.
 
 ## Explicitly out of scope
 

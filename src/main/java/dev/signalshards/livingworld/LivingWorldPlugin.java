@@ -4,6 +4,8 @@ import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.ModuleManager;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarModule;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarWorldResolver;
+import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
+import dev.signalshards.livingworld.features.climate.domain.ApparentTemperaturePolicy;
 import dev.signalshards.livingworld.features.climate.application.WeatherEventPlanner;
 import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
@@ -15,6 +17,10 @@ import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSett
 import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesModule;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperPathWearSettingsLoader;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
+import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
+import dev.signalshards.livingworld.features.hud.paper.PaperHudModule;
+import dev.signalshards.livingworld.features.hud.paper.PaperHudSettingsLoader;
+import dev.signalshards.livingworld.features.hud.paper.TemperatureColorPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.SeasonCycle;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import dev.signalshards.livingworld.features.waystones.paper.PaperPlayerWaystoneAccessStore;
@@ -44,6 +50,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
         );
 
         SeasonCycle seasons = SeasonCycle.livingWorldDefaults();
+        CalendarRules calendarRules = CalendarRules.livingWorldDefaults();
         PaperClimateCoordinator climateCoordinator = new PaperClimateCoordinator(
                 calendarWorld,
                 new PaperClimateSampler(
@@ -78,15 +85,28 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new PaperSafeWaystoneDestination(waystoneSettings.anchorMaterial())
         );
 
+        PaperCalendarModule calendarModule = new PaperCalendarModule(
+                this,
+                calendarWorld,
+                messages,
+                calendarRules,
+                seasons,
+                climateCoordinator,
+                desireLines
+        );
+        PaperHudModule hud = new PaperHudModule(
+                this,
+                PaperHudSettingsLoader.load(getConfig()),
+                calendarModule,
+                messages,
+                new HeadingPolicy(),
+                new ApparentTemperaturePolicy(),
+                new TemperatureColorPolicy()
+        );
+
         moduleManager = new ModuleManager(
                 desireLines,
-                new PaperCalendarModule(
-                        this,
-                        calendarWorld,
-                        messages,
-                        climateCoordinator,
-                        desireLines
-                ),
+                calendarModule,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)
@@ -97,7 +117,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         waystones,
                         waystoneTravel,
                         messages
-                )
+                ),
+                hud
         );
 
         try {

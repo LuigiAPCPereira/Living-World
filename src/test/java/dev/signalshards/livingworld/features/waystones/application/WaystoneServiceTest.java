@@ -50,6 +50,29 @@ class WaystoneServiceTest {
         assertFalse(service.activate(player, waystone.id()));
     }
 
+    @Test
+    void encontraERemoveWaystonePelaAncora() {
+        InMemoryRegistry registry = new InMemoryRegistry();
+        WaystoneService service = new WaystoneService(registry, new InMemoryAccessStore());
+        UUID world = UUID.randomUUID();
+        Waystone waystone = new Waystone(
+                WaystoneId.random(),
+                "Casa",
+                world,
+                10,
+                64,
+                10
+        );
+        service.register(waystone);
+
+        assertEquals(
+                Optional.of(waystone),
+                service.findAt(world, 10, 64, 10)
+        );
+        assertTrue(service.remove(waystone.id()));
+        assertTrue(service.findAt(world, 10, 64, 10).isEmpty());
+    }
+
     private Waystone waystone(String name, UUID world) {
         return new Waystone(WaystoneId.random(), name, world, 10, 64, 10);
     }
@@ -65,6 +88,16 @@ class WaystoneServiceTest {
         @Override
         public Optional<Waystone> find(WaystoneId id) {
             return Optional.ofNullable(values.get(id));
+        }
+
+        @Override
+        public Optional<Waystone> findAt(UUID worldId, int x, int y, int z) {
+            return values.values().stream()
+                    .filter(waystone -> waystone.worldId().equals(worldId))
+                    .filter(waystone -> waystone.x() == x)
+                    .filter(waystone -> waystone.y() == y)
+                    .filter(waystone -> waystone.z() == z)
+                    .findFirst();
         }
 
         @Override

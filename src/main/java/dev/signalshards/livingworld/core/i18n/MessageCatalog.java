@@ -1,5 +1,8 @@
 package dev.signalshards.livingworld.core.i18n;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -30,6 +33,10 @@ public final class MessageCatalog {
         String pattern = lookup(key);
         MessageFormat format = new MessageFormat(pattern, locale);
         return format.format(arguments);
+    }
+
+    public Component component(TextColor color, String key, Object... arguments) {
+        return Component.text(text(key, arguments), color);
     }
 
     private String lookup(String key) {
