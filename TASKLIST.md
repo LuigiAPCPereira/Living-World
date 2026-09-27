@@ -60,3 +60,8 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 | LW-071 | M7 | Runtime Waystone rename smoke | validated | LW-070 | real player confirms near-anchor rename, /lw list ordering/name update, travel still works and far-away rename is rejected | MCPFabric/Paper smoke: renamed to Portal da Savana near anchor, list updated, remote rename rejected at >6 blocks, travel succeeded, manual destruction removed renamed entry and list became empty | local master |
 
 **M7 complete — persistent local Waystone rename validated in live survival flow.**
+
+| LW-080 | M8 | Add visual Waystone travel menu | validated | M3, M7 | /lw menu presents activated Waystones as safe inventory entries bound to stable UUIDs and delegates clicks to existing travel service | clean IntelliJ/Gradle gates + live Paper smoke confirmed visual inventory rendering and click-to-travel through existing travel service | local master |
+| LW-081 | M8 | Runtime Waystone menu smoke | validated | LW-080 | real player confirms menu rendering, item safety and click-to-travel; CLI remains available | MCPFabric/Paper smoke: /lw menu rendered one Lodestone entry, manual slot click closed menu and completed travel, player inventory remained unchanged/no duplicated menu item, /lw list still worked, manual anchor destruction removed entry and final list was empty | local master |
+
+**M8 complete — visual Waystone travel menu validated in live gameplay.**

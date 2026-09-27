@@ -75,7 +75,9 @@ These are product directions, not promises that all are implemented in the curre
 - Legacy orphaned records from older plugin behavior are cleaned lazily when their chunks are already/naturally loaded; cleanup must never scan terrain or force chunk loads.
 - The initial travel UI is intentionally minimal: `/lw list` and `/lw travel <number>`.
 - Waystones can be renamed after activation while the player is physically close to the anchor; rename preserves UUID/access and changes the shared global name.
-- Recipe, GUI, cost/cooldown and richer presentation remain deferred.
+- `/lw menu` provides a visual inventory-based travel surface over the same activated Waystone set; command travel remains available as fallback.
+- The first menu intentionally supports up to 54 activated destinations without silent truncation; pagination remains deferred until gameplay evidence requires it.
+- Recipe, cost/cooldown and richer presentation remain deferred.
 
 ## Player HUD direction
 

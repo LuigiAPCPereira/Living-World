@@ -98,6 +98,12 @@ class PaperWaystoneCommandTest {
                 service,
                 new PaperSafeWaystoneDestination()
         );
+        PaperWaystoneMenu menu = new PaperWaystoneMenu(
+                service,
+                travel,
+                MessageCatalog.fromLanguageTag("pt-BR"),
+                org.bukkit.Material.LODESTONE
+        );
 
         return new PaperWaystoneCommand(
                 service,
@@ -117,7 +123,8 @@ class PaperWaystoneCommandTest {
                         20.0D,
                         4.2D
                 ),
-                6.0D
+                6.0D,
+                menu
         );
     }
 

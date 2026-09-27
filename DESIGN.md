@@ -166,6 +166,10 @@ The command interface uses Paper's current `BasicCommand` API registered by the 
 
 Rename is intentionally local rather than remote: the player must have activated the Waystone and be within the configured default 6-block radius of its anchor. Names are global/shared for the Waystone. This avoids introducing an ownership schema solely for naming while preventing arbitrary remote renames.
 
+The first visual Waystone menu is a thin Paper presentation adapter. `/lw menu` creates a titled inventory with one anchor-material icon per activated Waystone, maps each slot directly to its stable `WaystoneId`, cancels click/drag mutations, revalidates activation when clicked, closes the inventory, and delegates to the existing `PaperWaystoneTravelService`. It never reimplements travel safety or access policy.
+
+The menu caps at 54 destinations in the first slice. More than 54 produces explicit fallback guidance to `/lw list`; destinations are never silently truncated. Pagination is deferred until real usage demonstrates the need.
+
 Travel through this physical interface additionally requires the configured anchor material to still exist at the stored coordinate; destroying/replacing the anchor makes the destination unsafe instead of silently teleporting to a stale point.
 
 ## Future Player HUD

@@ -3,7 +3,6 @@ package dev.signalshards.livingworld.features.waystones.paper;
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
-import dev.signalshards.livingworld.features.waystones.application.WaystoneTravelResult;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.entity.Player;
@@ -24,13 +23,15 @@ public final class PaperWaystoneCommand implements BasicCommand {
     private final MessageCatalog messages;
     private final LivingWorldStatusProvider statusProvider;
     private final double renameMaxDistance;
+    private final PaperWaystoneMenu menu;
 
     public PaperWaystoneCommand(
             WaystoneService waystones,
             PaperWaystoneTravelService travel,
             MessageCatalog messages,
             LivingWorldStatusProvider statusProvider,
-            double renameMaxDistance
+            double renameMaxDistance,
+            PaperWaystoneMenu menu
     ) {
         this.waystones = Objects.requireNonNull(waystones, "serviço de waystones");
         this.travel = Objects.requireNonNull(travel, "viagem de waystones");
@@ -45,6 +46,7 @@ public final class PaperWaystoneCommand implements BasicCommand {
             );
         }
         this.renameMaxDistance = renameMaxDistance;
+        this.menu = Objects.requireNonNull(menu, "menu de waystones");
     }
 
     @Override
@@ -76,6 +78,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
             rename(player, args);
             return;
         }
+        if (args[0].equalsIgnoreCase("menu")) {
+            menu.open(player);
+            return;
+        }
 
         player.sendMessage(messages.component(
                 NamedTextColor.YELLOW,
@@ -87,7 +93,7 @@ public final class PaperWaystoneCommand implements BasicCommand {
     public Collection<String> suggest(CommandSourceStack source, String[] args) {
         if (args.length <= 1) {
             if (source.getSender() instanceof Player) {
-                return List.of("status", "list", "travel", "rename");
+                return List.of("status", "list", "travel", "rename", "menu");
             }
             return List.of("status");
         }
@@ -302,44 +308,18 @@ public final class PaperWaystoneCommand implements BasicCommand {
         }
 
         var target = activated.get(selection - 1);
-        player.sendMessage(messages.component(
-                NamedTextColor.AQUA,
-                "waystone.travel-start",
+        PaperWaystoneTravelFeedback.sendStart(
+                player,
+                messages,
                 target.name()
-        ));
-        travel.travel(player, target.id()).thenAccept(result -> sendResult(player, target.name(), result));
-    }
-
-    private void sendResult(Player player, String name, WaystoneTravelResult result) {
-        if (!player.isOnline()) {
-            return;
-        }
-
-        StyledResult styled = switch (result) {
-            case SUCCESS -> new StyledResult("waystone.travel-success", NamedTextColor.GREEN);
-            case NOT_ACTIVATED -> new StyledResult(
-                    "waystone.travel-not-activated",
-                    NamedTextColor.RED
-            );
-            case WORLD_UNAVAILABLE -> new StyledResult(
-                    "waystone.travel-world-unavailable",
-                    NamedTextColor.RED
-            );
-            case DESTINATION_UNSAFE -> new StyledResult(
-                    "waystone.travel-unsafe",
-                    NamedTextColor.YELLOW
-            );
-            case PLAYER_OFFLINE -> null;
-            case TELEPORT_REJECTED -> new StyledResult(
-                    "waystone.travel-rejected",
-                    NamedTextColor.RED
-            );
-        };
-        if (styled != null) {
-            player.sendMessage(messages.component(styled.color(), styled.key(), name));
-        }
-    }
-
-    private record StyledResult(String key, NamedTextColor color) {
+        );
+        travel.travel(player, target.id()).thenAccept(result ->
+                PaperWaystoneTravelFeedback.sendResult(
+                        player,
+                        messages,
+                        target.name(),
+                        result
+                )
+        );
     }
 }

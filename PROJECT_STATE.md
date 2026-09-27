@@ -6,15 +6,15 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M8 planning
-- **Current acceptance:** choose the next player-value slice without regressing the validated M0..M7 runtime/performance constraints
+- **Current task:** M9 planning
+- **Current acceptance:** choose the next player-value slice without regressing validated M0..M8 behavior, persistence or performance constraints
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `master`
-- **Observed HEAD:** `dc25cff` — M6 diagnostics/hardening checkpoint before M7 rename work
+- **Observed HEAD:** `73c68c7` — M7 persistent Waystone rename checkpoint before M8 menu work
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
-- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7 validated
-- **Validation:** live M7 smoke confirmed local persistent rename, updated listing, remote rename rejection, travel continuity with preserved identity/access, and manual destruction cleanup using the renamed label
+- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8 validated
+- **Validation:** live M8 smoke confirmed visual menu rendering, click-to-travel through the existing safe travel service, no menu-item leakage/duplication into player inventory, CLI fallback continuity, and clean anchor-destruction lifecycle
 - **Merge:** not integrated / no remote merge observed
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint M7, then inventory M8 from remaining survival UX gaps rather than broadening systems speculatively
+- **Next action:** checkpoint M8, then inventory M9 from remaining survival UX gaps instead of adding speculative systems

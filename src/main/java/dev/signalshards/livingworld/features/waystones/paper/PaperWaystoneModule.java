@@ -34,6 +34,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
     private final MessageCatalog messages;
     private final LivingWorldStatusProvider statusProvider;
     private final WaystoneAnchorIndex anchorIndex = new WaystoneAnchorIndex();
+    private final PaperWaystoneMenu menu;
 
     public PaperWaystoneModule(
             JavaPlugin plugin,
@@ -52,6 +53,12 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
                 statusProvider,
                 "diagnóstico do Living World"
         );
+        this.menu = new PaperWaystoneMenu(
+                waystones,
+                travel,
+                messages,
+                settings.anchorMaterial()
+        );
     }
 
     @Override
@@ -61,6 +68,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
         }
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        plugin.getServer().getPluginManager().registerEvents(menu, plugin);
         rebuildAnchorIndex();
         cleanAlreadyLoadedAnchors();
         plugin.registerCommand(
@@ -72,7 +80,8 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
                         travel,
                         messages,
                         statusProvider,
-                        settings.renameMaxDistance()
+                        settings.renameMaxDistance(),
+                        menu
                 )
         );
     }
@@ -81,6 +90,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
     public void disable() {
         if (settings.enabled()) {
             HandlerList.unregisterAll(this);
+            HandlerList.unregisterAll(menu);
         }
     }
 
