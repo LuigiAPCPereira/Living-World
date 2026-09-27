@@ -70,3 +70,6 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 | LW-091 | M9 | Runtime season-transition visual smoke | validated | LW-090 | real natural calendar progression crosses a season boundary and player sees the new-season title while HUD/calendar remain coherent | live sleep-driven Verão M6D8 → Outono M7D1; player explicitly confirmed seeing “Outono” title; boss bar/status/log all coherent; random_tick_speed restored to 3 | local master |
 
 **M9 complete — seasonal transition feedback validated in live gameplay.**
+
+| LW-100 | M10 | Add distance-aware Waystone menu navigation | validated | M8 | `/lw menu` groups current-world destinations first by distance, shows target world/coordinates, shows rounded same-world distance and preserves stable-ID click/travel semantics | focused Waystone tests with `--rerun-tasks` + full `./gradlew build --rerun-tasks` succeeded | chatgpt/waystones-m10 |
+| LW-101 | M10 | Runtime Waystone navigation-menu smoke | pending | LW-100 | real player confirms nearest-first current-world ordering, world/coordinate lore, same-world distance and unchanged click-to-travel behavior | not yet run; MCPFabric client observed without a connected server during this block | chatgpt/waystones-m10 |

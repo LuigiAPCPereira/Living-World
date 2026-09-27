@@ -77,6 +77,7 @@ These are product directions, not promises that all are implemented in the curre
 - The initial travel UI is intentionally minimal: `/lw list` and `/lw travel <number>`.
 - Waystones can be renamed after activation while the player is physically close to the anchor; rename preserves UUID/access and changes the shared global name.
 - `/lw menu` provides a visual inventory-based travel surface over the same activated Waystone set; command travel remains available as fallback.
+- The visual menu prioritizes destinations in the player's current world by straight-line distance to the physical anchor, then keeps cross-world destinations grouped after them. Each entry shows target world and coordinates; same-world entries also show rounded distance. This is presentation-only and does not change access or travel safety rules.
 - The first menu intentionally supports up to 54 activated destinations without silent truncation; pagination remains deferred until gameplay evidence requires it.
 - Recipe, cost/cooldown and richer presentation remain deferred.
 

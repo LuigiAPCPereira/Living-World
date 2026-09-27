@@ -14,6 +14,7 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M7 — Waystone survival UX | make the validated travel system feel intentional in long-running survival without adding hidden economy/balance costs | M3, M6 | LW-070..LW-071 | validated |
 | M8 — Waystone visual navigation | add an optional visual travel surface over the same validated Waystone identity/access/travel rules | M3, M7 | LW-080..LW-081 | validated |
 | M9 — Seasonal transition feedback | make season boundaries perceptible to players using existing calendar transition events without introducing polling or simulation state | M1, M4 | LW-090..LW-091 | validated |
+| M10 — Waystone navigation clarity | make the existing Waystone network easier to scan by surfacing world/distance context without changing access, economy or travel safety | M8 | LW-100..LW-101 | in progress |
 
 ## Sequencing principles
 

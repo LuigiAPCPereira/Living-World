@@ -170,6 +170,8 @@ Rename is intentionally local rather than remote: the player must have activated
 
 The first visual Waystone menu is a thin Paper presentation adapter. `/lw menu` creates a titled inventory with one anchor-material icon per activated Waystone, maps each slot directly to its stable `WaystoneId`, cancels click/drag mutations, revalidates activation when clicked, closes the inventory, and delegates to the existing `PaperWaystoneTravelService`. It never reimplements travel safety or access policy.
 
+For navigation clarity, the menu derives a presentation-only ordering from the player's current position: destinations in the current world come first by 3D distance to the anchor center, then cross-world destinations follow alphabetically. Item lore exposes target world and coordinates; same-world entries include rounded distance while cross-world entries explicitly avoid pretending that Euclidean distance across dimensions is meaningful. The application service keeps its stable alphabetical activated-waystone listing for command numbering, so visual ordering does not redefine domain/access state.
+
 The menu caps at 54 destinations in the first slice. More than 54 produces explicit fallback guidance to `/lw list`; destinations are never silently truncated. Pagination is deferred until real usage demonstrates the need.
 
 Travel through this physical interface additionally requires the configured anchor material to still exist at the stored coordinate; destroying/replacing the anchor makes the destination unsafe instead of silently teleporting to a stale point.
