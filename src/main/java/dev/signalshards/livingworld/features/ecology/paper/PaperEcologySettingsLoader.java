@@ -30,6 +30,14 @@ public final class PaperEcologySettingsLoader {
                         defaults.treeGrowthStrength()
                 ),
                 config.getBoolean(
+                        "ecology.ground-cover-spread.enabled",
+                        defaults.groundCoverSpreadEnabled()
+                ),
+                config.getDouble(
+                        "ecology.ground-cover-spread.strength",
+                        defaults.groundCoverSpreadStrength()
+                ),
+                config.getBoolean(
                         "ecology.frozen-surfaces.enabled",
                         defaults.frozenSurfacesEnabled()
                 )

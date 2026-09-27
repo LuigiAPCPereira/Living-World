@@ -4,15 +4,25 @@ public record PaperEcologySettings(
         boolean naturalGrowthEnabled,
         double cropGrowthStrength,
         double treeGrowthStrength,
+        boolean groundCoverSpreadEnabled,
+        double groundCoverSpreadStrength,
         boolean frozenSurfacesEnabled
 ) {
     public PaperEcologySettings {
         requireStrength("plantações", cropGrowthStrength);
         requireStrength("árvores", treeGrowthStrength);
+        requireStrength("cobertura vegetal", groundCoverSpreadStrength);
     }
 
     public static PaperEcologySettings defaults() {
-        return new PaperEcologySettings(true, 0.65D, 0.35D, true);
+        return new PaperEcologySettings(
+                true,
+                0.65D,
+                0.35D,
+                true,
+                0.50D,
+                true
+        );
     }
 
     private static void requireStrength(String target, double strength) {

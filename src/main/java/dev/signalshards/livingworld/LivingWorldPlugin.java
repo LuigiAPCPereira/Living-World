@@ -22,6 +22,7 @@ import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabi
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettings;
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettingsLoader;
 import dev.signalshards.livingworld.features.ecology.paper.PaperFrozenSurfaceModule;
+import dev.signalshards.livingworld.features.ecology.paper.PaperGroundCoverSpreadModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperNaturalGrowthModule;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
@@ -131,12 +132,21 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 localClimate,
                 new FrozenSurfacePolicy()
         );
+        PaperGroundCoverSpreadModule groundCoverSpread =
+                new PaperGroundCoverSpreadModule(
+                        this,
+                        calendarWorld,
+                        ecologySettings,
+                        localClimate,
+                        new NaturalGrowthSuitabilityPolicy()
+                );
 
         moduleManager = new ModuleManager(
                 desireLines,
                 calendarModule,
                 naturalGrowth,
                 frozenSurfaces,
+                groundCoverSpread,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

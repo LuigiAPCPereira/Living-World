@@ -43,5 +43,9 @@ ecology:
     # Árvores usam força menor porque já tentam crescer com menos frequência.
     crop-strength: 0.65
     tree-strength: 0.35
+  ground-cover-spread:
+    enabled: true
+    # Modula apenas DIRT -> GRASS_BLOCK causado por GRASS_BLOCK natural.
+    strength: 0.50
   frozen-surfaces:
     enabled: true

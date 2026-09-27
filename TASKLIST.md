@@ -34,10 +34,11 @@
 | LW-050 | M5 | Define climate-sensitive natural growth policy | validated | M2 | pure policy maps effective thermal/moisture bands to bounded natural-growth acceptance probability | clean Gradle gates; ideal/extreme/strength=0 policy tests pass | local master |
 | LW-051 | M5 | Integrate natural Ageable growth with Paper events | validated | LW-050 | BlockGrowEvent for Ageable vegetation is conditionally cancelled using local climate without scans or forced growth | clean Gradle gates; adapter integration tests + live Paper smoke pass | local master |
 | LW-052 | M5 | Runtime seasonal-growth smoke | validated | LW-051 | real gameplay confirms natural growth remains functional and visibly slower/less uniform in unsuitable climate/season without affecting explicit fertilization | zVaporius confirmed normal natural growth, bone-meal path unaffected, and less-uniform growth in ~41 °C savanna under accelerated random ticks; no runtime errors | local master |
-| LW-053 | M5 | Add bounded player microclimate modifiers | implemented not validated | LW-043 | apparent temperature reacts to direct exposure such as lava/fire/water without nearby-block scans | clean IntelliJ/Gradle gates; direct-exposure temperature policy tests pass; live HUD smoke pending | local master |
+| LW-053 | M5 | Add bounded player microclimate modifiers | validated | LW-043 | apparent temperature reacts to direct exposure such as lava/fire/water without nearby-block scans | clean IntelliJ/Gradle gates + zVaporius confirmed live water/lava HUD response | local master |
 | LW-054 | M5 | Extend climate-sensitive growth to natural sapling/tree attempts | validated | LW-051 | natural tree growth may be reduced by climate while bone-meal growth remains explicit/player-controlled | zVaporius confirmed hot-savanna natural sapling slowdown and immediate bonemeal bypass; live feedback showed shared crop-strength was too punitive for trees | local master |
 | LW-055 | M5 | Tune tree growth penalty independently | validated | LW-054 | tree growth remains climate-sensitive without excessive waiting; crop tuning remains unchanged | clean gates + zVaporius live recheck approved tree-strength 0.35 pacing; crop strength remains 0.65 | local master |
 | LW-056 | M5 | Add climate-aware natural snow/ice persistence | validated | M2 | vanilla snow/ice formation and fade events respect effective thermal climate without scans or forced formation | clean IntelliJ/Gradle gates + live MCPFabric/Paper smoke: 25/25 snow layers formed in snowy_plains, lit ICE survived cold tick sprint, equivalent ICE melted in savanna; entity-form bypass covered by tests | local master |
+| LW-057 | M5 | Add climate-aware natural grass spread | validated | LW-050 | vanilla GRASS_BLOCK spread onto DIRT is climate-modulated without scans and without touching unrelated BlockSpreadEvent mechanics | clean gates + MCPFabric/Paper 3-round comparison: plains 81/76/74 vs savanna 69/56/68 conversions out of 81 under identical accelerated ticks; unrelated spread bypass covered by tests | local master |
 
 ## Scope discipline
 
@@ -45,4 +46,4 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**M5 follow-up — choose next bounded ecological reaction only after checkpoint.**
+**M5 follow-up — select next bounded ecological reaction after checkpoint.**

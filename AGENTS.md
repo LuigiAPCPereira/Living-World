@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **LW-056 — climate-aware natural snow/ice persistence**.
+Current task: **LW-057 — climate-aware natural grass spread**.
 
 Do not implement later roadmap modules opportunistically.
 

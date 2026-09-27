@@ -200,6 +200,8 @@ Frozen-surface ecology reacts only to vanilla block-condition events. Natural WA
 
 `BlockFadeEvent` does not carry creation provenance, so cold-climate preservation applies to any ICE/SNOW block that vanilla attempts to fade, including player-placed frozen surfaces. This limitation is explicit; Living World does not add global tracking merely to recover provenance.
 
+Ground-cover ecology listens to `BlockSpreadEvent` but accepts only the exact vanilla shape source=GRASS_BLOCK, destination-current=DIRT, destination-new=GRASS_BLOCK. That narrow predicate deliberately excludes fire, fungi, vines, bamboo and other spread mechanics. Accepted grass spread reuses the existing climate suitability policy with an independent default strength of 0.50; Living World never forces or accelerates spread.
+
 Player apparent temperature is biome/coordinate temperature plus season and a bounded direct-exposure modifier. The first microclimate slice uses only Paper's player-local state: lava adds +20 °C, burning adds +8 °C and water subtracts 4 °C, with priority lava → water → fire → neutral so contradictory states are not stacked. The result still respects the HUD clamp of -40..55 °C.
 
 Nearby heat-source influence such as merely standing beside lava or campfires remains deferred. Supporting that would require a cached/bounded sampling design; the HUD must not scan an area around every player on each refresh.

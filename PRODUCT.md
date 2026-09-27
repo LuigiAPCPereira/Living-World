@@ -96,6 +96,7 @@ These are product directions, not promises that all are implemented in the curre
 - Crop and tree strength are configured separately because trees already have much sparser vanilla growth opportunities; the default tree penalty is intentionally milder than crop penalty.
 - Player-facing apparent temperature may later include bounded direct-exposure microclimate modifiers (for example standing in lava, burning or being submerged) without scanning surrounding terrain.
 - Natural snow/ice persistence may react to effective thermal climate by filtering vanilla formation/fade events; Living World should not create frozen terrain through its own scanner or scheduler.
+- Natural grass cover may spread less reliably in climatically unsuitable regions, but only by filtering vanilla GRASS_BLOCK→DIRT spread attempts; fire/fungi/vines and other spread mechanics remain vanilla.
 
 ## Explicitly out of scope
 
