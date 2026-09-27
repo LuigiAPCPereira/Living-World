@@ -1,0 +1,22 @@
+language: pt-BR
+
+calendar:
+  # Vazio = primeiro mundo do Overworld carregado.
+  world: ""
+
+climate:
+  weather-events:
+    clear-duration-seconds: 600
+    precipitation-duration-seconds: 300
+    storm-duration-seconds: 180
+
+desire-lines:
+  enabled: true
+  grass-to-dirt-visits: 12
+  dirt-to-path-visits: 24
+  max-tracked-positions-per-chunk: 512
+  flush-period-ticks: 200
+
+qol:
+  double-doors:
+    enabled: true
