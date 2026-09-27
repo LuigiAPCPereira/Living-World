@@ -5,7 +5,7 @@ import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.features.calendar.application.CalendarView;
 import dev.signalshards.livingworld.features.calendar.domain.CalendarDate;
 import dev.signalshards.livingworld.features.climate.domain.ApparentTemperaturePolicy;
-import dev.signalshards.livingworld.features.climate.domain.TemperatureExposure;
+import dev.signalshards.livingworld.features.climate.paper.PaperTemperatureExposureResolver;
 import dev.signalshards.livingworld.features.hud.domain.CardinalDirection;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
@@ -232,7 +232,7 @@ public final class PaperHudModule implements LivingWorldModule, Listener {
             int celsius = temperaturePolicy.degreesCelsius(
                     paperTemperature,
                     calendar.currentSeason(),
-                    exposureFor(player)
+                    PaperTemperatureExposureResolver.forPlayer(player)
             );
             result = appendSegment(
                     result,
@@ -245,19 +245,6 @@ public final class PaperHudModule implements LivingWorldModule, Listener {
         }
 
         return result;
-    }
-
-    private TemperatureExposure exposureFor(Player player) {
-        if (player.isInLava()) {
-            return TemperatureExposure.LAVA;
-        }
-        if (player.isInWater()) {
-            return TemperatureExposure.WATER;
-        }
-        if (player.getFireTicks() > 0) {
-            return TemperatureExposure.FIRE;
-        }
-        return TemperatureExposure.NONE;
     }
 
     private Component appendSegment(Component base, Component segment, boolean hasPrevious) {

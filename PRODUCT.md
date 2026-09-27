@@ -39,6 +39,7 @@ These are product directions, not promises that all are implemented in the curre
 - Calendar progress is durable logical state; administrative changes to Minecraft time must not rewrite the historical date.
 - Month duration is a policy value rather than a hard dependency of the date model, so server pacing can evolve later.
 - Crossing a real season boundary may produce a short optional player title using the existing calendar transition event; this is presentation only and adds no new season state.
+- `/lw climate` explains the player's effective local climate using the same temperature/moisture snapshot and ecology policies already driving gameplay. It reports configured acceptance/retention percentages rather than inventing a separate simulation model.
 
 ## Climate direction
 

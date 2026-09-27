@@ -2,6 +2,12 @@ package dev.signalshards.livingworld.features.waystones.paper;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
+import dev.signalshards.livingworld.features.climate.application.ClimateRuleReadout;
+import dev.signalshards.livingworld.features.climate.application.LocalClimateReadout;
+import dev.signalshards.livingworld.features.climate.application.LocalClimateReadoutProvider;
+import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
+import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
+import dev.signalshards.livingworld.features.seasons.domain.Season;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -24,6 +30,7 @@ public final class PaperWaystoneCommand implements BasicCommand {
     private final LivingWorldStatusProvider statusProvider;
     private final double renameMaxDistance;
     private final PaperWaystoneMenu menu;
+    private final LocalClimateReadoutProvider climateReadoutProvider;
 
     public PaperWaystoneCommand(
             WaystoneService waystones,
@@ -31,7 +38,8 @@ public final class PaperWaystoneCommand implements BasicCommand {
             MessageCatalog messages,
             LivingWorldStatusProvider statusProvider,
             double renameMaxDistance,
-            PaperWaystoneMenu menu
+            PaperWaystoneMenu menu,
+            LocalClimateReadoutProvider climateReadoutProvider
     ) {
         this.waystones = Objects.requireNonNull(waystones, "serviço de waystones");
         this.travel = Objects.requireNonNull(travel, "viagem de waystones");
@@ -47,6 +55,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
         }
         this.renameMaxDistance = renameMaxDistance;
         this.menu = Objects.requireNonNull(menu, "menu de waystones");
+        this.climateReadoutProvider = Objects.requireNonNull(
+                climateReadoutProvider,
+                "leitura de clima local"
+        );
     }
 
     @Override
@@ -82,6 +94,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
             menu.open(player);
             return;
         }
+        if (args[0].equalsIgnoreCase("climate")) {
+            climate(player);
+            return;
+        }
 
         player.sendMessage(messages.component(
                 NamedTextColor.YELLOW,
@@ -93,7 +109,14 @@ public final class PaperWaystoneCommand implements BasicCommand {
     public Collection<String> suggest(CommandSourceStack source, String[] args) {
         if (args.length <= 1) {
             if (source.getSender() instanceof Player) {
-                return List.of("status", "list", "travel", "rename", "menu");
+                return List.of(
+                        "status",
+                        "climate",
+                        "list",
+                        "travel",
+                        "rename",
+                        "menu"
+                );
             }
             return List.of("status");
         }
@@ -115,6 +138,117 @@ public final class PaperWaystoneCommand implements BasicCommand {
         }
 
         return List.of();
+    }
+
+    private void climate(Player player) {
+        LocalClimateReadout snapshot = climateReadoutProvider.snapshot(player);
+        player.sendMessage(messages.component(
+                NamedTextColor.GOLD,
+                "climate.readout-header"
+        ));
+        player.sendMessage(messages.component(
+                NamedTextColor.AQUA,
+                "climate.readout-summary",
+                seasonText(snapshot.season()),
+                snapshot.apparentCelsius(),
+                thermalText(snapshot.thermalBand()),
+                moistureText(snapshot.moistureBand())
+        ));
+        sendRule(
+                player,
+                "climate.readout-crops",
+                "climate.label-crops",
+                snapshot.cropGrowth()
+        );
+        sendRule(
+                player,
+                "climate.readout-trees",
+                "climate.label-trees",
+                snapshot.treeGrowth()
+        );
+        sendRule(
+                player,
+                "climate.readout-grass",
+                "climate.label-grass",
+                snapshot.grassSpread()
+        );
+        sendRule(
+                player,
+                "climate.readout-farmland",
+                "climate.label-farmland",
+                snapshot.farmlandRetention()
+        );
+        sendRule(
+                player,
+                "climate.readout-fire",
+                "climate.label-fire",
+                snapshot.fireSpread()
+        );
+        if (!snapshot.frozenSurfacesEnabled()) {
+            player.sendMessage(messages.component(
+                    NamedTextColor.DARK_GRAY,
+                    "climate.readout-frozen-disabled"
+            ));
+        } else {
+            player.sendMessage(messages.component(
+                    snapshot.frozenSurfacesPersist()
+                            ? NamedTextColor.AQUA
+                            : NamedTextColor.GRAY,
+                    snapshot.frozenSurfacesPersist()
+                            ? "climate.readout-frozen-yes"
+                            : "climate.readout-frozen-no"
+            ));
+        }
+    }
+
+    private void sendRule(
+            Player player,
+            String messageKey,
+            String labelKey,
+            ClimateRuleReadout readout
+    ) {
+        if (!readout.enabled()) {
+            player.sendMessage(messages.component(
+                    NamedTextColor.DARK_GRAY,
+                    "climate.readout-rule-disabled",
+                    messages.text(labelKey)
+            ));
+            return;
+        }
+        player.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                messageKey,
+                readout.percent()
+        ));
+    }
+
+    private String seasonText(Season season) {
+        return messages.text(switch (season) {
+            case PRIMAVERA -> "season.spring";
+            case VERAO -> "season.summer";
+            case OUTONO -> "season.autumn";
+            case INVERNO -> "season.winter";
+        });
+    }
+
+    private String thermalText(ThermalBand band) {
+        return messages.text(switch (band) {
+            case CONGELANTE -> "climate.thermal.freezing";
+            case FRIO -> "climate.thermal.cold";
+            case TEMPERADO -> "climate.thermal.temperate";
+            case QUENTE -> "climate.thermal.hot";
+            case ESCALDANTE -> "climate.thermal.scorching";
+        });
+    }
+
+    private String moistureText(MoistureBand band) {
+        return messages.text(switch (band) {
+            case ARIDO -> "climate.moisture.arid";
+            case SECO -> "climate.moisture.dry";
+            case EQUILIBRADO -> "climate.moisture.balanced";
+            case UMIDO -> "climate.moisture.humid";
+            case ENCHARCADO -> "climate.moisture.saturated";
+        });
     }
 
     private void rename(Player player, String[] args) {

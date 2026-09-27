@@ -2,6 +2,11 @@ package dev.signalshards.livingworld.features.waystones.paper;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
+import dev.signalshards.livingworld.features.climate.application.ClimateRuleReadout;
+import dev.signalshards.livingworld.features.climate.application.LocalClimateReadout;
+import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
+import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
+import dev.signalshards.livingworld.features.seasons.domain.Season;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneAccessStore;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneRegistry;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
@@ -124,7 +129,20 @@ class PaperWaystoneCommandTest {
                         4.2D
                 ),
                 6.0D,
-                menu
+                menu,
+                player -> new LocalClimateReadout(
+                        Season.OUTONO,
+                        23,
+                        ThermalBand.QUENTE,
+                        MoistureBand.SECO,
+                        new ClimateRuleReadout(true, 79),
+                        new ClimateRuleReadout(true, 89),
+                        new ClimateRuleReadout(true, 84),
+                        new ClimateRuleReadout(true, 0),
+                        new ClimateRuleReadout(true, 100),
+                        true,
+                        false
+                )
         );
     }
 

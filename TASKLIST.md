@@ -70,3 +70,8 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 | LW-091 | M9 | Runtime season-transition visual smoke | validated | LW-090 | real natural calendar progression crosses a season boundary and player sees the new-season title while HUD/calendar remain coherent | live sleep-driven Verão M6D8 → Outono M7D1; player explicitly confirmed seeing “Outono” title; boss bar/status/log all coherent; random_tick_speed restored to 3 | local master |
 
 **M9 complete — seasonal transition feedback validated in live gameplay.**
+
+| LW-100 | M10 | Add local climate readout | validated | M2, M5, M9 | /lw climate reports current apparent temperature, effective climate bands and the exact configured ecology probabilities already used by gameplay rules | clean IntelliJ/Gradle gates; 133 tests pass; hot/dry and cold/wet provider cases covered; live Paper contrast matched existing policies | local master |
+| LW-101 | M10 | Runtime climate readout contrast smoke | validated | LW-100 | savanna and snowy_plains show meaningfully different readouts matching existing climate/ecology behavior | live Paper/MCPFabric: savanna 39°C Escaldante/Árido with crops 50%, farmland 0%, fire 100%, no frozen persistence; snowy_plains -1°C Congelante/Equilibrado with crops 58%, farmland 39%, fire 60%, frozen persistence; random_tick_speed confirmed 3 and log clean | local master |
+
+**M10 complete — local climate readability validated in live gameplay.**

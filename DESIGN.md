@@ -112,6 +112,12 @@ The domain exposes an explicit transition value only when a calendar change cros
 
 Season-transition presentation is a narrow `CalendarProgressListener`. When a progress value carries `SeasonTransition`, the Paper adapter optionally sends one short Adventure title to currently online players using the new season's semantic color and the resulting Living World date as subtitle. It owns no scheduler or persistence and is disabled with `seasons.transition-announcement.enabled`.
 
+## Local climate readout
+
+`/lw climate` is a read-only explanation layer over the existing climate/ecology rules. `PaperLocalClimateReadoutProvider` resolves the player's effective `ClimateSnapshot`, current season and the same apparent-temperature policy used by the HUD. It then evaluates the already-configured crop/tree/grass growth, farmland retention, fire spread and frozen-surface policies with their current strengths/enabled flags. The command displays those actual percentages and state; it does not introduce thresholds, scans, polling, persistence or a second balance model.
+
+Player exposure (water/fire/lava) for apparent temperature is shared between HUD and climate readout through `PaperTemperatureExposureResolver`, preventing presentation drift between the two surfaces.
+
 ## Climate
 
 Climate is modeled from three inputs: a biome-derived base profile, the current season, and small bounded transient anomalies. The domain deliberately does not depend on Paper biome classes or weather APIs.

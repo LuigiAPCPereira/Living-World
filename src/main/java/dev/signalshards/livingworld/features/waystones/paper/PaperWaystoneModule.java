@@ -3,6 +3,7 @@ package dev.signalshards.livingworld.features.waystones.paper;
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
+import dev.signalshards.livingworld.features.climate.application.LocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneAnchorIndex;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import dev.signalshards.livingworld.features.waystones.domain.Waystone;
@@ -33,6 +34,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
     private final PaperWaystoneTravelService travel;
     private final MessageCatalog messages;
     private final LivingWorldStatusProvider statusProvider;
+    private final LocalClimateReadoutProvider climateReadoutProvider;
     private final WaystoneAnchorIndex anchorIndex = new WaystoneAnchorIndex();
     private final PaperWaystoneMenu menu;
 
@@ -42,7 +44,8 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
             WaystoneService waystones,
             PaperWaystoneTravelService travel,
             MessageCatalog messages,
-            LivingWorldStatusProvider statusProvider
+            LivingWorldStatusProvider statusProvider,
+            LocalClimateReadoutProvider climateReadoutProvider
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(settings, "configuração de waystones");
@@ -52,6 +55,10 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
         this.statusProvider = Objects.requireNonNull(
                 statusProvider,
                 "diagnóstico do Living World"
+        );
+        this.climateReadoutProvider = Objects.requireNonNull(
+                climateReadoutProvider,
+                "leitura de clima local"
         );
         this.menu = new PaperWaystoneMenu(
                 waystones,
@@ -81,7 +88,8 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
                         messages,
                         statusProvider,
                         settings.renameMaxDistance(),
-                        menu
+                        menu,
+                        climateReadoutProvider
                 )
         );
     }

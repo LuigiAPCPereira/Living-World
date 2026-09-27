@@ -15,6 +15,7 @@ import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresh
 import dev.signalshards.livingworld.features.climate.paper.PaperClimateCoordinator;
 import dev.signalshards.livingworld.features.climate.paper.PaperClimateSampler;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
+import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherController;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSettingsLoader;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesModule;
@@ -174,6 +175,16 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 localClimate,
                 new FireSpreadSuitabilityPolicy()
         );
+        var climateReadoutProvider = new PaperLocalClimateReadoutProvider(
+                calendarModule,
+                localClimate,
+                ecologySettings,
+                new ApparentTemperaturePolicy(),
+                new NaturalGrowthSuitabilityPolicy(),
+                new FarmlandMoistureRetentionPolicy(),
+                new FireSpreadSuitabilityPolicy(),
+                new FrozenSurfacePolicy()
+        );
 
         LivingWorldStatusProvider statusProvider = () -> {
             var date = calendarModule.currentDate();
@@ -217,7 +228,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         waystones,
                         waystoneTravel,
                         messages,
-                        statusProvider
+                        statusProvider,
+                        climateReadoutProvider
                 ),
                 hud
         );
