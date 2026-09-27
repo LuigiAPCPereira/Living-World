@@ -23,6 +23,9 @@
 | `features.desirelines.application` | bounded sparse per-chunk traffic ledger | Paper PDC or block types |
 | `features.desirelines.paper` | movement observation, block wear and Chunk PDC persistence | global world scanning or unrelated QoL rules |
 | `features.qol.doubledoors.paper` | detects an unambiguous adjacent compatible door and mirrors manual open state | redstone automation or arbitrary nearby doors |
+| `features.waystones.domain` | stable waystone identity, display name and anchor coordinates | Paper storage, GUI or teleport APIs |
+| `features.waystones.application` | registration, activation visibility and travel result contracts | player/world PDC details |
+| `features.waystones.paper` | World/Player PDC adapters, safe destination validation and async Paper teleport | economy, GUI or physical activation presentation |
 | future `features.*` packages | one gameplay capability and its state/listeners/tasks | unrelated feature internals |
 | Paper API | external server framework boundary | Living World domain decisions |
 
@@ -137,6 +140,16 @@ Tracked chunk data is persisted into that Chunk's namespaced PDC as compact inte
 Double Doors listens only to main-hand right-click block interactions that are not denied for the interacted block. It ignores iron doors and schedules a one-tick reconciliation so the clicked door's actual post-vanilla open state is authoritative.
 
 The pair finder checks only the four horizontal neighbors at the lower half. A candidate must use the same material and facing, the opposite hinge, and neither door may be powered. Synchronization occurs only when exactly one candidate matches, preventing rows/triples of doors from being coupled accidentally. The module updates both halves through modern `org.bukkit.block.data.type.Door` data; it does not use the legacy deprecated material-data API.
+
+## Waystones
+
+Waystone core intentionally separates identity/access/travel from the future physical block, GUI and economy. Each waystone has a stable UUID, bounded display name, owning world UUID and anchor block coordinates.
+
+Loaded worlds are the registry owners. Each waystone is stored under its own namespaced World PDC key with a versioned compact binary payload; listing iterates loaded worlds and only this plugin's prefixed PDC keys, never chunks. Player activation IDs use the online Player PDC as packed UUID longs. OfflinePlayer PDC is deliberately not used for mutation because current Paper exposes it as a read-only view and warns that reads may involve blocking disk I/O.
+
+Travel resolves only an activated waystone. It asynchronously requests/generates the destination chunk before reading destination blocks, then validates the world border, a solid/non-liquid anchor below the player, and passable/non-liquid feet/head spaces. The final teleport uses Paper `teleportAsync(..., PLUGIN)`; no synchronous destination chunk load is required by Living World.
+
+The first core does not choose a waystone material, crafting recipe, economy, cooldown or GUI. Those are presentation/gameplay policies to add only after the persistence and travel contracts are proven.
 
 ## Open design questions
 

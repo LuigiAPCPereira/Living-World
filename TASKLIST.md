@@ -22,7 +22,8 @@
 | LW-030 | M3 | Implement desire lines / path wear | implemented not validated | M0 | repeated traffic can evolve paths without whole-world scans | clean IntelliJ/Gradle gates; policy/ledger/Chunk PDC tests pass; live-player movement smoke still pending | local master |
 | LW-033 | M3 | Add Desire Lines recovery/regrowth policy | pending | LW-030, calendar | unused worn terrain can recover without world scans by reusing tracked state and logical-day cadence | not validated | local master |
 | LW-031 | M3 | Implement double-door QoL | implemented not validated | M0 | paired compatible doors act together without surprising unrelated blocks | clean IntelliJ/Gradle gates; pair-policy tests pass; live-player click smoke still pending | local master |
-| LW-032 | M3 | Define and implement waystone core | pending | M0 | activation/travel lifecycle and safe destination rules specified/tested | not validated | TBD |
+| LW-032 | M3 | Define and implement waystone core | validated | M0 | activation/travel lifecycle and safe destination rules specified/tested | clean IntelliJ/Gradle gates; domain, codec, online-player access, safety and async travel-order tests | local master |
+| LW-034 | M3 | Add physical waystone activation and player-facing travel entrypoint | pending | LW-032 | explicit anchor/material policy activates/registers waystones; player can select activated destinations through a minimal translated interface | not validated | local master |
 
 ## Scope discipline
 
@@ -30,4 +31,4 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**LW-032 — define and implement waystone core.**
+**LW-033 — add Desire Lines recovery/regrowth policy.**

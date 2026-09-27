@@ -62,6 +62,14 @@ These are product directions, not promises that all are implemented in the curre
 - Iron/redstone-powered doors are not overridden.
 - Triple rows or ambiguous neighboring doors are intentionally left untouched.
 
+## Waystones direction
+
+- Waystones have stable identities independent from their future visual block/UI.
+- A player must activate/discover a waystone before it can be used as that player's travel destination.
+- Waystone registry data belongs to the loaded world PDC; online-player discoveries belong to Player PDC.
+- Travel must avoid synchronous destination chunk loading and reject unsafe/blocked/liquid/out-of-border destinations.
+- Material, recipe, GUI, cost/cooldown and naming interaction are deliberately deferred until the core lifecycle is validated.
+
 ## Explicitly out of scope
 
 - recreating Terralith, Tectonic, or equivalent heavy world-generation systems;
