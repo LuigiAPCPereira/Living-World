@@ -194,6 +194,12 @@ Natural sapling-to-tree attempts reuse the same suitability policy through Paper
 
 Crop and tree growth use separate ecological strengths. Initial defaults are 0.65 for Ageable crops and 0.35 for natural sapling-to-tree attempts. This tuning came directly from live gameplay: applying crop-strength penalties to already-sparse tree attempts made hot-biome saplings feel excessively slow.
 
+Local effective climate calculation is shared through `PaperLocalClimateResolver`: one block-coordinate temperature/humidity sample, the current logical season, and stable bounded climate state. Ecology consumers must use this resolver instead of duplicating climate classification rules.
+
+Frozen-surface ecology reacts only to vanilla block-condition events. Natural WATER→ICE and AIR/SNOW→SNOW `BlockFormEvent` transitions are allowed only when effective temperature is FRIO/CONGELANTE. `EntityBlockFormEvent` and `BlockSpreadEvent` are explicitly ignored so Frost Walker, snow golems and unrelated formation/spread mechanics are untouched. `BlockFadeEvent` for ICE/SNOW is cancelled while effective climate remains FRIO/CONGELANTE and otherwise left to vanilla.
+
+`BlockFadeEvent` does not carry creation provenance, so cold-climate preservation applies to any ICE/SNOW block that vanilla attempts to fade, including player-placed frozen surfaces. This limitation is explicit; Living World does not add global tracking merely to recover provenance.
+
 Player apparent temperature is biome/coordinate temperature plus season and a bounded direct-exposure modifier. The first microclimate slice uses only Paper's player-local state: lava adds +20 °C, burning adds +8 °C and water subtracts 4 °C, with priority lava → water → fire → neutral so contradictory states are not stacked. The result still respects the HUD clamp of -40..55 °C.
 
 Nearby heat-source influence such as merely standing beside lava or campfires remains deferred. Supporting that would require a cached/bounded sampling design; the HUD must not scan an area around every player on each refresh.

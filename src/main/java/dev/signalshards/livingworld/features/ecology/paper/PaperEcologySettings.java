@@ -3,7 +3,8 @@ package dev.signalshards.livingworld.features.ecology.paper;
 public record PaperEcologySettings(
         boolean naturalGrowthEnabled,
         double cropGrowthStrength,
-        double treeGrowthStrength
+        double treeGrowthStrength,
+        boolean frozenSurfacesEnabled
 ) {
     public PaperEcologySettings {
         requireStrength("plantações", cropGrowthStrength);
@@ -11,7 +12,7 @@ public record PaperEcologySettings(
     }
 
     public static PaperEcologySettings defaults() {
-        return new PaperEcologySettings(true, 0.65D, 0.35D);
+        return new PaperEcologySettings(true, 0.65D, 0.35D, true);
     }
 
     private static void requireStrength(String target, double strength) {

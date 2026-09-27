@@ -5,6 +5,7 @@ import dev.signalshards.livingworld.features.calendar.domain.CalendarDate;
 import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresholds;
+import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
 import org.bukkit.World;
@@ -95,12 +96,15 @@ class PaperNaturalGrowthModuleTest {
         return new PaperNaturalGrowthModule(
                 plugin(),
                 world,
-                new PaperEcologySettings(true, 1.0D, 1.0D),
-                calendar(),
-                new ClimateProfileClassifier(
-                        ClimateProfileThresholds.livingWorldDefaults()
+                new PaperEcologySettings(true, 1.0D, 1.0D, true),
+                new PaperLocalClimateResolver(
+                        world,
+                        calendar(),
+                        new ClimateProfileClassifier(
+                                ClimateProfileThresholds.livingWorldDefaults()
+                        ),
+                        new ClimatePolicy()
                 ),
-                new ClimatePolicy(),
                 new NaturalGrowthSuitabilityPolicy(),
                 () -> randomValue
         );

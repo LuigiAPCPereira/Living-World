@@ -12,12 +12,16 @@ import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassi
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresholds;
 import dev.signalshards.livingworld.features.climate.paper.PaperClimateCoordinator;
 import dev.signalshards.livingworld.features.climate.paper.PaperClimateSampler;
+import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherController;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSettingsLoader;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesModule;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperPathWearSettingsLoader;
+import dev.signalshards.livingworld.features.ecology.domain.FrozenSurfacePolicy;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
+import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettings;
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettingsLoader;
+import dev.signalshards.livingworld.features.ecology.paper.PaperFrozenSurfaceModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperNaturalGrowthModule;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
@@ -54,14 +58,14 @@ public final class LivingWorldPlugin extends JavaPlugin {
 
         SeasonCycle seasons = SeasonCycle.livingWorldDefaults();
         CalendarRules calendarRules = CalendarRules.livingWorldDefaults();
+        ClimateProfileClassifier climateClassifier = new ClimateProfileClassifier(
+                ClimateProfileThresholds.livingWorldDefaults()
+        );
+        ClimatePolicy climatePolicy = new ClimatePolicy();
         PaperClimateCoordinator climateCoordinator = new PaperClimateCoordinator(
                 calendarWorld,
-                new PaperClimateSampler(
-                        new ClimateProfileClassifier(
-                                ClimateProfileThresholds.livingWorldDefaults()
-                        )
-                ),
-                new ClimatePolicy(),
+                new PaperClimateSampler(climateClassifier),
+                climatePolicy,
                 new WeatherEventPlanner(
                         PaperWeatherEventSettingsLoader.load(getConfig())
                 ),
@@ -106,22 +110,33 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new ApparentTemperaturePolicy(),
                 new TemperatureColorPolicy()
         );
+        PaperEcologySettings ecologySettings = PaperEcologySettingsLoader.load(getConfig());
+        PaperLocalClimateResolver localClimate = new PaperLocalClimateResolver(
+                calendarWorld,
+                calendarModule,
+                climateClassifier,
+                climatePolicy
+        );
         PaperNaturalGrowthModule naturalGrowth = new PaperNaturalGrowthModule(
                 this,
                 calendarWorld,
-                PaperEcologySettingsLoader.load(getConfig()),
-                calendarModule,
-                new ClimateProfileClassifier(
-                        ClimateProfileThresholds.livingWorldDefaults()
-                ),
-                new ClimatePolicy(),
+                ecologySettings,
+                localClimate,
                 new NaturalGrowthSuitabilityPolicy()
+        );
+        PaperFrozenSurfaceModule frozenSurfaces = new PaperFrozenSurfaceModule(
+                this,
+                calendarWorld,
+                ecologySettings,
+                localClimate,
+                new FrozenSurfacePolicy()
         );
 
         moduleManager = new ModuleManager(
                 desireLines,
                 calendarModule,
                 naturalGrowth,
+                frozenSurfaces,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

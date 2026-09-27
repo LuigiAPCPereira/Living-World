@@ -28,6 +28,10 @@ public final class PaperEcologySettingsLoader {
                 config.getDouble(
                         "ecology.natural-growth.tree-strength",
                         defaults.treeGrowthStrength()
+                ),
+                config.getBoolean(
+                        "ecology.frozen-surfaces.enabled",
+                        defaults.frozenSurfacesEnabled()
                 )
         );
     }

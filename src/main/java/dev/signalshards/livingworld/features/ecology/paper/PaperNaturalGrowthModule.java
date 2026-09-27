@@ -1,10 +1,7 @@
 package dev.signalshards.livingworld.features.ecology.paper;
 
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
-import dev.signalshards.livingworld.features.calendar.application.CalendarView;
-import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
-import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
-import dev.signalshards.livingworld.features.climate.domain.ClimateState;
+import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -26,9 +23,7 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
     private final Plugin plugin;
     private final World world;
     private final PaperEcologySettings settings;
-    private final CalendarView calendar;
-    private final ClimateProfileClassifier classifier;
-    private final ClimatePolicy climatePolicy;
+    private final PaperLocalClimateResolver climate;
     private final NaturalGrowthSuitabilityPolicy growthPolicy;
     private final DoubleSupplier random;
 
@@ -36,18 +31,14 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
             Plugin plugin,
             World world,
             PaperEcologySettings settings,
-            CalendarView calendar,
-            ClimateProfileClassifier classifier,
-            ClimatePolicy climatePolicy,
+            PaperLocalClimateResolver climate,
             NaturalGrowthSuitabilityPolicy growthPolicy
     ) {
         this(
                 plugin,
                 world,
                 settings,
-                calendar,
-                classifier,
-                climatePolicy,
+                climate,
                 growthPolicy,
                 () -> ThreadLocalRandom.current().nextDouble()
         );
@@ -57,18 +48,14 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
             Plugin plugin,
             World world,
             PaperEcologySettings settings,
-            CalendarView calendar,
-            ClimateProfileClassifier classifier,
-            ClimatePolicy climatePolicy,
+            PaperLocalClimateResolver climate,
             NaturalGrowthSuitabilityPolicy growthPolicy,
             DoubleSupplier random
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.world = Objects.requireNonNull(world, "mundo");
         this.settings = Objects.requireNonNull(settings, "configuração ecológica");
-        this.calendar = Objects.requireNonNull(calendar, "calendário");
-        this.classifier = Objects.requireNonNull(classifier, "classificador climático");
-        this.climatePolicy = Objects.requireNonNull(climatePolicy, "política climática");
+        this.climate = Objects.requireNonNull(climate, "clima local");
         this.growthPolicy = Objects.requireNonNull(growthPolicy, "política de crescimento");
         this.random = Objects.requireNonNull(random, "fonte aleatória");
     }
@@ -117,24 +104,8 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
     }
 
     private boolean rejectNaturalGrowth(Block block, double strength) {
-        double temperature = world.getTemperature(
-                block.getX(),
-                block.getY(),
-                block.getZ()
-        );
-        double humidity = world.getHumidity(
-                block.getX(),
-                block.getY(),
-                block.getZ()
-        );
-        var profile = classifier.classify(temperature, humidity);
-        var climate = climatePolicy.evaluate(
-                profile,
-                calendar.currentSeason(),
-                ClimateState.stable()
-        );
         double acceptanceChance = growthPolicy.acceptanceChance(
-                climate,
+                climate.snapshotAt(block),
                 strength
         );
         return nextRandomSample() >= acceptanceChance;

@@ -95,6 +95,7 @@ These are product directions, not promises that all are implemented in the curre
 - Growth-impact settings are balance-affecting and must be configurable/disableable.
 - Crop and tree strength are configured separately because trees already have much sparser vanilla growth opportunities; the default tree penalty is intentionally milder than crop penalty.
 - Player-facing apparent temperature may later include bounded direct-exposure microclimate modifiers (for example standing in lava, burning or being submerged) without scanning surrounding terrain.
+- Natural snow/ice persistence may react to effective thermal climate by filtering vanilla formation/fade events; Living World should not create frozen terrain through its own scanner or scheduler.
 
 ## Explicitly out of scope
 
