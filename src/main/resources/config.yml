@@ -4,6 +4,10 @@ calendar:
   # Vazio = primeiro mundo do Overworld carregado.
   world: ""
 
+seasons:
+  transition-announcement:
+    enabled: true
+
 climate:
   weather-events:
     clear-duration-seconds: 600

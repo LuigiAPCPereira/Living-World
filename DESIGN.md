@@ -110,6 +110,8 @@ Season state is derived from calendar date instead of persisted independently. T
 
 The domain exposes an explicit transition value only when a calendar change crosses a season boundary. Delivery of player messages, weather effects, biome reactions or other consequences belongs to later application/integration layers.
 
+Season-transition presentation is a narrow `CalendarProgressListener`. When a progress value carries `SeasonTransition`, the Paper adapter optionally sends one short Adventure title to currently online players using the new season's semantic color and the resulting Living World date as subtitle. It owns no scheduler or persistence and is disabled with `seasons.transition-announcement.enabled`.
+
 ## Climate
 
 Climate is modeled from three inputs: a biome-derived base profile, the current season, and small bounded transient anomalies. The domain deliberately does not depend on Paper biome classes or weather APIs.

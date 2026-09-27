@@ -36,6 +36,7 @@ import dev.signalshards.livingworld.features.hud.paper.PaperHudModule;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudSettingsLoader;
 import dev.signalshards.livingworld.features.hud.paper.TemperatureColorPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.SeasonCycle;
+import dev.signalshards.livingworld.features.seasons.paper.PaperSeasonTransitionAnnouncement;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import dev.signalshards.livingworld.features.waystones.paper.PaperPlayerWaystoneAccessStore;
 import dev.signalshards.livingworld.features.waystones.paper.PaperSafeWaystoneDestination;
@@ -100,6 +101,15 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 waystones,
                 new PaperSafeWaystoneDestination(waystoneSettings.anchorMaterial())
         );
+        PaperSeasonTransitionAnnouncement seasonAnnouncement =
+                new PaperSeasonTransitionAnnouncement(
+                        getServer(),
+                        messages,
+                        getConfig().getBoolean(
+                                "seasons.transition-announcement.enabled",
+                                true
+                        )
+                );
 
         PaperCalendarModule calendarModule = new PaperCalendarModule(
                 this,
@@ -108,7 +118,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 calendarRules,
                 seasons,
                 climateCoordinator,
-                desireLines
+                desireLines,
+                seasonAnnouncement
         );
         PaperHudModule hud = new PaperHudModule(
                 this,

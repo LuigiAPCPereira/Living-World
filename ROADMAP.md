@@ -13,6 +13,7 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M6 — Stability, profiling & operator controls | harden runtime behavior, measure event hot paths, improve diagnostics/configuration and verify graceful lifecycle before adding broader simulation | M0..M5 | LW-060..LW-062 | validated |
 | M7 — Waystone survival UX | make the validated travel system feel intentional in long-running survival without adding hidden economy/balance costs | M3, M6 | LW-070..LW-071 | validated |
 | M8 — Waystone visual navigation | add an optional visual travel surface over the same validated Waystone identity/access/travel rules | M3, M7 | LW-080..LW-081 | validated |
+| M9 — Seasonal transition feedback | make season boundaries perceptible to players using existing calendar transition events without introducing polling or simulation state | M1, M4 | LW-090..LW-091 | validated |
 
 ## Sequencing principles
 

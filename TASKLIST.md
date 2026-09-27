@@ -65,3 +65,8 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 | LW-081 | M8 | Runtime Waystone menu smoke | validated | LW-080 | real player confirms menu rendering, item safety and click-to-travel; CLI remains available | MCPFabric/Paper smoke: /lw menu rendered one Lodestone entry, manual slot click closed menu and completed travel, player inventory remained unchanged/no duplicated menu item, /lw list still worked, manual anchor destruction removed entry and final list was empty | local master |
 
 **M8 complete — visual Waystone travel menu validated in live gameplay.**
+
+| LW-090 | M9 | Add seasonal transition announcement | validated | M1, M4 | a real season transition produces one short configurable title for online players using the existing CalendarProgress transition; no new polling/state | clean IntelliJ/Gradle gates + deterministic listener tests + live Paper season-boundary progression | local master |
+| LW-091 | M9 | Runtime season-transition visual smoke | validated | LW-090 | real natural calendar progression crosses a season boundary and player sees the new-season title while HUD/calendar remain coherent | live sleep-driven Verão M6D8 → Outono M7D1; player explicitly confirmed seeing “Outono” title; boss bar/status/log all coherent; random_tick_speed restored to 3 | local master |
+
+**M9 complete — seasonal transition feedback validated in live gameplay.**
