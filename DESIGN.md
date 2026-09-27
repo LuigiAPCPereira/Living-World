@@ -204,6 +204,8 @@ Ground-cover ecology listens to `BlockSpreadEvent` but accepts only the exact va
 
 Farmland moisture ecology listens only to cancellable `MoistureChangeEvent` transitions whose current/new block data are both `Farmland` and whose moisture value decreases. Effective cold/humid climate can cancel a bounded fraction of those vanilla drying steps through a pure retention policy (default strength 0.70). Moisture increases always remain vanilla, and hot/dry climate receives no artificial extra drying.
 
+Fire ecology listens only to cancellable `BlockIgniteEvent` events whose cause is exactly `SPREAD`. The target block's effective climate feeds a pure fire-spread suitability policy (default strength 0.65). Hot/dry conditions can preserve the vanilla acceptance chance while cold/wet conditions reject some spread attempts. FLINT_AND_STEEL, LAVA, LIGHTNING, FIREBALL, ARROW, EXPLOSION and other non-SPREAD causes are untouched.
+
 Player apparent temperature is biome/coordinate temperature plus season and a bounded direct-exposure modifier. The first microclimate slice uses only Paper's player-local state: lava adds +20 °C, burning adds +8 °C and water subtracts 4 °C, with priority lava → water → fire → neutral so contradictory states are not stacked. The result still respects the HUD clamp of -40..55 °C.
 
 Nearby heat-source influence such as merely standing beside lava or campfires remains deferred. Supporting that would require a cached/bounded sampling design; the HUD must not scan an area around every player on each refresh.

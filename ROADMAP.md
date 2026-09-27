@@ -9,7 +9,8 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M2 — Environment | climate model and first environmental events integrated with seasons at runtime | M1 | LW-020..LW-024 | validated |
 | M3 — World Memory & QoL | first reactive-world and convenience mechanics such as desire lines, double doors and waystones | M0; feature-specific dependencies | LW-030..LW-036 | validated |
 | M4 — Player HUD & environmental feedback | surface existing calendar/climate/navigation state through optional boss bars/action bar without coupling presentation into domain logic | M1, M2 | LW-040..LW-044 | validated |
-| M5 — Ecology & richer evolution | bounded ecological/environmental responses: growth, ground cover, farmland moisture and natural snow/ice persistence react to effective climate without scans | M2, M4 gameplay evidence | LW-050..LW-058 | in progress |
+| M5 — Ecology & richer evolution | bounded ecological/environmental responses: growth, ground cover, farmland moisture, fire spread and natural snow/ice persistence react to effective climate without scans | M2, M4 gameplay evidence | LW-050..LW-059 | validated |
+| M6 — Stability, profiling & operator controls | harden runtime behavior, measure event hot paths, improve diagnostics/configuration and verify graceful lifecycle before adding broader simulation | M0..M5 | to inventory | next |
 
 ## Sequencing principles
 

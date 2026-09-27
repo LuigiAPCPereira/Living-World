@@ -6,13 +6,12 @@ import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresholds;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
-import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
+import dev.signalshards.livingworld.features.ecology.domain.FireSpreadSuitabilityPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
 
@@ -21,60 +20,51 @@ import java.lang.reflect.Proxy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PaperGroundCoverSpreadModuleTest {
+class PaperFireSpreadModuleTest {
     @Test
-    void cancelaGrassSpreadEmClimaExtremoQuandoChanceFalha() {
-        World world = world(-0.5D, 0.0D);
-        PaperGroundCoverSpreadModule module = module(world, 0.95D);
-        BlockSpreadEvent event = event(
+    void podeCancelarApenasSpreadEmClimaFrioEUmido() {
+        World world = world(0.40D, 0.80D);
+        PaperFireSpreadModule module = module(world, 0.90D);
+        BlockIgniteEvent event = event(
                 world,
-                Material.GRASS_BLOCK,
-                Material.DIRT,
-                Material.GRASS_BLOCK
+                BlockIgniteEvent.IgniteCause.SPREAD
         );
 
-        module.onGroundCoverSpread(event);
+        module.onIgnite(event);
 
         assertTrue(event.isCancelled());
     }
 
     @Test
-    void permiteGrassSpreadEmClimaIdeal() {
-        World world = world(0.8D, 0.5D);
-        PaperGroundCoverSpreadModule module = module(world, 0.99D);
-        BlockSpreadEvent event = event(
+    void quenteESecoMantemSpreadVanilla() {
+        World world = world(1.20D, 0.20D);
+        PaperFireSpreadModule module = module(world, 0.99D);
+        BlockIgniteEvent event = event(
                 world,
-                Material.GRASS_BLOCK,
-                Material.DIRT,
-                Material.GRASS_BLOCK
+                BlockIgniteEvent.IgniteCause.SPREAD
         );
 
-        module.onGroundCoverSpread(event);
+        module.onIgnite(event);
 
         assertFalse(event.isCancelled());
     }
 
     @Test
-    void ignoraOutrosTiposDeSpread() {
-        World world = world(-0.5D, 0.0D);
-        PaperGroundCoverSpreadModule module = module(world, 0.99D);
-        BlockSpreadEvent event = event(
+    void pederneiraNaoEhModulada() {
+        World world = world(0.40D, 0.80D);
+        PaperFireSpreadModule module = module(world, 0.99D);
+        BlockIgniteEvent event = event(
                 world,
-                Material.FIRE,
-                Material.AIR,
-                Material.FIRE
+                BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL
         );
 
-        module.onGroundCoverSpread(event);
+        module.onIgnite(event);
 
         assertFalse(event.isCancelled());
     }
 
-    private PaperGroundCoverSpreadModule module(
-            World world,
-            double randomValue
-    ) {
-        return new PaperGroundCoverSpreadModule(
+    private PaperFireSpreadModule module(World world, double randomValue) {
+        return new PaperFireSpreadModule(
                 plugin(),
                 world,
                 new PaperEcologySettings(
@@ -82,11 +72,11 @@ class PaperGroundCoverSpreadModuleTest {
                         0.65D,
                         0.35D,
                         true,
-                        1.0D,
+                        0.50D,
                         true,
                         0.70D,
                         true,
-                        0.65D,
+                        1.0D,
                         true
                 ),
                 new PaperLocalClimateResolver(
@@ -97,7 +87,7 @@ class PaperGroundCoverSpreadModuleTest {
                         ),
                         new ClimatePolicy()
                 ),
-                new NaturalGrowthSuitabilityPolicy(),
+                new FireSpreadSuitabilityPolicy(),
                 () -> randomValue
         );
     }
@@ -121,22 +111,18 @@ class PaperGroundCoverSpreadModuleTest {
         };
     }
 
-    private BlockSpreadEvent event(
+    private BlockIgniteEvent event(
             World world,
-            Material sourceType,
-            Material currentType,
-            Material newType
+            BlockIgniteEvent.IgniteCause cause
     ) {
-        Block destination = block(world, currentType);
-        Block source = block(world, sourceType);
-        return new BlockSpreadEvent(
-                destination,
-                source,
-                state(newType)
+        return new BlockIgniteEvent(
+                block(world),
+                cause,
+                (Entity) null
         );
     }
 
-    private Block block(World world, Material type) {
+    private Block block(World world) {
         return (Block) Proxy.newProxyInstance(
                 Block.class.getClassLoader(),
                 new Class<?>[]{Block.class},
@@ -145,24 +131,7 @@ class PaperGroundCoverSpreadModuleTest {
                     case "getX" -> 10;
                     case "getY" -> 64;
                     case "getZ" -> -20;
-                    case "getType" -> type;
-                    case "toString" -> "BlockFake(" + type + ")";
-                    case "hashCode" -> System.identityHashCode(proxy);
-                    case "equals" -> proxy == args[0];
-                    default -> throw new UnsupportedOperationException(
-                            "Método não esperado no teste: " + method.getName()
-                    );
-                }
-        );
-    }
-
-    private BlockState state(Material type) {
-        return (BlockState) Proxy.newProxyInstance(
-                BlockState.class.getClassLoader(),
-                new Class<?>[]{BlockState.class},
-                (proxy, method, args) -> switch (method.getName()) {
-                    case "getType" -> type;
-                    case "toString" -> "BlockStateFake(" + type + ")";
+                    case "toString" -> "BlockFake";
                     case "hashCode" -> System.identityHashCode(proxy);
                     case "equals" -> proxy == args[0];
                     default -> throw new UnsupportedOperationException(

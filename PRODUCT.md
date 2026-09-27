@@ -98,6 +98,7 @@ These are product directions, not promises that all are implemented in the curre
 - Natural snow/ice persistence may react to effective thermal climate by filtering vanilla formation/fade events; Living World should not create frozen terrain through its own scanner or scheduler.
 - Natural grass cover may spread less reliably in climatically unsuitable regions, but only by filtering vanilla GRASS_BLOCK→DIRT spread attempts; fire/fungi/vines and other spread mechanics remain vanilla.
 - Farmland may retain vanilla moisture longer in cold/humid climates by cancelling some natural moisture decreases. Living World must not hydrate farmland artificially or accelerate drying beyond vanilla.
+- Natural fire propagation may be less reliable in cold/wet climates, but only the SPREAD ignition cause is modulated. Flint-and-steel, lava, lightning, projectiles and other ignition causes remain vanilla.
 
 ## Explicitly out of scope
 

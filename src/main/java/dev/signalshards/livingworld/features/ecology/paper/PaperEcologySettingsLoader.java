@@ -46,6 +46,14 @@ public final class PaperEcologySettingsLoader {
                         defaults.farmlandMoistureRetentionStrength()
                 ),
                 config.getBoolean(
+                        "ecology.fire-spread.enabled",
+                        defaults.fireSpreadEnabled()
+                ),
+                config.getDouble(
+                        "ecology.fire-spread.strength",
+                        defaults.fireSpreadStrength()
+                ),
+                config.getBoolean(
                         "ecology.frozen-surfaces.enabled",
                         defaults.frozenSurfacesEnabled()
                 )

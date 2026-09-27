@@ -104,6 +104,8 @@ class PaperNaturalGrowthModuleTest {
                         0.50D,
                         true,
                         0.70D,
+                        true,
+                        0.65D,
                         true
                 ),
                 new PaperLocalClimateResolver(

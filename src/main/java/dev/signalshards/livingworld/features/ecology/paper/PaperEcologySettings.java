@@ -8,6 +8,8 @@ public record PaperEcologySettings(
         double groundCoverSpreadStrength,
         boolean farmlandMoistureRetentionEnabled,
         double farmlandMoistureRetentionStrength,
+        boolean fireSpreadEnabled,
+        double fireSpreadStrength,
         boolean frozenSurfacesEnabled
 ) {
     public PaperEcologySettings {
@@ -18,6 +20,7 @@ public record PaperEcologySettings(
                 "retenção de umidade do solo",
                 farmlandMoistureRetentionStrength
         );
+        requireStrength("propagação do fogo", fireSpreadStrength);
     }
 
     public static PaperEcologySettings defaults() {
@@ -29,6 +32,8 @@ public record PaperEcologySettings(
                 0.50D,
                 true,
                 0.70D,
+                true,
+                0.65D,
                 true
         );
     }

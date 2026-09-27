@@ -70,6 +70,8 @@ class PaperFarmlandMoistureModuleTest {
                         0.50D,
                         true,
                         1.0D,
+                        true,
+                        0.65D,
                         true
                 ),
                 new PaperLocalClimateResolver(
