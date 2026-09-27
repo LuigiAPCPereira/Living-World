@@ -18,6 +18,7 @@ import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -27,7 +28,7 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener {
     private final JavaPlugin plugin;
     private final World world;
     private final MessageCatalog messages;
-    private final CalendarProgressListener progressListener;
+    private final List<CalendarProgressListener> progressListeners;
 
     private CalendarRuntime runtime;
     private CalendarProgressTracker tracker;
@@ -37,12 +38,12 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener {
             JavaPlugin plugin,
             World world,
             MessageCatalog messages,
-            CalendarProgressListener progressListener
+            CalendarProgressListener... progressListeners
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.world = Objects.requireNonNull(world, "mundo");
         this.messages = Objects.requireNonNull(messages, "catálogo de mensagens");
-        this.progressListener = Objects.requireNonNull(progressListener, "observador do calendário");
+        this.progressListeners = List.of(progressListeners);
     }
 
     @Override
@@ -123,14 +124,16 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener {
     }
 
     private void notifyProgress(CalendarProgress progress) {
-        try {
-            progressListener.onProgress(progress);
-        } catch (RuntimeException exception) {
-            plugin.getLogger().log(
-                    Level.SEVERE,
-                    messages.text("calendar.progress-listener-failed", exception.getMessage()),
-                    exception
-            );
+        for (CalendarProgressListener progressListener : progressListeners) {
+            try {
+                progressListener.onProgress(progress);
+            } catch (RuntimeException exception) {
+                plugin.getLogger().log(
+                        Level.SEVERE,
+                        messages.text("calendar.progress-listener-failed", exception.getMessage()),
+                        exception
+                );
+            }
         }
     }
 }

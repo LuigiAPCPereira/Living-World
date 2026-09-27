@@ -53,17 +53,20 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 getLogger()
         );
 
+        PaperDesireLinesModule desireLines = new PaperDesireLinesModule(
+                this,
+                calendarWorld,
+                PaperPathWearSettingsLoader.load(getConfig())
+        );
+
         moduleManager = new ModuleManager(
+                desireLines,
                 new PaperCalendarModule(
                         this,
                         calendarWorld,
                         messages,
-                        climateCoordinator
-                ),
-                new PaperDesireLinesModule(
-                        this,
-                        calendarWorld,
-                        PaperPathWearSettingsLoader.load(getConfig())
+                        climateCoordinator,
+                        desireLines
                 ),
                 new PaperDoubleDoorsModule(
                         this,

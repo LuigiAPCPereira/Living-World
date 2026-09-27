@@ -20,7 +20,7 @@
 | LW-023 | M2 | Implement representative climate sampling for active world | validated | LW-020 | bounded sampling uses Paper temperature/humidity APIs without biome-name tables or world scans | clean Gradle gates; classifier + spawn fallback + 32-player cap tests | local master |
 | LW-024 | M2 | Connect daily logical-calendar progress to climate/weather reaction | validated | LW-021, LW-023 | at most one representative climate evaluation/weather plan per logical advance; climate failure cannot roll back persisted calendar progress | clean Gradle gates; end-to-end coordinator test with Paper API proxy | local master |
 | LW-030 | M3 | Implement desire lines / path wear | implemented not validated | M0 | repeated traffic can evolve paths without whole-world scans | clean IntelliJ/Gradle gates; policy/ledger/Chunk PDC tests pass; live-player movement smoke still pending | local master |
-| LW-033 | M3 | Add Desire Lines recovery/regrowth policy | pending | LW-030, calendar | unused worn terrain can recover without world scans by reusing tracked state and logical-day cadence | not validated | local master |
+| LW-033 | M3 | Add Desire Lines recovery/regrowth policy | implemented not validated | LW-030, calendar | unused worn terrain can recover without world scans by reusing tracked state and logical-day cadence | clean IntelliJ/Gradle gates; untouched/touched/multi-day ledger decay tests; live gameplay smoke pending | local master |
 | LW-031 | M3 | Implement double-door QoL | implemented not validated | M0 | paired compatible doors act together without surprising unrelated blocks | clean IntelliJ/Gradle gates; pair-policy tests pass; live-player click smoke still pending | local master |
 | LW-032 | M3 | Define and implement waystone core | validated | M0 | activation/travel lifecycle and safe destination rules specified/tested | clean IntelliJ/Gradle gates; domain, codec, online-player access, safety and async travel-order tests | local master |
 | LW-034 | M3 | Add physical waystone activation and player-facing travel entrypoint | pending | LW-032 | explicit anchor/material policy activates/registers waystones; player can select activated destinations through a minimal translated interface | not validated | local master |
@@ -31,4 +31,4 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**LW-033 — add Desire Lines recovery/regrowth policy.**
+**LW-034 — add physical waystone activation and player-facing travel entrypoint.**

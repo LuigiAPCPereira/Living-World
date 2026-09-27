@@ -1,6 +1,9 @@
 package dev.signalshards.livingworld.features.desirelines.paper;
 
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
+import dev.signalshards.livingworld.features.calendar.application.CalendarProgress;
+import dev.signalshards.livingworld.features.calendar.application.CalendarProgressListener;
+import dev.signalshards.livingworld.features.desirelines.application.PathTrafficDecay;
 import dev.signalshards.livingworld.features.desirelines.application.PathTrafficLedger;
 import dev.signalshards.livingworld.features.desirelines.domain.PathWearPolicy;
 import dev.signalshards.livingworld.features.desirelines.domain.PathWearSettings;
@@ -24,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class PaperDesireLinesModule implements LivingWorldModule, Listener {
+public final class PaperDesireLinesModule implements LivingWorldModule, Listener, CalendarProgressListener {
     private final JavaPlugin plugin;
     private final World world;
     private final PathWearSettings settings;
@@ -100,12 +103,30 @@ public final class PaperDesireLinesModule implements LivingWorldModule, Listener
                 ignored -> new CachedChunk(chunk, store.load(chunk))
         );
 
-        int visits = cached.ledger.record(packPosition(ground));
+        int positionKey = packPosition(ground);
+        if (material == Material.DIRT && !cached.ledger.contains(positionKey)) {
+            return;
+        }
+
+        int visits = cached.ledger.record(positionKey);
         if (visits == 0) {
             return;
         }
 
         applyWear(ground, material, policy.stageFor(visits));
+    }
+
+    @Override
+    public void onProgress(CalendarProgress progress) {
+        if (!settings.enabled()) {
+            return;
+        }
+
+        for (CachedChunk cached : cache.values()) {
+            for (PathTrafficDecay decay : cached.ledger.decayUntouched(progress.daysAdvanced())) {
+                applyRecovery(cached.chunk, decay);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -128,6 +149,22 @@ public final class PaperDesireLinesModule implements LivingWorldModule, Listener
 
         if (material == Material.DIRT && stage == PathWearStage.CAMINHO) {
             block.setType(Material.DIRT_PATH);
+        }
+    }
+
+    private void applyRecovery(Chunk chunk, PathTrafficDecay decay) {
+        int localX = decay.positionKey() & 15;
+        int localZ = (decay.positionKey() >>> 4) & 15;
+        int relativeY = decay.positionKey() >>> 8;
+        int y = world.getMinHeight() + relativeY;
+        Block block = chunk.getBlock(localX, y, localZ);
+        PathWearStage stage = policy.stageFor(decay.currentScore());
+
+        if (block.getType() == Material.DIRT_PATH && stage != PathWearStage.CAMINHO) {
+            block.setType(Material.DIRT);
+        }
+        if (block.getType() == Material.DIRT && stage == PathWearStage.NATURAL) {
+            block.setType(Material.GRASS_BLOCK);
         }
     }
 

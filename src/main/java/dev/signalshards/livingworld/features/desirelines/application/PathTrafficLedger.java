@@ -1,13 +1,18 @@
 package dev.signalshards.livingworld.features.desirelines.application;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Contador esparso e limitado de tráfego dentro de um chunk.
  */
 public final class PathTrafficLedger {
     private final Map<Integer, Integer> visits;
+    private final Set<Integer> touchedSinceDecay = new HashSet<>();
     private final int maxEntries;
     private final int maxScore;
     private boolean dirty;
@@ -39,12 +44,51 @@ public final class PathTrafficLedger {
             return 0;
         }
 
+        touchedSinceDecay.add(positionKey);
         int next = Math.min(maxScore, (current == null ? 0 : current) + 1);
         if (!Integer.valueOf(next).equals(current)) {
             visits.put(positionKey, next);
             dirty = true;
         }
         return next;
+    }
+
+    public boolean contains(int positionKey) {
+        return visits.containsKey(positionKey);
+    }
+
+    public List<PathTrafficDecay> decayUntouched(long days) {
+        if (days < 0) {
+            throw new IllegalArgumentException("A quantidade de dias para recuperação não pode ser negativa");
+        }
+        if (days == 0 || visits.isEmpty()) {
+            touchedSinceDecay.clear();
+            return List.of();
+        }
+
+        List<PathTrafficDecay> changes = new ArrayList<>();
+        for (var entry : Map.copyOf(visits).entrySet()) {
+            int key = entry.getKey();
+            int previous = entry.getValue();
+            long protectedDays = touchedSinceDecay.contains(key) ? 1L : 0L;
+            long decayDays = Math.max(0L, days - protectedDays);
+            int current = (int) Math.max(0L, previous - Math.min(previous, decayDays));
+
+            if (current == previous) {
+                continue;
+            }
+
+            if (current == 0) {
+                visits.remove(key);
+            } else {
+                visits.put(key, current);
+            }
+            dirty = true;
+            changes.add(new PathTrafficDecay(key, previous, current));
+        }
+
+        touchedSinceDecay.clear();
+        return List.copyOf(changes);
     }
 
     public Map<Integer, Integer> snapshot() {

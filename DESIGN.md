@@ -135,6 +135,10 @@ Traffic is sparse and bounded per chunk. The initial policy tracks at most 512 p
 
 Tracked chunk data is persisted into that Chunk's namespaced PDC as compact integer pairs. Dirty ledgers are flushed every 200 ticks, on chunk unload, and on module disable. There is no recurring chunk/world scan: the periodic flush iterates only chunks that have actually accumulated tracked traffic in the current loaded session.
 
+Recovery uses the same sparse ledgers and the logical calendar callback. A position touched since the previous logical-day transition is protected from one day of decay; untouched scores decay by one per day. Large valid day advances decay the additional elapsed days in one bounded pass. Only cached tracked chunks are visited. When a score crosses back below the path threshold, DIRT_PATH becomes DIRT; below the wear threshold, tracked DIRT becomes GRASS_BLOCK.
+
+Natural dirt is not enrolled into Desire Lines merely by walking over it. A new ledger entry starts only on grass; dirt continues accumulating traffic only when that exact position is already owned by Desire Lines. This prevents recovery from converting unrelated natural dirt into grass.
+
 ## Double Doors
 
 Double Doors listens only to main-hand right-click block interactions that are not denied for the interacted block. It ignores iron doors and schedules a one-tick reconciliation so the clicked door's actual post-vanilla open state is authoritative.

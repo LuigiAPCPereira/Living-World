@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **LW-033 — Desire Lines recovery/regrowth**.
+Current task: **LW-034 — physical waystone activation and player-facing travel entrypoint**.
 
 Do not implement later roadmap modules opportunistically.
 

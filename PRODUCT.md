@@ -53,7 +53,8 @@ These are product directions, not promises that all are implemented in the curre
 - Tracking is event-driven and sparse; the feature must never discover traffic by scanning the world.
 - Per-chunk traffic memory is bounded and durable through Chunk PDC.
 - Teleports do not count as foot traffic.
-- Recovery/regrowth is a later evolution step and must reuse tracked state rather than adding whole-world scans.
+- Recovery/regrowth reuses tracked state and logical days rather than adding whole-world scans.
+- Recovery/regrowth reuses tracked state and logical days: recently used paths hold their wear, while unused tracked paths gradually recover without scanning terrain.
 
 ## Double Doors direction
 

@@ -43,4 +43,40 @@ class PathTrafficLedgerTest {
         ledger.markClean();
         assertFalse(ledger.isDirty());
     }
+
+    @Test
+    void recuperaSomentePosicoesNaoUsadasNoDia() {
+        PathTrafficLedger ledger = new PathTrafficLedger(
+                Map.of(1, 12, 2, 12),
+                10,
+                24
+        );
+
+        ledger.record(1);
+        var changes = ledger.decayUntouched(1);
+
+        assertEquals(13, ledger.snapshot().get(1));
+        assertEquals(11, ledger.snapshot().get(2));
+        assertEquals(1, changes.size());
+        assertEquals(2, changes.getFirst().positionKey());
+    }
+
+    @Test
+    void saltoDeVariosDiasProtegeApenasODiaComTrafego() {
+        PathTrafficLedger ledger = new PathTrafficLedger(Map.of(1, 12), 10, 24);
+        ledger.record(1);
+
+        ledger.decayUntouched(3);
+
+        assertEquals(11, ledger.snapshot().get(1));
+    }
+
+    @Test
+    void removeEntradaQuandoRecuperaAteZero() {
+        PathTrafficLedger ledger = new PathTrafficLedger(Map.of(1, 1), 10, 24);
+
+        ledger.decayUntouched(1);
+
+        assertFalse(ledger.contains(1));
+    }
 }
