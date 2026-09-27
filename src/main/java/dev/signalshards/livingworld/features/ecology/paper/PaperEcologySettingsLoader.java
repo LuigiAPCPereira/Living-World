@@ -38,6 +38,14 @@ public final class PaperEcologySettingsLoader {
                         defaults.groundCoverSpreadStrength()
                 ),
                 config.getBoolean(
+                        "ecology.farmland-moisture-retention.enabled",
+                        defaults.farmlandMoistureRetentionEnabled()
+                ),
+                config.getDouble(
+                        "ecology.farmland-moisture-retention.strength",
+                        defaults.farmlandMoistureRetentionStrength()
+                ),
+                config.getBoolean(
                         "ecology.frozen-surfaces.enabled",
                         defaults.frozenSurfacesEnabled()
                 )

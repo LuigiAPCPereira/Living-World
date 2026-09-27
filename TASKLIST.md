@@ -39,6 +39,7 @@
 | LW-055 | M5 | Tune tree growth penalty independently | validated | LW-054 | tree growth remains climate-sensitive without excessive waiting; crop tuning remains unchanged | clean gates + zVaporius live recheck approved tree-strength 0.35 pacing; crop strength remains 0.65 | local master |
 | LW-056 | M5 | Add climate-aware natural snow/ice persistence | validated | M2 | vanilla snow/ice formation and fade events respect effective thermal climate without scans or forced formation | clean IntelliJ/Gradle gates + live MCPFabric/Paper smoke: 25/25 snow layers formed in snowy_plains, lit ICE survived cold tick sprint, equivalent ICE melted in savanna; entity-form bypass covered by tests | local master |
 | LW-057 | M5 | Add climate-aware natural grass spread | validated | LW-050 | vanilla GRASS_BLOCK spread onto DIRT is climate-modulated without scans and without touching unrelated BlockSpreadEvent mechanics | clean gates + MCPFabric/Paper 3-round comparison: plains 81/76/74 vs savanna 69/56/68 conversions out of 81 under identical accelerated ticks; unrelated spread bypass covered by tests | local master |
+| LW-058 | M5 | Add climate-aware farmland moisture retention | validated | M2 | vanilla FARMLAND drying may be partially retained in cold/humid climate without artificial hydration, accelerated drying or scans | clean gates + MCPFabric/Paper controlled comparison: snowy_plains avg moisture 1.39 vs savanna 0.59 after identical 5s simulated window; hot/dry path stayed vanilla | local master |
 
 ## Scope discipline
 

@@ -24,6 +24,8 @@ class PaperEcologySettingsLoaderTest {
         config.set("ecology.natural-growth.tree-strength", 0.15D);
         config.set("ecology.ground-cover-spread.enabled", false);
         config.set("ecology.ground-cover-spread.strength", 0.30D);
+        config.set("ecology.farmland-moisture-retention.enabled", false);
+        config.set("ecology.farmland-moisture-retention.strength", 0.40D);
         config.set("ecology.frozen-surfaces.enabled", false);
 
         PaperEcologySettings settings = PaperEcologySettingsLoader.load(config);
@@ -33,6 +35,8 @@ class PaperEcologySettingsLoaderTest {
         assertEquals(0.15D, settings.treeGrowthStrength());
         assertFalse(settings.groundCoverSpreadEnabled());
         assertEquals(0.30D, settings.groundCoverSpreadStrength());
+        assertFalse(settings.farmlandMoistureRetentionEnabled());
+        assertEquals(0.40D, settings.farmlandMoistureRetentionStrength());
         assertFalse(settings.frozenSurfacesEnabled());
     }
 
@@ -47,13 +51,15 @@ class PaperEcologySettingsLoaderTest {
         assertEquals(0.35D, settings.treeGrowthStrength());
         assertEquals(true, settings.groundCoverSpreadEnabled());
         assertEquals(0.50D, settings.groundCoverSpreadStrength());
+        assertEquals(true, settings.farmlandMoistureRetentionEnabled());
+        assertEquals(0.70D, settings.farmlandMoistureRetentionStrength());
         assertEquals(true, settings.frozenSurfacesEnabled());
     }
 
     @Test
     void rejeitaForcaInvalida() {
         YamlConfiguration config = new YamlConfiguration();
-        config.set("ecology.ground-cover-spread.strength", 2.0D);
+        config.set("ecology.farmland-moisture-retention.strength", 2.0D);
 
         assertThrows(
                 IllegalArgumentException.class,

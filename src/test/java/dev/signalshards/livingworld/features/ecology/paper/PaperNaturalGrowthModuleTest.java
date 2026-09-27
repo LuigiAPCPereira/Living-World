@@ -96,7 +96,16 @@ class PaperNaturalGrowthModuleTest {
         return new PaperNaturalGrowthModule(
                 plugin(),
                 world,
-                new PaperEcologySettings(true, 1.0D, 1.0D, true, 0.50D, true),
+                new PaperEcologySettings(
+                        true,
+                        1.0D,
+                        1.0D,
+                        true,
+                        0.50D,
+                        true,
+                        0.70D,
+                        true
+                ),
                 new PaperLocalClimateResolver(
                         world,
                         calendar(),

@@ -6,12 +6,18 @@ public record PaperEcologySettings(
         double treeGrowthStrength,
         boolean groundCoverSpreadEnabled,
         double groundCoverSpreadStrength,
+        boolean farmlandMoistureRetentionEnabled,
+        double farmlandMoistureRetentionStrength,
         boolean frozenSurfacesEnabled
 ) {
     public PaperEcologySettings {
         requireStrength("plantações", cropGrowthStrength);
         requireStrength("árvores", treeGrowthStrength);
         requireStrength("cobertura vegetal", groundCoverSpreadStrength);
+        requireStrength(
+                "retenção de umidade do solo",
+                farmlandMoistureRetentionStrength
+        );
     }
 
     public static PaperEcologySettings defaults() {
@@ -21,6 +27,8 @@ public record PaperEcologySettings(
                 0.35D,
                 true,
                 0.50D,
+                true,
+                0.70D,
                 true
         );
     }

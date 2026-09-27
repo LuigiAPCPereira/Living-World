@@ -17,11 +17,13 @@ import dev.signalshards.livingworld.features.climate.paper.PaperWeatherControlle
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSettingsLoader;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesModule;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperPathWearSettingsLoader;
+import dev.signalshards.livingworld.features.ecology.domain.FarmlandMoistureRetentionPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.FrozenSurfacePolicy;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettings;
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettingsLoader;
 import dev.signalshards.livingworld.features.ecology.paper.PaperFrozenSurfaceModule;
+import dev.signalshards.livingworld.features.ecology.paper.PaperFarmlandMoistureModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperGroundCoverSpreadModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperNaturalGrowthModule;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
@@ -140,6 +142,14 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         localClimate,
                         new NaturalGrowthSuitabilityPolicy()
                 );
+        PaperFarmlandMoistureModule farmlandMoisture =
+                new PaperFarmlandMoistureModule(
+                        this,
+                        calendarWorld,
+                        ecologySettings,
+                        localClimate,
+                        new FarmlandMoistureRetentionPolicy()
+                );
 
         moduleManager = new ModuleManager(
                 desireLines,
@@ -147,6 +157,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 naturalGrowth,
                 frozenSurfaces,
                 groundCoverSpread,
+                farmlandMoisture,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

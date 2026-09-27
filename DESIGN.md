@@ -202,6 +202,8 @@ Frozen-surface ecology reacts only to vanilla block-condition events. Natural WA
 
 Ground-cover ecology listens to `BlockSpreadEvent` but accepts only the exact vanilla shape source=GRASS_BLOCK, destination-current=DIRT, destination-new=GRASS_BLOCK. That narrow predicate deliberately excludes fire, fungi, vines, bamboo and other spread mechanics. Accepted grass spread reuses the existing climate suitability policy with an independent default strength of 0.50; Living World never forces or accelerates spread.
 
+Farmland moisture ecology listens only to cancellable `MoistureChangeEvent` transitions whose current/new block data are both `Farmland` and whose moisture value decreases. Effective cold/humid climate can cancel a bounded fraction of those vanilla drying steps through a pure retention policy (default strength 0.70). Moisture increases always remain vanilla, and hot/dry climate receives no artificial extra drying.
+
 Player apparent temperature is biome/coordinate temperature plus season and a bounded direct-exposure modifier. The first microclimate slice uses only Paper's player-local state: lava adds +20 °C, burning adds +8 °C and water subtracts 4 °C, with priority lava → water → fire → neutral so contradictory states are not stacked. The result still respects the HUD clamp of -40..55 °C.
 
 Nearby heat-source influence such as merely standing beside lava or campfires remains deferred. Supporting that would require a cached/bounded sampling design; the HUD must not scan an area around every player on each refresh.

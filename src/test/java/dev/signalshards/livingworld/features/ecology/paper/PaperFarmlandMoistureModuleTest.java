@@ -6,13 +6,13 @@ import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresholds;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
-import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
+import dev.signalshards.livingworld.features.ecology.domain.FarmlandMoistureRetentionPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.block.data.type.Farmland;
+import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
 
@@ -21,60 +21,45 @@ import java.lang.reflect.Proxy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PaperGroundCoverSpreadModuleTest {
+class PaperFarmlandMoistureModuleTest {
     @Test
-    void cancelaGrassSpreadEmClimaExtremoQuandoChanceFalha() {
-        World world = world(-0.5D, 0.0D);
-        PaperGroundCoverSpreadModule module = module(world, 0.95D);
-        BlockSpreadEvent event = event(
-                world,
-                Material.GRASS_BLOCK,
-                Material.DIRT,
-                Material.GRASS_BLOCK
-        );
+    void podeCancelarSecagemEmClimaFrioEUmido() {
+        World world = world(0.40D, 0.80D);
+        PaperFarmlandMoistureModule module = module(world, 0.10D);
+        MoistureChangeEvent event = event(world, 7, 6);
 
-        module.onGroundCoverSpread(event);
+        module.onMoistureChange(event);
 
         assertTrue(event.isCancelled());
     }
 
     @Test
-    void permiteGrassSpreadEmClimaIdeal() {
-        World world = world(0.8D, 0.5D);
-        PaperGroundCoverSpreadModule module = module(world, 0.99D);
-        BlockSpreadEvent event = event(
-                world,
-                Material.GRASS_BLOCK,
-                Material.DIRT,
-                Material.GRASS_BLOCK
-        );
+    void naoRetemSecagemEmClimaQuenteESeco() {
+        World world = world(1.20D, 0.20D);
+        PaperFarmlandMoistureModule module = module(world, 0.0D);
+        MoistureChangeEvent event = event(world, 7, 6);
 
-        module.onGroundCoverSpread(event);
+        module.onMoistureChange(event);
 
         assertFalse(event.isCancelled());
     }
 
     @Test
-    void ignoraOutrosTiposDeSpread() {
-        World world = world(-0.5D, 0.0D);
-        PaperGroundCoverSpreadModule module = module(world, 0.99D);
-        BlockSpreadEvent event = event(
-                world,
-                Material.FIRE,
-                Material.AIR,
-                Material.FIRE
-        );
+    void aumentoDeUmidadeContinuaVanilla() {
+        World world = world(0.40D, 0.80D);
+        PaperFarmlandMoistureModule module = module(world, 0.0D);
+        MoistureChangeEvent event = event(world, 3, 4);
 
-        module.onGroundCoverSpread(event);
+        module.onMoistureChange(event);
 
         assertFalse(event.isCancelled());
     }
 
-    private PaperGroundCoverSpreadModule module(
+    private PaperFarmlandMoistureModule module(
             World world,
             double randomValue
     ) {
-        return new PaperGroundCoverSpreadModule(
+        return new PaperFarmlandMoistureModule(
                 plugin(),
                 world,
                 new PaperEcologySettings(
@@ -82,9 +67,9 @@ class PaperGroundCoverSpreadModuleTest {
                         0.65D,
                         0.35D,
                         true,
-                        1.0D,
+                        0.50D,
                         true,
-                        0.70D,
+                        1.0D,
                         true
                 ),
                 new PaperLocalClimateResolver(
@@ -95,7 +80,7 @@ class PaperGroundCoverSpreadModuleTest {
                         ),
                         new ClimatePolicy()
                 ),
-                new NaturalGrowthSuitabilityPolicy(),
+                new FarmlandMoistureRetentionPolicy(),
                 () -> randomValue
         );
     }
@@ -119,23 +104,12 @@ class PaperGroundCoverSpreadModuleTest {
         };
     }
 
-    private BlockSpreadEvent event(
+    private MoistureChangeEvent event(
             World world,
-            Material sourceType,
-            Material currentType,
-            Material newType
+            int currentMoisture,
+            int nextMoisture
     ) {
-        Block destination = block(world, currentType);
-        Block source = block(world, sourceType);
-        return new BlockSpreadEvent(
-                destination,
-                source,
-                state(newType)
-        );
-    }
-
-    private Block block(World world, Material type) {
-        return (Block) Proxy.newProxyInstance(
+        Block block = (Block) Proxy.newProxyInstance(
                 Block.class.getClassLoader(),
                 new Class<?>[]{Block.class},
                 (proxy, method, args) -> switch (method.getName()) {
@@ -143,8 +117,8 @@ class PaperGroundCoverSpreadModuleTest {
                     case "getX" -> 10;
                     case "getY" -> 64;
                     case "getZ" -> -20;
-                    case "getType" -> type;
-                    case "toString" -> "BlockFake(" + type + ")";
+                    case "getBlockData" -> farmland(currentMoisture);
+                    case "toString" -> "FarmlandBlockFake";
                     case "hashCode" -> System.identityHashCode(proxy);
                     case "equals" -> proxy == args[0];
                     default -> throw new UnsupportedOperationException(
@@ -152,15 +126,30 @@ class PaperGroundCoverSpreadModuleTest {
                     );
                 }
         );
-    }
-
-    private BlockState state(Material type) {
-        return (BlockState) Proxy.newProxyInstance(
+        BlockState state = (BlockState) Proxy.newProxyInstance(
                 BlockState.class.getClassLoader(),
                 new Class<?>[]{BlockState.class},
                 (proxy, method, args) -> switch (method.getName()) {
-                    case "getType" -> type;
-                    case "toString" -> "BlockStateFake(" + type + ")";
+                    case "getBlockData" -> farmland(nextMoisture);
+                    case "toString" -> "FarmlandStateFake";
+                    case "hashCode" -> System.identityHashCode(proxy);
+                    case "equals" -> proxy == args[0];
+                    default -> throw new UnsupportedOperationException(
+                            "Método não esperado no teste: " + method.getName()
+                    );
+                }
+        );
+        return new MoistureChangeEvent(block, state);
+    }
+
+    private Farmland farmland(int moisture) {
+        return (Farmland) Proxy.newProxyInstance(
+                Farmland.class.getClassLoader(),
+                new Class<?>[]{Farmland.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getMoisture" -> moisture;
+                    case "getMaximumMoisture" -> 7;
+                    case "toString" -> "FarmlandFake(" + moisture + ")";
                     case "hashCode" -> System.identityHashCode(proxy);
                     case "equals" -> proxy == args[0];
                     default -> throw new UnsupportedOperationException(

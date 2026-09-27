@@ -47,5 +47,9 @@ ecology:
     enabled: true
     # Modula apenas DIRT -> GRASS_BLOCK causado por GRASS_BLOCK natural.
     strength: 0.50
+  farmland-moisture-retention:
+    enabled: true
+    # Só pode atrasar secagem vanilla; nunca hidrata ou seca artificialmente.
+    strength: 0.70
   frozen-surfaces:
     enabled: true
