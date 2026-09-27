@@ -46,7 +46,11 @@ public final class PaperWaystoneSettingsLoader {
 
         return new PaperWaystoneSettings(
                 config.getBoolean("waystones.enabled", defaults.enabled()),
-                material
+                material,
+                config.getDouble(
+                        "waystones.rename-max-distance",
+                        defaults.renameMaxDistance()
+                )
         );
     }
 }

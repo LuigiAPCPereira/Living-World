@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **M7 planning — choose next product slice from validated gameplay evidence**.
+Current task: **M8 planning — choose next survival-value slice after Waystone rename validation**.
 
 Do not implement later roadmap modules opportunistically.
 

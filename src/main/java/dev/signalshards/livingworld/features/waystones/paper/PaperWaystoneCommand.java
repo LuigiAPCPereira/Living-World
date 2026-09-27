@@ -12,6 +12,7 @@ import org.jspecify.annotations.NullMarked;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -22,12 +23,14 @@ public final class PaperWaystoneCommand implements BasicCommand {
     private final PaperWaystoneTravelService travel;
     private final MessageCatalog messages;
     private final LivingWorldStatusProvider statusProvider;
+    private final double renameMaxDistance;
 
     public PaperWaystoneCommand(
             WaystoneService waystones,
             PaperWaystoneTravelService travel,
             MessageCatalog messages,
-            LivingWorldStatusProvider statusProvider
+            LivingWorldStatusProvider statusProvider,
+            double renameMaxDistance
     ) {
         this.waystones = Objects.requireNonNull(waystones, "serviço de waystones");
         this.travel = Objects.requireNonNull(travel, "viagem de waystones");
@@ -36,6 +39,12 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 statusProvider,
                 "diagnóstico do Living World"
         );
+        if (!Double.isFinite(renameMaxDistance) || renameMaxDistance <= 0.0D) {
+            throw new IllegalArgumentException(
+                    "A distância para renomear waystones deve ser positiva"
+            );
+        }
+        this.renameMaxDistance = renameMaxDistance;
     }
 
     @Override
@@ -63,6 +72,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
             travel(player, args);
             return;
         }
+        if (args[0].equalsIgnoreCase("rename")) {
+            rename(player, args);
+            return;
+        }
 
         player.sendMessage(messages.component(
                 NamedTextColor.YELLOW,
@@ -74,7 +87,7 @@ public final class PaperWaystoneCommand implements BasicCommand {
     public Collection<String> suggest(CommandSourceStack source, String[] args) {
         if (args.length <= 1) {
             if (source.getSender() instanceof Player) {
-                return List.of("status", "list", "travel");
+                return List.of("status", "list", "travel", "rename");
             }
             return List.of("status");
         }
@@ -83,7 +96,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
             return List.of();
         }
 
-        if (args.length == 2 && args[0].equalsIgnoreCase("travel")) {
+        if (args.length == 2 && (
+                args[0].equalsIgnoreCase("travel")
+                        || args[0].equalsIgnoreCase("rename")
+        )) {
             int size = waystones.activatedWaystones(player.getUniqueId()).size();
             List<String> suggestions = new ArrayList<>(size);
             for (int index = 1; index <= size; index++) {
@@ -93,6 +109,90 @@ public final class PaperWaystoneCommand implements BasicCommand {
         }
 
         return List.of();
+    }
+
+    private void rename(Player player, String[] args) {
+        if (args.length < 3) {
+            player.sendMessage(messages.component(
+                    NamedTextColor.YELLOW,
+                    "waystone.rename-usage"
+            ));
+            return;
+        }
+
+        int selection;
+        try {
+            selection = Integer.parseInt(args[1]);
+        } catch (NumberFormatException exception) {
+            player.sendMessage(messages.component(
+                    NamedTextColor.RED,
+                    "waystone.rename-invalid-selection"
+            ));
+            return;
+        }
+
+        var activated = waystones.activatedWaystones(player.getUniqueId());
+        if (selection < 1 || selection > activated.size()) {
+            player.sendMessage(messages.component(
+                    NamedTextColor.RED,
+                    "waystone.rename-invalid-selection"
+            ));
+            return;
+        }
+
+        var target = activated.get(selection - 1);
+        if (!player.getWorld().getUID().equals(target.worldId())
+                || distanceSquaredToAnchor(player, target) >
+                renameMaxDistance * renameMaxDistance) {
+            player.sendMessage(messages.component(
+                    NamedTextColor.YELLOW,
+                    "waystone.rename-too-far",
+                    renameMaxDistance
+            ));
+            return;
+        }
+
+        String newName = String.join(
+                " ",
+                Arrays.copyOfRange(args, 2, args.length)
+        );
+        try {
+            var renamed = waystones.renameActivated(
+                    player.getUniqueId(),
+                    target.id(),
+                    newName
+            );
+            if (renamed.isEmpty()) {
+                player.sendMessage(messages.component(
+                        NamedTextColor.RED,
+                        "waystone.rename-not-activated"
+                ));
+                return;
+            }
+
+            player.sendMessage(messages.component(
+                    NamedTextColor.GREEN,
+                    "waystone.renamed",
+                    target.name(),
+                    renamed.orElseThrow().name()
+            ));
+        } catch (IllegalArgumentException exception) {
+            player.sendMessage(messages.component(
+                    NamedTextColor.RED,
+                    "waystone.rename-invalid-name"
+            ));
+        }
+    }
+
+    private double distanceSquaredToAnchor(
+            Player player,
+            dev.signalshards.livingworld.features.waystones.domain.Waystone waystone
+    ) {
+        var location = player.getLocation();
+        double dx = location.getX() - (waystone.x() + 0.5D);
+        double dy = location.getY() - waystone.y();
+        double dz = location.getZ() - (waystone.z() + 0.5D);
+        return (dx * dx) + (dy * dy) + (dz * dz);
     }
 
     private void status(CommandSender sender) {

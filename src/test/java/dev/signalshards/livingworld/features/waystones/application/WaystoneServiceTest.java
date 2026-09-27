@@ -73,6 +73,49 @@ class WaystoneServiceTest {
         assertTrue(service.findAt(world, 10, 64, 10).isEmpty());
     }
 
+    @Test
+    void renomeiaWaystoneAtivadaSemTrocarIdentidade() {
+        InMemoryRegistry registry = new InMemoryRegistry();
+        InMemoryAccessStore access = new InMemoryAccessStore();
+        WaystoneService service = new WaystoneService(registry, access);
+        UUID player = UUID.randomUUID();
+        Waystone original = waystone("Casa", UUID.randomUUID());
+        service.register(original);
+        service.activate(player, original.id());
+
+        Waystone renamed = service.renameActivated(
+                player,
+                original.id(),
+                "Casa da Montanha"
+        ).orElseThrow();
+
+        assertEquals(original.id(), renamed.id());
+        assertEquals("Casa da Montanha", renamed.name());
+        assertEquals(
+                Optional.of(renamed),
+                service.find(original.id())
+        );
+        assertTrue(service.findActivated(player, original.id()).isPresent());
+    }
+
+    @Test
+    void naoRenomeiaWaystoneSemAtivacao() {
+        InMemoryRegistry registry = new InMemoryRegistry();
+        WaystoneService service = new WaystoneService(
+                registry,
+                new InMemoryAccessStore()
+        );
+        Waystone waystone = waystone("Casa", UUID.randomUUID());
+        service.register(waystone);
+
+        assertTrue(service.renameActivated(
+                UUID.randomUUID(),
+                waystone.id(),
+                "Outro nome"
+        ).isEmpty());
+        assertEquals(Optional.of(waystone), service.find(waystone.id()));
+    }
+
     private Waystone waystone(String name, UUID world) {
         return new Waystone(WaystoneId.random(), name, world, 10, 64, 10);
     }

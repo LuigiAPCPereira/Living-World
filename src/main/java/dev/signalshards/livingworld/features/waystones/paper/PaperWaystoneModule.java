@@ -71,7 +71,8 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
                         waystones,
                         travel,
                         messages,
-                        statusProvider
+                        statusProvider,
+                        settings.renameMaxDistance()
                 )
         );
     }

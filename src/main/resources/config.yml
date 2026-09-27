@@ -24,6 +24,8 @@ qol:
 waystones:
   enabled: true
   anchor-material: LODESTONE
+  # Renomear exige estar fisicamente próximo da âncora.
+  rename-max-distance: 6.0
 
 hud:
   enabled: true

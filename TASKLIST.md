@@ -55,3 +55,8 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 | LW-062 | M6 | Harden graceful module shutdown | validated | M0 | all enabled modules get a shutdown attempt; multiple failures are aggregated and logged without escaping plugin onDisable | clean gates; reverse-order aggregate-failure test passes; plugin boundary catches/logs shutdown aggregate | local master |
 
 **M6 complete — diagnostics, profiling baseline and graceful shutdown validated.**
+
+| LW-070 | M7 | Add persistent local Waystone rename | validated | LW-034, M6 | activated Waystone can be renamed near its physical anchor; UUID/access remain unchanged; names remain bounded/persisted | clean IntelliJ/Gradle gates + live Paper smoke confirmed persisted rename without identity/access loss | local master |
+| LW-071 | M7 | Runtime Waystone rename smoke | validated | LW-070 | real player confirms near-anchor rename, /lw list ordering/name update, travel still works and far-away rename is rejected | MCPFabric/Paper smoke: renamed to Portal da Savana near anchor, list updated, remote rename rejected at >6 blocks, travel succeeded, manual destruction removed renamed entry and list became empty | local master |
+
+**M7 complete — persistent local Waystone rename validated in live survival flow.**

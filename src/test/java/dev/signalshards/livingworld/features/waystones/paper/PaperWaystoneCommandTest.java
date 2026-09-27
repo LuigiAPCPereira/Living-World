@@ -116,7 +116,8 @@ class PaperWaystoneCommandTest {
                         3,
                         20.0D,
                         4.2D
-                )
+                ),
+                6.0D
         );
     }
 

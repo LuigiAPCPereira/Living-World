@@ -74,7 +74,8 @@ These are product directions, not promises that all are implemented in the curre
 - Destroying a registered anchor removes the waystone immediately and gives player feedback; recreating an anchor at the same coordinates creates a new identity instead of reviving old access.
 - Legacy orphaned records from older plugin behavior are cleaned lazily when their chunks are already/naturally loaded; cleanup must never scan terrain or force chunk loads.
 - The initial travel UI is intentionally minimal: `/lw list` and `/lw travel <number>`.
-- Custom naming, recipe, GUI, cost/cooldown and richer presentation remain deferred.
+- Waystones can be renamed after activation while the player is physically close to the anchor; rename preserves UUID/access and changes the shared global name.
+- Recipe, GUI, cost/cooldown and richer presentation remain deferred.
 
 ## Player HUD direction
 

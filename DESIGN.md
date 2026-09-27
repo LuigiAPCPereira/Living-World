@@ -162,7 +162,9 @@ Breaking a registered anchor immediately removes its registry entry and sends tr
 
 Legacy orphan cleanup is chunk-bounded and never forces a chunk load. On module enable, Living World builds an in-memory index from registered waystones and validates only anchors whose chunks are already loaded. Later `ChunkLoadEvent` callbacks inspect only registered anchors indexed for that naturally loaded chunk. Missing anchors are removed from the registry; stale player activation UUIDs remain harmless because listings intersect current registry entries.
 
-The minimal command interface uses Paper's current `BasicCommand` API registered by the JavaPlugin: `/livingworld list` (alias `/lw list`) and `/lw travel <number>`. Numeric selection is intentionally simple and unambiguous for the first slice. GUI, custom naming, crafting recipe, economy and cooldown remain separate policies.
+The command interface uses Paper's current `BasicCommand` API registered by the JavaPlugin: `/livingworld list` (alias `/lw list`), `/lw travel <number>`, `/lw rename <number> <name>` and operator `/lw status`. Numeric selection remains intentionally simple. Rename rewrites the existing version-1 payload under the same Waystone UUID, so player activation IDs and identity remain stable; no persistence migration is required.
+
+Rename is intentionally local rather than remote: the player must have activated the Waystone and be within the configured default 6-block radius of its anchor. Names are global/shared for the Waystone. This avoids introducing an ownership schema solely for naming while preventing arbitrary remote renames.
 
 Travel through this physical interface additionally requires the configured anchor material to still exist at the stored coordinate; destroying/replacing the anchor makes the destination unsafe instead of silently teleporting to a stale point.
 

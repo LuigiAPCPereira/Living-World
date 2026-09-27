@@ -19,6 +19,7 @@ class PaperWaystoneSettingsLoaderTest {
         );
 
         assertEquals(Material.LODESTONE, settings.anchorMaterial());
+        assertEquals(6.0D, settings.renameMaxDistance());
     }
 
     @Test
@@ -62,6 +63,36 @@ class PaperWaystoneSettingsLoaderTest {
                         config,
                         this::resolveMaterial,
                         material -> false
+                )
+        );
+    }
+
+    @Test
+    void carregaDistanciaDeRenameConfigurada() {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("waystones.rename-max-distance", 8.5D);
+
+        assertEquals(
+                8.5D,
+                PaperWaystoneSettingsLoader.load(
+                        config,
+                        this::resolveMaterial,
+                        material -> true
+                ).renameMaxDistance()
+        );
+    }
+
+    @Test
+    void rejeitaDistanciaDeRenameInvalida() {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("waystones.rename-max-distance", 0.5D);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> PaperWaystoneSettingsLoader.load(
+                        config,
+                        this::resolveMaterial,
+                        material -> true
                 )
         );
     }

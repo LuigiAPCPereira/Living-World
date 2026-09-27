@@ -40,6 +40,33 @@ public final class WaystoneService {
         return registry.all();
     }
 
+    public Optional<Waystone> renameActivated(
+            UUID playerId,
+            WaystoneId waystoneId,
+            String newName
+    ) {
+        Objects.requireNonNull(playerId, "jogador");
+        Objects.requireNonNull(waystoneId, "waystone");
+        Objects.requireNonNull(newName, "novo nome");
+
+        Optional<Waystone> current = findActivated(playerId, waystoneId);
+        if (current.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Waystone waystone = current.orElseThrow();
+        Waystone renamed = new Waystone(
+                waystone.id(),
+                newName,
+                waystone.worldId(),
+                waystone.x(),
+                waystone.y(),
+                waystone.z()
+        );
+        registry.register(renamed);
+        return Optional.of(renamed);
+    }
+
     public boolean activate(UUID playerId, WaystoneId waystoneId) {
         Objects.requireNonNull(playerId, "jogador");
         Objects.requireNonNull(waystoneId, "waystone");
