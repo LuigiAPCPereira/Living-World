@@ -93,6 +93,8 @@ These are product directions, not promises that all are implemented in the curre
 - Effective climate already includes season, so ecology should consume the existing climate model instead of duplicating seasonal rules.
 - The first slice must not accelerate growth above vanilla, force growth, scan chunks, or modify explicit player fertilization; poor conditions only reduce the chance that a natural growth attempt succeeds.
 - Growth-impact settings are balance-affecting and must be configurable/disableable.
+- Crop and tree strength are configured separately because trees already have much sparser vanilla growth opportunities; the default tree penalty is intentionally milder than crop penalty.
+- Player-facing apparent temperature may later include bounded direct-exposure microclimate modifiers (for example standing in lava, burning or being submerged) without scanning surrounding terrain.
 
 ## Explicitly out of scope
 

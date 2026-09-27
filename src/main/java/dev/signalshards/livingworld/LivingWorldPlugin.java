@@ -16,6 +16,9 @@ import dev.signalshards.livingworld.features.climate.paper.PaperWeatherControlle
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSettingsLoader;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesModule;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperPathWearSettingsLoader;
+import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
+import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettingsLoader;
+import dev.signalshards.livingworld.features.ecology.paper.PaperNaturalGrowthModule;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudModule;
@@ -103,10 +106,22 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new ApparentTemperaturePolicy(),
                 new TemperatureColorPolicy()
         );
+        PaperNaturalGrowthModule naturalGrowth = new PaperNaturalGrowthModule(
+                this,
+                calendarWorld,
+                PaperEcologySettingsLoader.load(getConfig()),
+                calendarModule,
+                new ClimateProfileClassifier(
+                        ClimateProfileThresholds.livingWorldDefaults()
+                ),
+                new ClimatePolicy(),
+                new NaturalGrowthSuitabilityPolicy()
+        );
 
         moduleManager = new ModuleManager(
                 desireLines,
                 calendarModule,
+                naturalGrowth,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

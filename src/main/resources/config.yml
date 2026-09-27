@@ -35,3 +35,11 @@ hud:
     navigation: true
     coordinates: true
     temperature: true
+
+ecology:
+  natural-growth:
+    enabled: true
+    # 0 = crescimento vanilla; 1 = efeito climático completo.
+    # Árvores usam força menor porque já tentam crescer com menos frequência.
+    crop-strength: 0.65
+    tree-strength: 0.35

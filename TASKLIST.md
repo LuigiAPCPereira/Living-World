@@ -31,9 +31,13 @@
 | LW-042 | M4 | Direction/coordinate HUD | validated | LW-040 | optional heading + coordinates display updates per player with bounded cadence and no world scans | clean gates; 8-direction yaw policy tested; zVaporius confirmed live heading/coordinate updates | local master |
 | LW-043 | M4 | Apparent-temperature action bar | validated | LW-040, M2 | optional action bar exposes a clearly defined Living World apparent temperature in degrees without claiming a canonical Minecraft Celsius value | clean gates + zVaporius visual approval; temperature color bands accepted | local master |
 | LW-044 | M4 | Runtime HUD readability/behavior smoke | validated | LW-041, LW-042, LW-043 | real player confirms calendar boss bar and composed navigation/coordinate/temperature action bar are correct and readable | zVaporius approved layout, direction changes, color hierarchy and overall readability | local master |
-| LW-050 | M5 | Define climate-sensitive natural growth policy | in progress | M2 | pure policy maps effective thermal/moisture bands to bounded natural-growth acceptance probability | pending | local master |
-| LW-051 | M5 | Integrate natural Ageable growth with Paper events | pending | LW-050 | BlockGrowEvent for Ageable vegetation is conditionally cancelled using local climate without scans or forced growth | not validated | local master |
-| LW-052 | M5 | Runtime seasonal-growth smoke | pending | LW-051 | real gameplay confirms natural growth remains functional and visibly slower in unsuitable climate/season without affecting explicit fertilization | not validated | local master |
+| LW-050 | M5 | Define climate-sensitive natural growth policy | validated | M2 | pure policy maps effective thermal/moisture bands to bounded natural-growth acceptance probability | clean Gradle gates; ideal/extreme/strength=0 policy tests pass | local master |
+| LW-051 | M5 | Integrate natural Ageable growth with Paper events | validated | LW-050 | BlockGrowEvent for Ageable vegetation is conditionally cancelled using local climate without scans or forced growth | clean Gradle gates; adapter integration tests + live Paper smoke pass | local master |
+| LW-052 | M5 | Runtime seasonal-growth smoke | validated | LW-051 | real gameplay confirms natural growth remains functional and visibly slower/less uniform in unsuitable climate/season without affecting explicit fertilization | zVaporius confirmed normal natural growth, bone-meal path unaffected, and less-uniform growth in ~41 °C savanna under accelerated random ticks; no runtime errors | local master |
+| LW-053 | M5 | Add bounded player microclimate modifiers | implemented not validated | LW-043 | apparent temperature reacts to direct exposure such as lava/fire/water without nearby-block scans | clean IntelliJ/Gradle gates; direct-exposure temperature policy tests pass; live HUD smoke pending | local master |
+| LW-054 | M5 | Extend climate-sensitive growth to natural sapling/tree attempts | validated | LW-051 | natural tree growth may be reduced by climate while bone-meal growth remains explicit/player-controlled | zVaporius confirmed hot-savanna natural sapling slowdown and immediate bonemeal bypass; live feedback showed shared crop-strength was too punitive for trees | local master |
+| LW-055 | M5 | Tune tree growth penalty independently | validated | LW-054 | tree growth remains climate-sensitive without excessive waiting; crop tuning remains unchanged | clean gates + zVaporius live recheck approved tree-strength 0.35 pacing; crop strength remains 0.65 | local master |
+| LW-056 | M5 | Add climate-aware natural snow/ice persistence | in progress | M2 | vanilla snow/ice formation and fade events respect effective thermal climate without scans or forced formation | pending | local master |
 
 ## Scope discipline
 
@@ -41,4 +45,4 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**LW-050 — define climate-sensitive natural growth policy.**
+**LW-056 — climate-aware natural snow/ice persistence.**

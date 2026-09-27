@@ -31,4 +31,44 @@ class ApparentTemperaturePolicyTest {
                 () -> policy.degreesCelsius(Double.NaN, Season.VERAO)
         );
     }
+
+    @Test
+    void exposicaoDiretaAlteraApenasTemperaturaAparente() {
+        assertEquals(
+                11,
+                policy.degreesCelsius(
+                        0.8,
+                        Season.OUTONO,
+                        TemperatureExposure.WATER
+                )
+        );
+        assertEquals(
+                23,
+                policy.degreesCelsius(
+                        0.8,
+                        Season.OUTONO,
+                        TemperatureExposure.FIRE
+                )
+        );
+        assertEquals(
+                35,
+                policy.degreesCelsius(
+                        0.8,
+                        Season.OUTONO,
+                        TemperatureExposure.LAVA
+                )
+        );
+    }
+
+    @Test
+    void exposicaoEmLavaRespeitaLimiteDoHud() {
+        assertEquals(
+                55,
+                policy.degreesCelsius(
+                        10.0,
+                        Season.VERAO,
+                        TemperatureExposure.LAVA
+                )
+        );
+    }
 }

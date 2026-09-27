@@ -190,6 +190,14 @@ For each relevant event, the adapter samples temperature/humidity only at that b
 
 The initial ecology contract only slows growth in unsuitable conditions; suitability never exceeds 1.0, so Living World does not grow crops faster than vanilla. This keeps the first balance change bounded and reversible.
 
+Natural sapling-to-tree attempts reuse the same suitability policy through Paper's cancellable `StructureGrowEvent`. The adapter handles only events whose origin block is a `Sapling`, and explicitly bypasses `isFromBonemeal()` events. Huge mushrooms and other organic structures therefore remain vanilla in this slice.
+
+Crop and tree growth use separate ecological strengths. Initial defaults are 0.65 for Ageable crops and 0.35 for natural sapling-to-tree attempts. This tuning came directly from live gameplay: applying crop-strength penalties to already-sparse tree attempts made hot-biome saplings feel excessively slow.
+
+Player apparent temperature is biome/coordinate temperature plus season and a bounded direct-exposure modifier. The first microclimate slice uses only Paper's player-local state: lava adds +20 °C, burning adds +8 °C and water subtracts 4 °C, with priority lava → water → fire → neutral so contradictory states are not stacked. The result still respects the HUD clamp of -40..55 °C.
+
+Nearby heat-source influence such as merely standing beside lava or campfires remains deferred. Supporting that would require a cached/bounded sampling design; the HUD must not scan an area around every player on each refresh.
+
 ## Open design questions
 
 - whether later messages need per-player locale in addition to the server default;

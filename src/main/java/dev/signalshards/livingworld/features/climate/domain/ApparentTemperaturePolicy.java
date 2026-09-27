@@ -20,10 +20,23 @@ public final class ApparentTemperaturePolicy {
     private static final int MAX_CELSIUS = 55;
 
     public int degreesCelsius(double paperTemperature, Season season) {
+        return degreesCelsius(
+                paperTemperature,
+                season,
+                TemperatureExposure.NONE
+        );
+    }
+
+    public int degreesCelsius(
+            double paperTemperature,
+            Season season,
+            TemperatureExposure exposure
+    ) {
         if (!Double.isFinite(paperTemperature)) {
             throw new IllegalArgumentException("A temperatura do Paper deve ser finita");
         }
         Objects.requireNonNull(season, "estação");
+        Objects.requireNonNull(exposure, "exposição térmica");
 
         double base = NEUTRAL_CELSIUS
                 + ((paperTemperature - NEUTRAL_PAPER_TEMPERATURE)
@@ -34,8 +47,16 @@ public final class ApparentTemperaturePolicy {
             case OUTONO -> 0.0D;
             case INVERNO -> -6.0D;
         };
+        double exposureAdjustment = switch (exposure) {
+            case NONE -> 0.0D;
+            case WATER -> -4.0D;
+            case FIRE -> 8.0D;
+            case LAVA -> 20.0D;
+        };
 
-        long rounded = Math.round(base + seasonalAdjustment);
+        long rounded = Math.round(
+                base + seasonalAdjustment + exposureAdjustment
+        );
         return (int) Math.max(MIN_CELSIUS, Math.min(MAX_CELSIUS, rounded));
     }
 }
