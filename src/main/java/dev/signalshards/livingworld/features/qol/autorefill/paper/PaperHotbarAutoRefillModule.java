@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -114,6 +115,11 @@ public final class PaperHotbarAutoRefillModule implements LivingWorldModule, Lis
         if (event.getWhoClicked() instanceof Player player) {
             suppressIntentionalChange(player);
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        suppressedUntilTick.remove(event.getPlayer().getUniqueId());
     }
 
     private void scheduleRefill(Player player, int targetSlot, ItemStack depletedItem) {
