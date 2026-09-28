@@ -330,6 +330,211 @@ During the smoke:
 
 ---
 
+### LW-211 — Container Sort real-player smoke
+
+**Branch implementation:** `qol/container-sort`.
+
+**Automated status:** tracked as LW-210; this matrix remains runtime-only until exercised on a real Paper player session.
+
+**Goal:** prove that one explicit sort gesture reduces container-management friction without merging different metadata variants, touching player inventory, overriding machine semantics or racing another viewer.
+
+#### A. Basic material ordering
+
+**Prepare**
+
+- Open a normal chest with mixed unsorted stacks, for example Stone, Dirt, Cobblestone and Oak Logs.
+- Leave at least one empty chest slot.
+- Keep cursor empty.
+
+**Action**
+
+- Shift + left-click an empty top-inventory slot.
+
+**Expected**
+
+- The chest reorganizes on the next tick.
+- Non-empty stacks are packed from the first storage slots.
+- Material groups follow lexical namespaced-key order.
+- Empty slots end up after non-empty stacks.
+- Player inventory remains unchanged.
+
+#### B. Exact-stack consolidation
+
+**Prepare**
+
+- Place multiple ordinary stacks of the same material at different target slots.
+
+**Expected**
+
+- Exact `ItemStack.isSimilar` stacks consolidate up to their actual max stack size.
+- Total amount is conserved.
+- Overflow beyond one stack becomes another stack of the same exact variant.
+
+#### C. Metadata/component separation
+
+**Prepare**
+
+- Put ordinary Stone plus same-material variants with different metadata/components, such as custom names, enchantments or another convenient visible difference.
+
+**Expected**
+
+- Different variants do not merge.
+- Each variant preserves its metadata/components and total count.
+- Variants of the same material keep their original first-seen relative order after the material group moves.
+
+#### D. Non-stackable/max-stack behavior
+
+Use representative max-stack-size-1 items such as tools/weapons, plus any custom max-stack-size item available in the test environment if convenient.
+
+**Expected**
+
+- Non-stackables are not collapsed into illegal stacks.
+- Per-item max stack size is respected.
+
+#### E. Supported physical storage
+
+Repeat basic sorting for:
+
+- single chest;
+- double chest;
+- barrel;
+- placed shulker box.
+
+**Expected**
+
+- Same behavior for every supported target.
+
+#### F. Unsupported inventories stay vanilla
+
+Try representative unsupported inventories:
+
+- hopper;
+- dispenser/dropper;
+- furnace-like machine;
+- Ender Chest.
+
+If a plugin-created chest-style GUI is available, try it too.
+
+**Expected**
+
+- Container Sort does not run.
+- Existing vanilla/plugin behavior remains authoritative.
+
+#### G. Player inventory isolation
+
+Before sorting, record representative items in:
+
+- player main inventory;
+- hotbar;
+- offhand;
+- armor.
+
+**Expected**
+
+- None of those slots change.
+
+#### H. Occupied-slot Shift + left-click remains vanilla
+
+**Action**
+
+- Shift + left-click an occupied target slot.
+
+**Expected**
+
+- Container Sort does not trigger.
+- Vanilla shift-transfer behavior remains authoritative.
+
+#### I. Non-empty cursor does not trigger
+
+**Action**
+
+- Hold an item on the cursor and use Shift + left-click on an empty top slot.
+
+**Expected**
+
+- Container Sort does not run.
+
+#### J. Full-container gesture limitation
+
+Fill every target slot.
+
+**Expected**
+
+- M21 exposes no Container Sort gesture because there is no empty top slot.
+- Shift + left-clicking occupied stacks remains vanilla.
+- Record this as intentional UX, not a failed sort.
+
+#### K. Concurrent viewer fail-closed
+
+Use two players.
+
+**Prepare**
+
+- Both players view the same supported storage.
+
+**Expected**
+
+- Player A's sort gesture does not reorganize the shared storage while Player B is also viewing it.
+
+#### L. Target/content changes before deferred execution
+
+Where reproducible:
+
+- trigger sorting and immediately close/switch the inventory; or
+- have another legitimate action alter target contents before the deferred write.
+
+**Expected**
+
+- Living World aborts rather than sorting a different or changed snapshot.
+- No duplication/loss occurs.
+
+#### M. Creative and Spectator
+
+**Expected**
+
+- Container Sort does not operate in Creative or Spectator.
+
+#### N. Configuration off
+
+Set:
+
+```yaml
+qol:
+  container-sort:
+    enabled: false
+```
+
+Restart using the project's normal safe procedure.
+
+**Expected**
+
+- The gesture has only vanilla behavior and no sort occurs.
+
+#### O. Lifecycle/log sanity
+
+During the smoke:
+
+- sort repeatedly across supported storage;
+- disconnect/reconnect;
+- stop the server normally.
+
+**Expected**
+
+- No Living World warning/error related to Container Sort.
+- No pending-task/shutdown exception.
+
+**Evidence to record**
+
+- Before/after screenshots or slot/item counts for basic sorting and consolidation.
+- Metadata/component negative case.
+- Player-inventory before/after.
+- Supported/unsupported targets exercised.
+- Two-player viewer result if available.
+- Console log cleanliness.
+- Exact branch/commit SHA and Paper build.
+
+---
+
 ## Completed runtime validations
 
 Move entries here only after the exact runtime evidence exists. Preserve the original task ID and add the evidence format fields above.

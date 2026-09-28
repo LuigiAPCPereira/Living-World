@@ -48,7 +48,7 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**M12.4 accepted/validated. LW-121 documents the accepted M12.5 foundation; next executable implementation task is LW-122 when requested.**
+**M21 Container Sort is the active authorized QoL slice on `qol/container-sort`. Mainline environmental and Waystone runtime debt remains separately tracked and does not imply success for M21.**
 
 | LW-060 | M6 | Establish Paper/spark runtime baseline | validated | M5 | measure representative runtime before optimizing hot paths | spark baseline: TPS 20.0; 10s MSPT min/med/p95/max 2.8/4.4/5.9/13.7 ms; 1m 2.8/4.3/6.2/24.1 ms; no evidence justifying speculative optimization | local master |
 | LW-061 | M6 | Add /lw status operator diagnostics | validated | LW-060 | player/console can inspect runtime state and performance without files or unsafe reloads | clean gates + console-path unit test + live MCPFabric player smoke; output confirmed calendar/runtime counters/TPS/MSPT and latest.log stayed clean | local master |
@@ -112,3 +112,22 @@ M12.4 recebeu aceite formal. Próxima ação executável quando autorizada: **LW
 | LW-140 | M14 | Define and implement the Discovery foundation | implemented not validated | M3, M13 | a discovery is identified by (type, id) and stored per owner; personal and world scope both work; only the first record publishes an event; undeclared types fail closed; persisted payloads have an explicit schema version and reject unknown versions | integrated-main automated gates green: 183 tests / 57 suites / 0 failures; codec regressions cover V1 marker, headerless V1 compatibility, malformed payload and unknown-version rejection; runtime presentation pending | local main |
 | LW-141 | M14 | Integrate physical Waystone interaction with Discovery | implemented not validated | LW-140, LW-034 | first physical interaction records a personal discovery and shows one short title; legacy activated Waystones backfill once; repeated interaction, rename, destruction and travel keep their current behaviour; Waystone never depends on a presentation surface | integrated-main gates green + dedicated legacy/idempotency regressions; interaction-level smoke pending LW-142 | local main |
 | LW-142 | M14 | Runtime Discovery + Waystone integration smoke | in progress | LW-141, LW-131 | real player confirms one discovery title on first/backfill interaction, silence on repeat, unchanged rename/travel, climate command coexistence and Waystone removal without deleting discovery memory | partial live smoke confirmed by user on 2026-09-27: physical Waystone interaction displayed `Descoberto`; repeat/idempotency, rename/travel, climate coexistence and destruction-memory checks remain pending | local main |
+
+
+## M20 — Deposit Matching QoL
+
+M20 is implemented on the separate `qol/deposit-matching` branch. It remains independent from M21; this task inventory records the durable cross-branch state so a fresh agent does not mistake Container Sort for a replacement.
+
+| Task | Milestone | Outcome / Task | State | Dependencies | Acceptance / REQ | Validation evidence | Branch / PR |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| LW-200 | M20 | Implement conservative Deposit Matching | validated | M0 | explicit one-target matching deposit; exact preexisting categories only; player loadout protected; closed gesture/presentation bounded and fail-closed | automated GitHub Actions gate + two-axis review on `qol/deposit-matching`; runtime behavior remains LW-201 | `qol/deposit-matching` |
+| LW-201 | M20 | Runtime Deposit Matching smoke | pending | LW-200 | real player proves matching transfer, closed trigger/access safety and bounded presentation without duplication/loss | pending; detailed matrix lives on the feature branch runtime backlog | `qol/deposit-matching` |
+
+## M21 — Container Sort QoL
+
+M21 is explicitly authorized on `qol/container-sort`. Its detailed behavior contract is `CONTAINER_SORT_SPEC.md`.
+
+| Task | Milestone | Outcome / Task | State | Dependencies | Acceptance / REQ | Validation evidence | Branch / PR |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| LW-210 | M21 | Implement conservative Container Sort | implemented not validated | M0 | Shift + left-click an empty top slot with empty cursor and vanilla no-op action; physical chest/double chest/barrel/shulker only; sole viewer; exact `isSimilar` consolidation; per-item max stack; stable material-key order; player inventory/machines/nearby storage untouched; snapshot revalidation before deferred write | implementation + pure planner/policy regressions present; exact-HEAD GitHub Actions gate and final review pending | `qol/container-sort` |
+| LW-211 | M21 | Runtime Container Sort smoke | pending | LW-210 | real player proves gesture, ordering/consolidation, metadata separation, supported-target boundary, player-inventory isolation, concurrency fail-closed behavior and config-off behavior | pending real-player Paper smoke; scenarios in `RUNTIME_VALIDATION_BACKLOG.md` | `qol/container-sort` |

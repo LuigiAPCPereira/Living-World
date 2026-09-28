@@ -27,6 +27,7 @@
 | `features.desirelines.application` | bounded sparse per-chunk traffic ledger | Paper PDC or block types |
 | `features.desirelines.paper` | movement observation, block wear and Chunk PDC persistence | global world scanning or unrelated QoL rules |
 | `features.qol.doubledoors.paper` | detects an unambiguous adjacent compatible door and mirrors manual open state | redstone automation or arbitrary nearby doors |
+| `features.qol.containersort.paper` | owns the explicit open-container sort gesture, snapshot/exclusive-viewer safety, exact-variant consolidation and deterministic target-storage layout | player inventory, semantic item classification, machines, nearby storage, persistence or storage networking |
 | `features.waystones.domain` | stable waystone identity, display name and anchor coordinates | Paper storage, GUI or teleport APIs |
 | `features.waystones.application` | registration, activation visibility and travel result contracts | player/world PDC details |
 | `features.waystones.paper` | World/Player PDC adapters, safe destination validation and async Paper teleport | economy, GUI or physical activation presentation |
@@ -161,6 +162,18 @@ Natural dirt is not enrolled into Desire Lines merely by walking over it. A new 
 Double Doors listens only to main-hand right-click block interactions that are not denied for the interacted block. It ignores iron doors and schedules a one-tick reconciliation so the clicked door's actual post-vanilla open state is authoritative.
 
 The pair finder checks only the four horizontal neighbors at the lower half. A candidate must use the same material and facing, the opposite hinge, and neither door may be powered. Synchronization occurs only when exactly one candidate matches, preventing rows/triples of doors from being coupled accidentally. The module updates both halves through modern `org.bukkit.block.data.type.Door` data; it does not use the legacy deprecated material-data API.
+
+## Container Sort
+
+Container Sort is a bounded open-inventory adapter over a runtime-independent planner.
+
+The Paper listener accepts only Shift + left-click on an empty top-storage slot with empty cursor when Paper reports `InventoryAction.NOTHING`. It observes at high priority with cancelled events ignored and defers mutation to the next tick rather than changing inventory contents from inside `InventoryClickEvent`.
+
+The adapter supports only physical chest/double chest, barrel and shulker storage. It captures physical holder coordinates instead of relying on wrapper-object identity, requires the initiating player to be the sole viewer, snapshots storage contents and revalidates target + exact contents before mutation. Concurrent viewing, closing/switching targets or any intervening item change causes a no-op.
+
+The planner itself has no Bukkit dependency. The adapter supplies `ItemStack.isSimilar`, material namespaced key, amount and `getMaxStackSize()`. The planner groups exact variants, splits totals by the supplied max stack size, uses stable lexical material-key ordering and fails closed if the normalized result would exceed target capacity.
+
+The player inventory is outside the feature boundary. There is no polling, persistence, nearby-container scan or machine-slot rewriting. A future Restock Matching slice may reveal legitimate shared storage concepts, but Living World does not introduce a generic storage framework before that evidence exists.
 
 ## Waystones
 

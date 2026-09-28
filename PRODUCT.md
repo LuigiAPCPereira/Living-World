@@ -30,6 +30,7 @@ These are product directions, not promises that all are implemented in the curre
 - small ecological/evolutionary behaviors;
 - waystones and travel QoL;
 - double doors and other focused convenience mechanics;
+- explicit storage QoL such as matching deposit, one-container sorting and later restocking without nearby-container scans;
 - environmental reactions and long-term world memory.
 - optional player HUD surfaces for calendar/season, navigation and environmental feedback.
 
@@ -71,6 +72,16 @@ These are product directions, not promises that all are implemented in the curre
 - Iron/redstone-powered doors are not overridden.
 - Triple rows or ambiguous neighboring doors are intentionally left untouched.
 
+## Storage QoL direction
+
+- Storage convenience must remain explicit, local and explainable; Living World does not discover or operate a nearby storage network for the player.
+- **Deposit Matching** is implemented on the separate `qol/deposit-matching` branch with automated validation and deferred real-player smoke. It deposits only exact categories already present in one explicitly targeted storage.
+- **Container Sort** is the active M21 slice on `qol/container-sort`. It reorganizes only one already-open physical chest/double chest, barrel or shulker box after an explicit vanilla-no-op gesture.
+- Container Sort consolidates only `ItemStack.isSimilar` variants, respects per-item max stack size, orders by material namespaced key and deliberately preserves first-seen ordering among metadata variants of the same material.
+- Container Sort never touches player inventory/hotbar/offhand/armor/cursor, never sorts machine inventories and aborts when the target is concurrently viewed or changes before its deferred operation.
+- **Restock Matching** is an accepted future generic QoL direction, but it has no active implementation task yet. It should later receive its own explicit behavior contract rather than being smuggled into Deposit Matching or Container Sort.
+- Do not introduce a generic storage framework merely because these features are related; extract shared ownership only when later concrete work proves the abstraction earns leverage.
+
 ## Waystones direction
 
 - Waystones have stable identities independent from their future visual block/UI.
@@ -85,6 +96,8 @@ These are product directions, not promises that all are implemented in the curre
 - `/lw menu` provides a visual inventory-based travel surface over the same activated Waystone set; command travel remains available as fallback.
 - The visual menu prioritizes destinations in the player's current world by straight-line distance to the physical anchor, then keeps cross-world destinations grouped after them. Each entry shows target world and coordinates; same-world entries also show rounded distance. This is presentation-only and does not change access or travel safety rules.
 - The first menu intentionally supports up to 54 activated destinations without silent truncation; pagination remains deferred until gameplay evidence requires it.
+- **Favorites** and **Recent** are accepted future Waystone navigation features and belong to the Waystone system itself, not generic `features.qol`.
+- Favorites/Recent should be specified only when Waystone navigation is revisited and must reuse stable Waystone identity/access/travel state rather than duplicating destination ownership in a QoL module.
 - Recipe, cost/cooldown and richer presentation remain deferred.
 
 ## Discovery direction
