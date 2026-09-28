@@ -398,6 +398,10 @@ Ao sair, o jogador permanece molhado e continua perdendo calor até secar/ser aq
 
 Fontes térmicas devem alterar a **taxa de troca térmica local**, não reescrever `AmbientTemperature`.
 
+**Checkpoint de implementação LW-122 / décimo-primeiro slice:** `LocalHeatSourcePolicy` recebe apenas observações já resolvidas (`LocalHeatExposure`) e converte fonte + distância + exposição + linha de visão em `ThermalExchangeRate` positivo com falloff quadrático e cap global de stacking. O domínio não procura blocos; um resolver Paper futuro deverá fornecer uma lista bounded/cached.
+
+O catálogo Vanilla+ inicial mantém papéis distintos: torch/lantern dão conforto pequeno, furnace/smoker/blast furnace moderado, fire/campfire forte e lava extremo. Cenários provam que uma tocha ajuda mas não resolve frio extremo ao ar livre, fogueira + abrigo pode inverter a perda e recuperar o jogador, e exposição prolongada à lava acumula `OVERHEATING` mesmo sem contato direto.
+
 Modelo conceitual: `sourceFlux = sourcePower * distanceFalloff * exposureFactor * optionalLineOfSightFactor`.
 
 Ordem conceitual, sujeita a tuning: torch/lantern = pequeno conforto; furnace/smoker aceso = moderado; fire = forte; campfire = forte e apropriado para recuperação; lava = extremo e perigoso.

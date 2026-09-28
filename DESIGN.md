@@ -297,6 +297,8 @@ Nono slice de LW-122: `PlayerActivity` + `ActivityThermalPolicy` adicionam calor
 
 Décimo slice de LW-122: armadura é representada por slot/cobertura + material/profile. `ArmorInsulationPolicy` reduz `AirThermalTransferFactor` de acordo com isolamento efetivo, portanto não cria temperatura e funciona simetricamente como barreira à troca. `waterResistance` é mantida como propriedade separada para uma integração posterior com wetness. Defaults de couro/chainmail/metal/diamond/netherite/turtle shell são tuning configurável de gameplay, não propriedades físicas autoritativas.
 
+Décimo-primeiro slice de LW-122: `LocalHeatSourceCatalog` + `LocalHeatSourcePolicy` transformam observações bounded de fontes vanilla em contribuição positiva de `ThermalExchangeRate`. Distância usa falloff quadrático, exposição/linha de visão são fatores `[0,1]` e múltiplas fontes têm cap global. A policy não faz block scan; localizar fontes pertence a um adapter/cache Paper futuro.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.
