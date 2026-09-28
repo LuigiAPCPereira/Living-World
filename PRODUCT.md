@@ -83,8 +83,19 @@ These are product directions, not promises that all are implemented in the curre
 - The initial travel UI is intentionally minimal: `/lw list` and `/lw travel <number>`.
 - Waystones can be renamed after activation while the player is physically close to the anchor; rename preserves UUID/access and changes the shared global name.
 - `/lw menu` provides a visual inventory-based travel surface over the same activated Waystone set; command travel remains available as fallback.
+- The visual menu prioritizes destinations in the player's current world by straight-line distance to the physical anchor, then keeps cross-world destinations grouped after them. Each entry shows target world and coordinates; same-world entries also show rounded distance. This is presentation-only and does not change access or travel safety rules.
 - The first menu intentionally supports up to 54 activated destinations without silent truncation; pagination remains deferred until gameplay evidence requires it.
 - Recipe, cost/cooldown and richer presentation remain deferred.
+
+## Discovery direction
+
+- Discovery is durable world/player memory that something was found; it is not a teleport list, quest log or achievement/reward system.
+- Discovery identity is `(type, id)` and does not duplicate mutable subject data such as a Waystone display name.
+- Personal discoveries belong to Player PDC; world discoveries belong to World PDC.
+- Only the first discovery publishes a presentation event; repeated physical interaction is idempotent.
+- Waystones are the first producer: a valid physical Waystone interaction records/backfills a personal discovery without changing activation, rename, destruction or travel rules.
+- Discovery presentation is cosmetic and replaceable. The foundation remains independent from HUD, Blockbench, resourcepack and future title systems.
+- Future biome/landmark/village discovery follows `DISCOVERY_ROADMAP.md`; it is not automatically promoted into active scope by the existence of the foundation.
 
 ## Player HUD direction
 

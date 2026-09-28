@@ -6,18 +6,19 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** nenhuma implementação ativa; LW-121 validado, LW-122 é a próxima tarefa elegível
-- **Current acceptance:** M12.5 documentado com direção ambiental recuperável, ownership plugin/datapack/resourcepack explícito, compatibilidade worldgen e próximos gates identificados sem iniciar features futuras
+- **Current task:** M13/M14 local integration — Waystone navigation clarity + Discovery foundation on `master`
+- **Current acceptance:** merged code must pass master gates, then a real player confirms nearest-first menu/lore/travel and one-time Discovery behavior without regressions in climate/Waystones
+- **Current validation:** merged tree passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks` (183 tests, 57 suites, 0 failures/errors/skips), IntelliJ build and cached diff whitespace gate; real-player LW-131/LW-142 smoke remains pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `master`
 - **Observed HEAD:** `99adcda` — M10 local climate readability checkpoint before M11 weather-feedback work
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
 - **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability validated; M12.3 concluído; M12.4 implementado e validado em runtime via Paper 26.3 e MCPFabric
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
-- **Merge:** not integrated / no remote merge observed
+- **Merge:** local `integration/m10-discovery` merge into `master` in progress; no remote merge/push
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** iniciar LW-122 somente quando solicitado: especificar matematicamente AmbientTemperature, microclima e PlayerThermalState (inércia corporal, wetness, água/profundidade, vento/abrigo, atividade, armadura/isolamento e fontes térmicas) preservando contratos existentes antes de ampliar efeitos físicos
+- **Next action:** finish local M13/M14 merge gates, then run LW-131/LW-142 with a real player; return to LW-122 only after this integration is reconciled
 
 ## M12.4 — checkpoint local
 

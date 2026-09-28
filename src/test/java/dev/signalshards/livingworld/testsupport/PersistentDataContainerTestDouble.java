@@ -1,4 +1,4 @@
-package dev.signalshards.livingworld.features.waystones.paper;
+package dev.signalshards.livingworld.testsupport;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -6,11 +6,17 @@ import org.bukkit.persistence.PersistentDataContainer;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
-final class PersistentDataContainerTestDouble {
+/**
+ * PDC em memória para testes de adaptadores de persistência.
+ *
+ * <p>O mapa fornecido é o próprio armazenamento, então um teste pode verificar tanto
+ * o que foi gravado quanto o que sobrevive a um novo adapter sobre o mesmo mapa.
+ */
+public final class PersistentDataContainerTestDouble {
     private PersistentDataContainerTestDouble() {
     }
 
-    static PersistentDataContainer create(Map<NamespacedKey, Object> data) {
+    public static PersistentDataContainer create(Map<NamespacedKey, Object> data) {
         return (PersistentDataContainer) Proxy.newProxyInstance(
                 PersistentDataContainer.class.getClassLoader(),
                 new Class<?>[]{PersistentDataContainer.class},

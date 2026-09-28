@@ -20,6 +20,9 @@
 | `features.climate.domain` | bounded climate state and deterministic weather tendency from biome profile + season | Paper weather scheduling, biome lookup or environmental side effects |
 | `features.climate.application` | bounded/configurable weather-event planning from climate snapshots | direct Paper API calls |
 | `features.climate.paper` | samples representative world climate and applies weather-event plans through public Paper APIs | climate policy, calendar or event selection |
+| `features.discovery.domain` | discovery identity, scope and durable record vocabulary | Paper, persistence adapters, feature-specific detection |
+| `features.discovery.application` | first-discovery use case, type registry and typed discovery event publication | Bukkit, feature-specific rules, client rendering |
+| `features.discovery.persistence` / `.paper` | narrow stores plus Player/World PDC adapters and optional Paper presentation | Waystone access/travel state or discovery policy |
 | `features.desirelines.domain` | traffic thresholds and wear stages independent from Paper | movement events, chunks or block mutation |
 | `features.desirelines.application` | bounded sparse per-chunk traffic ledger | Paper PDC or block types |
 | `features.desirelines.paper` | movement observation, block wear and Chunk PDC persistence | global world scanning or unrelated QoL rules |
@@ -179,9 +182,19 @@ Rename is intentionally local rather than remote: the player must have activated
 
 The first visual Waystone menu is a thin Paper presentation adapter. `/lw menu` creates a titled inventory with one anchor-material icon per activated Waystone, maps each slot directly to its stable `WaystoneId`, cancels click/drag mutations, revalidates activation when clicked, closes the inventory, and delegates to the existing `PaperWaystoneTravelService`. It never reimplements travel safety or access policy.
 
+For navigation clarity, the menu derives a presentation-only ordering from the player's current position: destinations in the current world come first by 3D distance to the anchor center, then cross-world destinations follow alphabetically. Item lore exposes target world and coordinates; same-world entries include rounded distance while cross-world entries explicitly avoid pretending that Euclidean distance across dimensions is meaningful. The application service keeps its stable alphabetical activated-waystone listing for command numbering, so visual ordering does not redefine domain/access state.
+
 The menu caps at 54 destinations in the first slice. More than 54 produces explicit fallback guidance to `/lw list`; destinations are never silently truncated. Pagination is deferred until real usage demonstrates the need.
 
 Travel through this physical interface additionally requires the configured anchor material to still exist at the stored coordinate; destroying/replacing the anchor makes the destination unsafe instead of silently teleporting to a stale point.
+
+## Discovery
+
+Discovery is an independent world-memory capability under `features.discovery`. Its domain/application layers contain no Paper API and do not depend on Waystones. Producers depend only on the narrow Discovery application contracts.
+
+The first integration is additive to physical Waystone interaction: after the existing activation path, `PaperWaystoneModule` asks `DiscoveryService` to record the Waystone identity for the player. The call is intentionally independent from whether activation was newly granted, so players with legacy Waystone access receive a one-time memory backfill on their next physical interaction. Repeated interactions are idempotent.
+
+Discovery stores identity only, with versioned PDC payloads. Waystone rename therefore cannot stale a Discovery record, Waystone destruction does not erase historical memory, and travel is not itself a discovery. Detailed ownership, persistence, ADRs and UX are in `DISCOVERY_ARCHITECTURE.md`, `DISCOVERY_UX_SPEC.md` and `WAYSTONE_DISCOVERY_INTEGRATION.md`.
 
 ## Future Player HUD
 

@@ -19,6 +19,14 @@ import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateRead
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherController;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventAnnouncement;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSettingsLoader;
+import dev.signalshards.livingworld.features.discovery.application.DiscoveryEventPublisher;
+import dev.signalshards.livingworld.features.discovery.application.DiscoveryRegistry;
+import dev.signalshards.livingworld.features.discovery.application.DiscoveryService;
+import dev.signalshards.livingworld.features.discovery.paper.PaperDiscoveryModule;
+import dev.signalshards.livingworld.features.discovery.paper.PaperDiscoveryPresentation;
+import dev.signalshards.livingworld.features.discovery.paper.PaperPlayerDiscoveryStore;
+import dev.signalshards.livingworld.features.discovery.paper.PaperWorldDiscoveryStore;
+import dev.signalshards.livingworld.features.discovery.presentation.DiscoveryPresentationPolicy;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesModule;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperPathWearSettingsLoader;
 import dev.signalshards.livingworld.features.ecology.domain.FarmlandMoistureRetentionPolicy;
@@ -42,6 +50,7 @@ import dev.signalshards.livingworld.features.hud.paper.PaperHudSettingsLoader;
 import dev.signalshards.livingworld.features.hud.paper.TemperatureColorPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.SeasonCycle;
 import dev.signalshards.livingworld.features.seasons.paper.PaperSeasonTransitionAnnouncement;
+import dev.signalshards.livingworld.features.waystones.application.WaystoneDiscovery;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import dev.signalshards.livingworld.features.waystones.paper.PaperPlayerWaystoneAccessStore;
 import dev.signalshards.livingworld.features.waystones.paper.PaperSafeWaystoneDestination;
@@ -53,6 +62,7 @@ import dev.signalshards.livingworld.features.waystones.paper.PaperWaystoneTravel
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.logging.Level;
 
 public final class LivingWorldPlugin extends JavaPlugin {
@@ -107,6 +117,23 @@ public final class LivingWorldPlugin extends JavaPlugin {
         WaystoneService waystones = new WaystoneService(
                 new PaperWaystoneRegistry(this),
                 new PaperPlayerWaystoneAccessStore(this)
+        );
+
+        DiscoveryRegistry discoveryTypes = new DiscoveryRegistry(List.of(
+                WaystoneDiscovery.DEFINITION
+        ));
+        DiscoveryEventPublisher discoveryEvents = new DiscoveryEventPublisher(failure ->
+                getLogger().log(
+                        Level.WARNING,
+                        messages.text("discovery.listener-failed", failure.getMessage()),
+                        failure
+                )
+        );
+        DiscoveryService discovery = new DiscoveryService(
+                discoveryTypes,
+                discoveryEvents,
+                new PaperPlayerDiscoveryStore(this),
+                new PaperWorldDiscoveryStore(this)
         );
         PaperWaystoneTravelService waystoneTravel = new PaperWaystoneTravelService(
                 getServer(),
@@ -246,11 +273,20 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)
                 ),
+                new PaperDiscoveryModule(
+                        discoveryEvents,
+                        new PaperDiscoveryPresentation(
+                                getServer(),
+                                new DiscoveryPresentationPolicy(messages, discoveryTypes)
+                        ),
+                        getConfig().getBoolean("discovery.presentation.enabled", true)
+                ),
                 new PaperWaystoneModule(
                         this,
                         waystoneSettings,
                         waystones,
                         waystoneTravel,
+                        discovery,
                         messages,
                         statusProvider,
                         climateReadoutProvider

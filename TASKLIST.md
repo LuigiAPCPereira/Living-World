@@ -101,3 +101,14 @@ M12.3 informado concluído pelo usuário; integração sazonal existente preserv
 | M12.4 — Folhas sazonais próximas ao jogador | validated | ./gradlew clean test build aprovado (152 testes, 0 falhas); smoke visual Paper 26.3 + MCPFabric comprovado em runtime sob copa de folhas (partículas em outono, inverno condicionado por clima frio, verão nulo); fixture e mundo 100% restaurados |
 
 M12.4 recebeu aceite formal. Próxima ação executável quando autorizada: **LW-122**, preservando primeiro a fundação ambiental antes de ampliar flora/neve física.
+
+## M13 — Waystone navigation clarity
+
+| LW-130 | M13 | Add distance-aware Waystone menu navigation | validated | M8 | `/lw menu` groups current-world destinations first by distance, shows target world/coordinates, shows rounded same-world distance and preserves stable-ID click/travel semantics | merged-master `./gradlew clean test build` + forced `./gradlew test --rerun-tasks` green; 183 tests / 57 suites / 0 failures/errors/skips; IntelliJ build and `git diff --check --cached` clean | local master |
+| LW-131 | M13 | Runtime Waystone navigation-menu smoke | pending | LW-130 | real player confirms nearest-first current-world ordering, world/coordinate lore, same-world distance and unchanged click-to-travel behavior | pending real-player smoke on merged master | local master |
+
+## M14 — Discovery foundation
+
+| LW-140 | M14 | Define and implement the Discovery foundation | implemented not validated | M3, M13 | a discovery is identified by (type, id) and stored per owner; personal and world scope both work; only the first record publishes an event; undeclared types fail closed; persisted payloads have an explicit schema version and reject unknown versions | merged-master automated gates green: 183 tests / 57 suites / 0 failures; codec regressions cover V1 marker, headerless V1 compatibility, malformed payload and unknown-version rejection; runtime presentation pending | local master |
+| LW-141 | M14 | Integrate physical Waystone interaction with Discovery | implemented not validated | LW-140, LW-034 | first physical interaction records a personal discovery and shows one short title; legacy activated Waystones backfill once; repeated interaction, rename, destruction and travel keep their current behaviour; Waystone never depends on a presentation surface | merged-master gates green + dedicated legacy/idempotency regressions; interaction-level smoke pending LW-142 | local master |
+| LW-142 | M14 | Runtime Discovery + Waystone integration smoke | pending | LW-141, LW-131 | real player confirms one discovery title on first/backfill interaction, silence on repeat, unchanged rename/travel, climate command coexistence and Waystone removal without deleting discovery memory | pending real-player smoke on merged master | local master |

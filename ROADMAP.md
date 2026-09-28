@@ -17,6 +17,8 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M10 — Local climate readability | expose the effective local climate and already-active ecology probabilities so survival players can understand why the world reacts differently by place/season | M2, M5, M9 | LW-100..LW-101 | validated |
 | M11 — Weather readability | expose current local weather tendency and announce weather events only when Living World actually applies them, without fake forecasting or new simulation state | M2, M10 | LW-110..LW-112 | in progress |
 | M12 — Seasonal ecology & environmental foundation | evolve validated seasonal ecology into a shared thermal/environmental foundation before broader visual/physical simulation | M10, M11 | LW-120..LW-128 | in progress |
+| M13 — Waystone navigation clarity | make the existing Waystone network easier to scan by surfacing nearest-first same-world ordering plus world/coordinate/distance context without changing access or travel safety | M8 | LW-130..LW-131 | in progress |
+| M14 — Discovery foundation | add durable personal/world discovery memory and prove it through additive Waystone integration without coupling presentation or changing Waystone rules | M3, M13 | LW-140..LW-142 | in progress |
 
 ## Sequencing principles
 

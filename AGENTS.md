@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current direction: **M12.5 — Environmental & Thermal Foundation**. M12.4 is accepted/validated; implementation tasks for M12.5 remain staged in `TASKLIST.md`.
+Current integration/test focus: **M13 Waystone navigation clarity + M14 Discovery foundation** on local `master`. The accepted M12.5 environmental/thermal direction remains staged and must not be implemented opportunistically while this integration is being validated.
 
 Do not implement later roadmap modules opportunistically.
 
@@ -86,7 +86,7 @@ Tests should cover observable behavior, lifecycle, fallback semantics, and real 
 
 Observed initial repository state: local Git repository, branch `master`, unborn HEAD at project initialization.
 
-Current user authorization covers protocol initialization and continued local development. It does **not** authorize merge, deploy, remote repository creation, branch-protection changes, publishing releases, or external paid services.
+Current explicit user authorization covers the local Waystone/Discovery merge into `master` for testing, plus continued local development. It does **not** authorize deploy, remote repository creation, branch-protection changes, publishing releases, external paid services, or remote merge/push.
 
 Preserve unrelated user changes. Inspect the diff before committing. Never commit secrets.
 
