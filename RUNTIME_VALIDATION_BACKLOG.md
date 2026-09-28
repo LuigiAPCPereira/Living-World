@@ -508,18 +508,117 @@ Restart using the project's normal safe procedure.
 
 - The gesture produces only vanilla inventory behavior; no bulk matching transfer occurs.
 
-#### N. Log/lifecycle sanity
+#### N. Closed-container basic gesture
+
+**Prepare**
+
+- Use Survival or Adventure.
+- Put at least one matching category in a supported physical storage.
+- Keep the player's main hand empty.
+- Keep one exact matching stack in slots 9..35.
+
+**Action**
+
+- Sneak and right-click the closed storage block.
+
+**Expected**
+
+- The GUI does not open.
+- Matching main-inventory items deposit using the same rules as the open-GUI path.
+- Hotbar/offhand/armor remain untouched.
+- The paired offhand interaction does not reopen/use the storage.
+
+#### O. Closed-container access safety
+
+Exercise representative blocked/unsafe states where practical:
+
+- locked chest/barrel/shulker;
+- chest blocked by vanilla obstruction;
+- shulker with a non-passable block in its opening direction;
+- storage currently being viewed by another player;
+- naturally generated loot storage before its loot table has been consumed, when a safe fixture is available.
+
+**Expected**
+
+- Living World does not take ownership of unsafe/denied storage.
+- No inventory transfer occurs.
+- Vanilla/protection-plugin behavior remains authoritative.
+- No loot generation/access rule is bypassed.
+
+#### P. Protection-plugin denial
+
+If the runtime environment includes a protection plugin, deny interaction with one supported storage and repeat the closed gesture.
+
+**Expected**
+
+- Deposit Matching does not bypass the denied block interaction.
+
+If no protection plugin is installed, record this scenario as not exercised rather than inferring compatibility.
+
+#### Q. Closed-container visual presentation
+
+With `qol.deposit-matching.presentation.enabled: true`:
+
+- perform a successful closed deposit with one category;
+- repeat with at least three distinct eligible categories;
+- if convenient, repeat with more than three eligible categories.
+
+**Expected**
+
+- A short visual reaction occurs only after a real transfer.
+- The container lid reacts when Living World can safely own that animation.
+- Real transferred item types are visually represented.
+- At most three ItemDisplay representatives appear even when more categories move.
+- Displays travel briefly toward the clicked storage and disappear automatically.
+- One quiet vanilla pickup-style sound accompanies arrival.
+- No ItemDisplay remains after the animation window.
+
+#### R. Viewer/lid ownership
+
+Use two players if available.
+
+**Action**
+
+- Player A triggers a closed deposit that starts the lid animation.
+- Player B opens the same storage before Living World's planned visual close.
+
+**Expected**
+
+- Living World does not force-close the lid while the inventory still has viewers.
+- After the final viewer closes, the temporary forced-lid state is released.
+- The chest/barrel/shulker does not remain visually stuck open.
+
+#### S. Presentation disabled
+
+Set:
+
+```yaml
+qol:
+  deposit-matching:
+    enabled: true
+    presentation:
+      enabled: false
+```
+
+Restart using the normal safe procedure and repeat a successful closed deposit.
+
+**Expected**
+
+- Deposit Matching still transfers items.
+- No Deposit Matching ItemDisplay/lid presentation is created.
+
+#### T. Log/lifecycle sanity
 
 During the smoke:
 
-- use Deposit Matching repeatedly across supported storages;
+- use both Deposit Matching gestures repeatedly across supported storages;
 - disconnect/reconnect;
-- stop the server normally.
+- stop the server normally, including after at least one visual closed deposit.
 
 **Expected**
 
 - No Living World error/warning related to Deposit Matching.
-- No pending-task or shutdown exception.
+- No pending-task, orphan ItemDisplay, forced-lid or shutdown exception.
 
 **Evidence to record**
 
