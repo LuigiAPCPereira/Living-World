@@ -1,7 +1,7 @@
 # Living World — Project State
 
 - **Protocol:** Agent Development Protocol v2.2 snapshot in repository
-- **Product scope:** `PRODUCT.md` — Foundation v0.1
+- **Product scope:** `PRODUCT.md` — Foundation v0.1 + Discovery foundation (M11)
 - **Requirements:** `PRODUCT.md`
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`

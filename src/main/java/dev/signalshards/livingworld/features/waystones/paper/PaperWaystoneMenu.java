@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,10 +18,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class PaperWaystoneMenu implements Listener {
     private final WaystoneService waystones;
@@ -74,7 +77,17 @@ public final class PaperWaystoneMenu implements Listener {
             return;
         }
 
-        int size = WaystoneMenuLayout.inventorySize(activated.size());
+        var playerLocation = player.getLocation();
+        UUID currentWorldId = player.getWorld().getUID();
+        List<Waystone> destinations = WaystoneMenuLayout.orderDestinations(
+                currentWorldId,
+                playerLocation.getX(),
+                playerLocation.getY(),
+                playerLocation.getZ(),
+                activated
+        );
+
+        int size = WaystoneMenuLayout.inventorySize(destinations.size());
         WaystoneMenuHolder holder = new WaystoneMenuHolder();
         Inventory inventory = Bukkit.createInventory(
                 holder,
@@ -86,10 +99,19 @@ public final class PaperWaystoneMenu implements Listener {
         );
         holder.bind(inventory);
 
-        for (int slot = 0; slot < activated.size(); slot++) {
-            Waystone waystone = activated.get(slot);
+        for (int slot = 0; slot < destinations.size(); slot++) {
+            Waystone waystone = destinations.get(slot);
             holder.bind(slot, waystone.id());
-            inventory.setItem(slot, menuItem(waystone));
+            inventory.setItem(
+                    slot,
+                    menuItem(
+                            currentWorldId,
+                            playerLocation.getX(),
+                            playerLocation.getY(),
+                            playerLocation.getZ(),
+                            waystone
+                    )
+            );
         }
         player.openInventory(inventory);
     }
@@ -147,28 +169,62 @@ public final class PaperWaystoneMenu implements Listener {
         }
     }
 
-    private ItemStack menuItem(Waystone waystone) {
+    private ItemStack menuItem(
+            UUID currentWorldId,
+            double playerX,
+            double playerY,
+            double playerZ,
+            Waystone waystone
+    ) {
         ItemStack item = new ItemStack(iconMaterial);
         var meta = item.getItemMeta();
         meta.displayName(Component.text(
                 waystone.name(),
                 NamedTextColor.GOLD
         ));
-        meta.lore(List.of(
-                Component.text(
-                        messages.text(
-                                "waystone.menu-location",
-                                waystone.x(),
-                                waystone.y(),
-                                waystone.z()
-                        ),
-                        NamedTextColor.GRAY
-                ),
-                Component.text(
-                        messages.text("waystone.menu-click"),
-                        NamedTextColor.AQUA
-                )
+
+        List<Component> lore = new ArrayList<>();
+        World targetWorld = Bukkit.getWorld(waystone.worldId());
+        String worldName = targetWorld == null
+                ? messages.text("waystone.menu-world-unavailable")
+                : targetWorld.getName();
+        lore.add(Component.text(
+                messages.text("waystone.menu-world", worldName),
+                NamedTextColor.DARK_GRAY
         ));
+        lore.add(Component.text(
+                messages.text(
+                        "waystone.menu-location",
+                        waystone.x(),
+                        waystone.y(),
+                        waystone.z()
+                ),
+                NamedTextColor.GRAY
+        ));
+        if (waystone.worldId().equals(currentWorldId)) {
+            lore.add(Component.text(
+                    messages.text(
+                            "waystone.menu-distance",
+                            WaystoneMenuLayout.distanceBlocks(
+                                    playerX,
+                                    playerY,
+                                    playerZ,
+                                    waystone
+                            )
+                    ),
+                    NamedTextColor.AQUA
+            ));
+        } else {
+            lore.add(Component.text(
+                    messages.text("waystone.menu-other-world"),
+                    NamedTextColor.LIGHT_PURPLE
+            ));
+        }
+        lore.add(Component.text(
+                messages.text("waystone.menu-click"),
+                NamedTextColor.GREEN
+        ));
+        meta.lore(lore);
         item.setItemMeta(meta);
         return item;
     }
