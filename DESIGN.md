@@ -27,6 +27,7 @@
 | `features.desirelines.application` | bounded sparse per-chunk traffic ledger | Paper PDC or block types |
 | `features.desirelines.paper` | movement observation, block wear and Chunk PDC persistence | global world scanning or unrelated QoL rules |
 | `features.qol.doubledoors.paper` | detects an unambiguous adjacent compatible door and mirrors manual open state | redstone automation or arbitrary nearby doors |
+| `features.qol.autorefill.paper` | observes bounded selected-hotbar depletion and moves an exact matching stack from main inventory on the next tick | item creation, sorting, tool replacement, containers or persistence |
 | `features.waystones.domain` | stable waystone identity, display name and anchor coordinates | Paper storage, GUI or teleport APIs |
 | `features.waystones.application` | registration, activation visibility and travel result contracts | player/world PDC details |
 | `features.waystones.paper` | World/Player PDC adapters, safe destination validation and async Paper teleport | economy, GUI or physical activation presentation |
@@ -95,6 +96,7 @@ Text intended for players or server administrators is translatable and therefore
 - no claims of optimization without measurement;
 - module disable must stop owned background work;
 - persistent systems should index only state they own rather than rediscovering the world repeatedly.
+- hotbar auto-refill is event-driven and scans at most the 27 main-inventory storage slots only after a candidate selected stack is depleted.
 
 ## Persistence
 
