@@ -1,9 +1,8 @@
 package dev.signalshards.livingworld.features.qol.containersort.paper;
 
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,77 +12,118 @@ class ContainerSortPlannerTest {
     private final ContainerSortPlanner planner = new ContainerSortPlanner();
 
     @Test
-    void consolidatesSimilarStacksAndSortsByMaterialKey() {
-        ItemStack[] source = new ItemStack[] {
-                new ItemStack(Material.STONE, 32),
-                null,
-                new ItemStack(Material.DIRT, 5),
-                new ItemStack(Material.STONE, 40),
-                null
-        };
+    void consolidatesExactVariantsAndSortsByMaterialKey() {
+        List<TestStack> source = List.of(
+                new TestStack("minecraft:stone", "normal", 32, 64),
+                new TestStack("minecraft:dirt", "normal", 5, 64),
+                new TestStack("minecraft:stone", "normal", 40, 64)
+        );
 
-        ItemStack[] result = planner.plan(source).orElseThrow();
+        List<ContainerSortPlanner.PlannedStack<TestStack>> result =
+                plan(source, 5).orElseThrow();
 
-        assertEquals(Material.DIRT, result[0].getType());
-        assertEquals(5, result[0].getAmount());
-        assertEquals(Material.STONE, result[1].getType());
-        assertEquals(64, result[1].getAmount());
-        assertEquals(Material.STONE, result[2].getType());
-        assertEquals(8, result[2].getAmount());
-        assertTrue(result[3] == null && result[4] == null);
+        assertEquals("minecraft:dirt", result.get(0).template().materialKey());
+        assertEquals(5, result.get(0).amount());
+        assertEquals("minecraft:stone", result.get(1).template().materialKey());
+        assertEquals(64, result.get(1).amount());
+        assertEquals("minecraft:stone", result.get(2).template().materialKey());
+        assertEquals(8, result.get(2).amount());
     }
 
     @Test
-    void respectsRealMaxStackSizeForNonStackableItems() {
-        ItemStack[] source = new ItemStack[] {
-                new ItemStack(Material.DIAMOND_SWORD, 1),
-                new ItemStack(Material.DIAMOND_SWORD, 1),
-                null
-        };
+    void keepsSameMaterialMetadataVariantsSeparateAndStable() {
+        List<TestStack> source = List.of(
+                new TestStack("minecraft:stone", "named-b", 2, 64),
+                new TestStack("minecraft:dirt", "normal", 1, 64),
+                new TestStack("minecraft:stone", "normal", 4, 64),
+                new TestStack("minecraft:stone", "named-b", 3, 64)
+        );
 
-        ItemStack[] result = planner.plan(source).orElseThrow();
+        List<ContainerSortPlanner.PlannedStack<TestStack>> result =
+                plan(source, 5).orElseThrow();
 
-        assertEquals(Material.DIAMOND_SWORD, result[0].getType());
-        assertEquals(1, result[0].getAmount());
-        assertEquals(Material.DIAMOND_SWORD, result[1].getType());
-        assertEquals(1, result[1].getAmount());
+        assertEquals("minecraft:dirt", result.get(0).template().materialKey());
+        assertEquals("named-b", result.get(1).template().variant());
+        assertEquals(5, result.get(1).amount());
+        assertEquals("normal", result.get(2).template().variant());
+        assertEquals(4, result.get(2).amount());
+    }
+
+    @Test
+    void respectsPerVariantMaximumStackSize() {
+        List<TestStack> source = List.of(
+                new TestStack("minecraft:diamond_sword", "normal", 1, 1),
+                new TestStack("minecraft:diamond_sword", "normal", 1, 1)
+        );
+
+        List<ContainerSortPlanner.PlannedStack<TestStack>> result =
+                plan(source, 3).orElseThrow();
+
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).amount());
+        assertEquals(1, result.get(1).amount());
     }
 
     @Test
     void preservesTotalAmounts() {
-        ItemStack[] source = new ItemStack[] {
-                new ItemStack(Material.OAK_LOG, 17),
-                new ItemStack(Material.COBBLESTONE, 64),
-                new ItemStack(Material.OAK_LOG, 64),
-                new ItemStack(Material.COBBLESTONE, 7),
-                null,
-                null
-        };
+        List<TestStack> source = List.of(
+                new TestStack("minecraft:oak_log", "normal", 17, 64),
+                new TestStack("minecraft:cobblestone", "normal", 64, 64),
+                new TestStack("minecraft:oak_log", "normal", 64, 64),
+                new TestStack("minecraft:cobblestone", "normal", 7, 64)
+        );
 
-        ItemStack[] result = planner.plan(source).orElseThrow();
+        List<ContainerSortPlanner.PlannedStack<TestStack>> result =
+                plan(source, 6).orElseThrow();
 
-        assertEquals(81, total(result, Material.OAK_LOG));
-        assertEquals(71, total(result, Material.COBBLESTONE));
+        assertEquals(81, total(result, "minecraft:oak_log"));
+        assertEquals(71, total(result, "minecraft:cobblestone"));
     }
 
     @Test
     void failsClosedWhenNormalizingWouldNeedMoreSlotsThanAvailable() {
-        ItemStack[] source = new ItemStack[] {
-                new ItemStack(Material.STONE, 128)
-        };
+        List<TestStack> source = List.of(
+                new TestStack("minecraft:stone", "normal", 128, 64)
+        );
 
-        Optional<ItemStack[]> result = planner.plan(source);
+        Optional<List<ContainerSortPlanner.PlannedStack<TestStack>>> result =
+                plan(source, 1);
 
         assertTrue(result.isEmpty());
     }
 
-    private int total(ItemStack[] stacks, Material material) {
-        int total = 0;
-        for (ItemStack stack : stacks) {
-            if (stack != null && stack.getType() == material) {
-                total += stack.getAmount();
-            }
-        }
-        return total;
+    private Optional<List<ContainerSortPlanner.PlannedStack<TestStack>>> plan(
+            List<TestStack> source,
+            int capacity
+    ) {
+        return planner.plan(
+                source,
+                capacity,
+                (left, right) -> left.materialKey().equals(right.materialKey())
+                        && left.variant().equals(right.variant()),
+                TestStack::materialKey,
+                TestStack::amount,
+                TestStack::maxStackSize
+        );
+    }
+
+    private int total(
+            List<ContainerSortPlanner.PlannedStack<TestStack>> stacks,
+            String materialKey
+    ) {
+        return stacks.stream()
+                .filter(stack ->
+                        stack.template().materialKey().equals(materialKey)
+                )
+                .mapToInt(ContainerSortPlanner.PlannedStack::amount)
+                .sum();
+    }
+
+    private record TestStack(
+            String materialKey,
+            String variant,
+            int amount,
+            int maxStackSize
+    ) {
     }
 }
