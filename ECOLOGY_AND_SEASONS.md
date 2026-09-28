@@ -350,6 +350,8 @@ Encantamentos só devem influenciar temperatura quando sua semântica vanilla su
 
 Molhamento deve ser estado acumulável separado da temperatura ambiente: `Wetness = 0.0 .. 1.0`.
 
+**Checkpoint de implementação LW-122 / terceiro slice:** `WetnessState` modela umidade acumulada em `[0, 1]`, `WetnessRate` representa molhar/secar por segundo e `WetnessPolicy` integra a taxa pelo tempo decorrido. Assim como o estado corporal, a integração é independente da frequência de atualização e satura de forma segura em seco/completamente molhado. Chuva, submersão, abrigo, calor e equipamento ainda não foram ligados; eles serão apenas produtores/modificadores dessa taxa.
+
 Fontes candidatas: chuva, contato parcial com água, natação/submersão e outras precipitações apenas quando fizer sentido. Recuperação vem de tempo, abrigo, calor, fogueira e condições secas.
 
 Wetness aumenta troca térmica com ambiente frio; não significa automaticamente `-X °C`. Uma tempestade quente de verão não deve causar hipotermia só porque o jogador está molhado.

@@ -281,6 +281,8 @@ O modelo térmico segue um princípio Vanilla+: condições ambientais definem o
 
 Segundo slice de LW-122: `PlayerThermalState` é um índice corporal interno normalizado em `[-1, +1]`, independente de Celsius; `ThermalExchangeRate` fornece a taxa líquida por segundo; `PlayerThermalPolicy` integra essa taxa usando tempo decorrido e classifica o resultado com `PlayerThermalThresholds` em bandas de `EXTREME_COLD` a `EXTREME_HEAT`. O integrador não conhece Paper nem a origem da taxa, permitindo que água, vento, atividade, isolamento e fontes térmicas sejam compostos depois sem duplicar a inércia corporal.
 
+Terceiro slice de LW-122: wetness também é estado temporal próprio. `WetnessState` guarda `[0,1]`, `WetnessRate` define a variação líquida por segundo e `WetnessPolicy` integra/satura. Molhamento não altera `AmbientTemperature`; ele será um dos fatores que modificam a troca térmica corporal.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.
