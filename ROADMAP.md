@@ -15,6 +15,8 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M8 — Waystone visual navigation | add an optional visual travel surface over the same validated Waystone identity/access/travel rules | M3, M7 | LW-080..LW-081 | validated |
 | M9 — Seasonal transition feedback | make season boundaries perceptible to players using existing calendar transition events without introducing polling or simulation state | M1, M4 | LW-090..LW-091 | validated |
 | M10 — Local climate readability | expose the effective local climate and already-active ecology probabilities so survival players can understand why the world reacts differently by place/season | M2, M5, M9 | LW-100..LW-101 | validated |
+| M11 — Weather readability | expose current local weather tendency and announce weather events only when Living World actually applies them, without fake forecasting or new simulation state | M2, M10 | LW-110..LW-112 | in progress |
+| M12 — Seasonal ecology | make existing ecological rules react to seasons through deterministic modifiers before adding visual world changes | M10, M11 | LW-120.. | in progress |
 
 ## Sequencing principles
 
@@ -30,3 +32,7 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 - Environmental systems can become tick-heavy if implemented as global scans.
 - Persistence requirements are not yet known and should not be guessed.
 - Visual seasonal effects may eventually need optional resource-pack support; not part of Foundation v0.1.
+
+## Checkpoint M12.4
+
+M12.3 concluído conforme confirmação do usuário. M12.4 implementa a primeira fatia visual de folhas via movimento limitado por jogador, sem scans periódicos ou mutações de blocos. Aceite visual em cliente Paper permanece separado dos gates automatizados. Flora dinâmica e efeitos adicionais continuam fora desta entrega.

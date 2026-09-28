@@ -81,6 +81,7 @@ public final class PaperLocalClimateReadoutProvider
                 ),
                 snapshot.temperature(),
                 snapshot.moisture(),
+                snapshot.weatherTendency(),
                 chance(
                         ecology.naturalGrowthEnabled(),
                         growthPolicy.acceptanceChance(

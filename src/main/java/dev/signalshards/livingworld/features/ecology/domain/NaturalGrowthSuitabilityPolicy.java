@@ -3,6 +3,7 @@ package dev.signalshards.livingworld.features.ecology.domain;
 import dev.signalshards.livingworld.features.climate.domain.ClimateSnapshot;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
+import dev.signalshards.livingworld.features.seasons.domain.Season;
 
 import java.util.Objects;
 
@@ -15,6 +16,38 @@ import java.util.Objects;
  * toda a penalidade climática.</p>
  */
 public final class NaturalGrowthSuitabilityPolicy {
+    public double acceptanceChance(
+            ClimateSnapshot climate,
+            Season season,
+            GrowthCategory category,
+            double strength,
+            SeasonalEcologyModifier seasonalModifier
+    ) {
+        Objects.requireNonNull(season, "estação");
+        Objects.requireNonNull(seasonalModifier, "modificador sazonal");
+        Objects.requireNonNull(category, "categoria de crescimento");
+
+        return clamp(
+                acceptanceChance(climate, strength)
+                        * seasonalModifier.multiplier(category, season)
+        );
+    }
+
+    public double acceptanceChance(
+            ClimateSnapshot climate,
+            Season season,
+            double strength,
+            SeasonalEcologyModifier seasonalModifier
+    ) {
+        return acceptanceChance(
+                climate,
+                season,
+                GrowthCategory.CROP,
+                strength,
+                seasonalModifier
+        );
+    }
+
     public double acceptanceChance(ClimateSnapshot climate, double strength) {
         Objects.requireNonNull(climate, "clima");
         if (!Double.isFinite(strength) || strength < 0.0D || strength > 1.0D) {
@@ -26,6 +59,10 @@ public final class NaturalGrowthSuitabilityPolicy {
         double baseSuitability = thermalFactor(climate.temperature())
                 * moistureFactor(climate.moisture());
         return 1.0D - (strength * (1.0D - baseSuitability));
+    }
+
+    private double clamp(double value) {
+        return Math.clamp(value, 0.0D, 1.5D);
     }
 
     private double thermalFactor(ThermalBand temperature) {

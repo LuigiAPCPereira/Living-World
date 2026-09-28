@@ -3,6 +3,12 @@ package dev.signalshards.livingworld.features.ecology.paper;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
+import dev.signalshards.livingworld.features.ecology.domain.GrowthCategory;
+import dev.signalshards.livingworld.features.ecology.domain.SeasonalEcologyModifier;
+import dev.signalshards.livingworld.features.ecology.domain.DefaultSeasonalEcologyModifier;
+import dev.signalshards.livingworld.features.calendar.application.CalendarView;
+import dev.signalshards.livingworld.features.calendar.domain.CalendarDate;
+import dev.signalshards.livingworld.features.seasons.domain.Season;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
@@ -25,6 +31,8 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
     private final PaperEcologySettings settings;
     private final PaperLocalClimateResolver climate;
     private final NaturalGrowthSuitabilityPolicy growthPolicy;
+    private final CalendarView calendar;
+    private final SeasonalEcologyModifier seasonalModifier;
     private final DoubleSupplier random;
 
     public PaperNaturalGrowthModule(
@@ -32,7 +40,8 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
             World world,
             PaperEcologySettings settings,
             PaperLocalClimateResolver climate,
-            NaturalGrowthSuitabilityPolicy growthPolicy
+            NaturalGrowthSuitabilityPolicy growthPolicy,
+            DoubleSupplier random
     ) {
         this(
                 plugin,
@@ -40,8 +49,50 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
                 settings,
                 climate,
                 growthPolicy,
+                constantCalendar(),
+                new DefaultSeasonalEcologyModifier(),
+                random
+        );
+    }
+
+    public PaperNaturalGrowthModule(
+            Plugin plugin,
+            World world,
+            PaperEcologySettings settings,
+            PaperLocalClimateResolver climate,
+            NaturalGrowthSuitabilityPolicy growthPolicy,
+            CalendarView calendar,
+            SeasonalEcologyModifier seasonalModifier
+    ) {
+        this(
+                plugin,
+                world,
+                settings,
+                climate,
+                growthPolicy,
+                calendar,
+                seasonalModifier,
                 () -> ThreadLocalRandom.current().nextDouble()
         );
+    }
+
+    private static CalendarView constantCalendar() {
+        return new CalendarView() {
+            @Override
+            public CalendarDate currentDate() {
+                return new CalendarDate(1, 1, 1);
+            }
+
+            @Override
+            public Season currentSeason() {
+                return Season.PRIMAVERA;
+            }
+
+            @Override
+            public int daysPerMonth() {
+                return 8;
+            }
+        };
     }
 
     PaperNaturalGrowthModule(
@@ -50,6 +101,8 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
             PaperEcologySettings settings,
             PaperLocalClimateResolver climate,
             NaturalGrowthSuitabilityPolicy growthPolicy,
+            CalendarView calendar,
+            SeasonalEcologyModifier seasonalModifier,
             DoubleSupplier random
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
@@ -57,6 +110,11 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
         this.settings = Objects.requireNonNull(settings, "configuração ecológica");
         this.climate = Objects.requireNonNull(climate, "clima local");
         this.growthPolicy = Objects.requireNonNull(growthPolicy, "política de crescimento");
+        this.calendar = Objects.requireNonNull(calendar, "calendário");
+        this.seasonalModifier = Objects.requireNonNull(
+                seasonalModifier,
+                "modificador sazonal"
+        );
         this.random = Objects.requireNonNull(random, "fonte aleatória");
     }
 
@@ -84,7 +142,7 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
             return;
         }
 
-        if (rejectNaturalGrowth(block, settings.cropGrowthStrength())) {
+        if (rejectNaturalGrowth(block, GrowthCategory.CROP, settings.cropGrowthStrength())) {
             event.setCancelled(true);
         }
     }
@@ -98,15 +156,18 @@ public final class PaperNaturalGrowthModule implements LivingWorldModule, Listen
             return;
         }
 
-        if (rejectNaturalGrowth(origin, settings.treeGrowthStrength())) {
+        if (rejectNaturalGrowth(origin, GrowthCategory.TREE, settings.treeGrowthStrength())) {
             event.setCancelled(true);
         }
     }
 
-    private boolean rejectNaturalGrowth(Block block, double strength) {
+    private boolean rejectNaturalGrowth(Block block, GrowthCategory category, double strength) {
         double acceptanceChance = growthPolicy.acceptanceChance(
                 climate.snapshotAt(block),
-                strength
+                calendar.currentSeason(),
+                category,
+                strength,
+                seasonalModifier
         );
         return nextRandomSample() >= acceptanceChance;
     }

@@ -75,3 +75,22 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 | LW-101 | M10 | Runtime climate readout contrast smoke | validated | LW-100 | savanna and snowy_plains show meaningfully different readouts matching existing climate/ecology behavior | live Paper/MCPFabric: savanna 39°C Escaldante/Árido with crops 50%, farmland 0%, fire 100%, no frozen persistence; snowy_plains -1°C Congelante/Equilibrado with crops 58%, farmland 39%, fire 60%, frozen persistence; random_tick_speed confirmed 3 and log clean | local master |
 
 **M10 complete — local climate readability validated in live gameplay.**
+
+| LW-120 | M12 | Add seasonal ecology modifier domain | in progress | M10 | season influences ecological growth through isolated domain multipliers without Bukkit or simulation state | implementation + domain tests pending | local master |
+
+| LW-110 | M11 | Add weather tendency to local climate readout | implemented not validated | M10 | /lw climate exposes the existing WeatherTendency from the same local ClimateSnapshot without claiming a future forecast | clean IntelliJ/Gradle gates; hot/dry=Tempo limpo and cold/wet=Precipitação provider assertions pass; live Paper pending | local master |
+| LW-111 | M11 | Add player feedback for applied Living World weather events | implemented not validated | M2 | when the climate coordinator actually applies clear/precipitation/storm weather, online players receive one short configurable message; stable/no-plan state stays silent | clean gates; coordinator sends one message after apply and disabled toggle stays silent; live Paper pending | local master |
+| LW-112 | M11 | Runtime weather feedback smoke | pending | LW-110, LW-111 | live logical-day advance applies a weather plan, player sees matching event feedback and /lw climate tendency remains coherent | not validated | local master |
+
+**LW-112 — runtime weather feedback smoke.**
+
+## Checkpoint M12.4 — 2026-09-27
+
+M12.3 informado concluído pelo usuário; integração sazonal existente preservada. Esta atualização substitui o ponteiro antigo LW-120 para o trabalho atual.
+
+| Task | State | Evidence / remaining validation |
+| --- | --- | --- |
+| M12.4 — Folhas sazonais próximas ao jogador | validated | ./gradlew clean test build aprovado (152 testes, 0 falhas); smoke visual Paper 26.3 + MCPFabric comprovado em runtime sob copa de folhas (partículas em outono, inverno condicionado por clima frio, verão nulo); fixture e mundo 100% restaurados |
+
+Próxima ação: aceite final pelo usuário e planejamento da próxima fatia ecológica visual.
+

@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **M11 planning — choose the next survival-value slice after local climate readability validation**.
+Current task: **M12.4 — ecologia visual / folhas sazonais**.
 
 Do not implement later roadmap modules opportunistically.
 

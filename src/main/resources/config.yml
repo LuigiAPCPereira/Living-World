@@ -10,6 +10,7 @@ seasons:
 
 climate:
   weather-events:
+    player-announcements: true
     clear-duration-seconds: 600
     precipitation-duration-seconds: 300
     storm-duration-seconds: 180

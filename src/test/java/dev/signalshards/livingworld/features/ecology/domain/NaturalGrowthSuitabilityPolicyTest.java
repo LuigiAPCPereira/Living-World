@@ -4,6 +4,7 @@ import dev.signalshards.livingworld.features.climate.domain.ClimateSnapshot;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
 import dev.signalshards.livingworld.features.climate.domain.WeatherTendency;
+import dev.signalshards.livingworld.features.seasons.domain.Season;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,6 +55,82 @@ class NaturalGrowthSuitabilityPolicyTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> policy.acceptanceChance(climate, 1.1D)
+        );
+    }
+
+    @Test
+    void categoriasUsamMultiplicadorSazonalCorrespondente() {
+        ClimateSnapshot climate = snapshot(
+                ThermalBand.TEMPERADO,
+                MoistureBand.EQUILIBRADO
+        );
+        SeasonalEcologyModifier modifier = new DefaultSeasonalEcologyModifier();
+
+        assertEquals(
+                1.15D,
+                policy.acceptanceChance(
+                        climate,
+                        Season.PRIMAVERA,
+                        GrowthCategory.CROP,
+                        0.0D,
+                        modifier
+                )
+        );
+        assertEquals(
+                1.10D,
+                policy.acceptanceChance(
+                        climate,
+                        Season.PRIMAVERA,
+                        GrowthCategory.TREE,
+                        0.0D,
+                        modifier
+                )
+        );
+        assertEquals(
+                1.20D,
+                policy.acceptanceChance(
+                        climate,
+                        Season.PRIMAVERA,
+                        GrowthCategory.GROUND_COVER,
+                        0.0D,
+                        modifier
+                )
+        );
+    }
+
+    @Test
+    void multipliersSazonaisSaoLimitadosPeloClamp() {
+        ClimateSnapshot climate = snapshot(
+                ThermalBand.TEMPERADO,
+                MoistureBand.EQUILIBRADO
+        );
+
+        SeasonalEcologyModifier modifier = new SeasonalEcologyModifier() {
+            @Override
+            public double cropMultiplier(Season season) {
+                return 2.0D;
+            }
+
+            @Override
+            public double treeMultiplier(Season season) {
+                return 2.0D;
+            }
+
+            @Override
+            public double grassMultiplier(Season season) {
+                return 2.0D;
+            }
+        };
+
+        assertEquals(
+                1.5D,
+                policy.acceptanceChance(
+                        climate,
+                        Season.PRIMAVERA,
+                        GrowthCategory.CROP,
+                        0.0D,
+                        modifier
+                )
         );
     }
 

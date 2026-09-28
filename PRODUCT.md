@@ -40,6 +40,8 @@ These are product directions, not promises that all are implemented in the curre
 - Month duration is a policy value rather than a hard dependency of the date model, so server pacing can evolve later.
 - Crossing a real season boundary may produce a short optional player title using the existing calendar transition event; this is presentation only and adds no new season state.
 - `/lw climate` explains the player's effective local climate using the same temperature/moisture snapshot and ecology policies already driving gameplay. It reports configured acceptance/retention percentages rather than inventing a separate simulation model.
+- Local climate readability may include the existing weather tendency, explicitly as a current tendency rather than a guaranteed future forecast.
+- When Living World actually applies a global weather event after logical calendar progress, an optional short player message may explain the applied clear/precipitation/storm plan.
 
 ## Climate direction
 
@@ -124,3 +126,7 @@ The foundation is accepted when:
 - user/admin-facing messages have an i18n foundation with deterministic PT-BR fallback and optional additional locales;
 - tests cover the module lifecycle and message fallback behavior;
 - project documentation, task inventory, roadmap, and checkpoint are recoverable for a new agent.
+
+## M12.4 — Ecologia visual inicial
+
+Folhas sazonais oferecem partículas ocasionais junto a copas próximas de jogadores em movimento, usando estação/clima existentes. Não recolorem folhas, acumulam neve, alteram flora ou blocos. Jogadores parados não recebem novas tentativas. A ausência de movimento elimina trabalho desta feature; não existe simulação visual global.

@@ -27,6 +27,7 @@ public final class PaperClimateCoordinator implements CalendarProgressListener {
     private final ClimatePolicy policy;
     private final WeatherEventPlanner planner;
     private final PaperWeatherController controller;
+    private final PaperWeatherEventAnnouncement announcement;
     private final SeasonCycle seasons;
     private final MessageCatalog messages;
     private final Logger logger;
@@ -39,6 +40,7 @@ public final class PaperClimateCoordinator implements CalendarProgressListener {
             ClimatePolicy policy,
             WeatherEventPlanner planner,
             PaperWeatherController controller,
+            PaperWeatherEventAnnouncement announcement,
             SeasonCycle seasons,
             MessageCatalog messages,
             Logger logger
@@ -48,6 +50,10 @@ public final class PaperClimateCoordinator implements CalendarProgressListener {
         this.policy = Objects.requireNonNull(policy, "política climática");
         this.planner = Objects.requireNonNull(planner, "planejador de eventos");
         this.controller = Objects.requireNonNull(controller, "controlador de clima Paper");
+        this.announcement = Objects.requireNonNull(
+                announcement,
+                "anúncio de evento climático"
+        );
         this.seasons = Objects.requireNonNull(seasons, "ciclo de estações");
         this.messages = Objects.requireNonNull(messages, "catálogo de mensagens");
         this.logger = Objects.requireNonNull(logger, "logger");
@@ -64,6 +70,7 @@ public final class PaperClimateCoordinator implements CalendarProgressListener {
 
     private void apply(WeatherEventPlan plan) {
         controller.apply(world, plan);
+        announcement.announce(world, plan);
         logger.info(messages.text(
                 "climate.weather-applied",
                 world.getName(),

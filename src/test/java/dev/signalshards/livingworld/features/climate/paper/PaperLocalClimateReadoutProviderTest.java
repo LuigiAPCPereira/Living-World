@@ -8,6 +8,7 @@ import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassi
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresholds;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
+import dev.signalshards.livingworld.features.climate.domain.WeatherTendency;
 import dev.signalshards.livingworld.features.ecology.domain.FarmlandMoistureRetentionPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.FireSpreadSuitabilityPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.FrozenSurfacePolicy;
@@ -35,6 +36,7 @@ class PaperLocalClimateReadoutProviderTest {
         assertEquals(23, readout.apparentCelsius());
         assertEquals(ThermalBand.QUENTE, readout.thermalBand());
         assertEquals(MoistureBand.SECO, readout.moistureBand());
+        assertEquals(WeatherTendency.TEMPO_LIMPO, readout.weatherTendency());
         assertEquals(79, readout.cropGrowth().percent());
         assertEquals(89, readout.treeGrowth().percent());
         assertEquals(84, readout.grassSpread().percent());
@@ -51,6 +53,7 @@ class PaperLocalClimateReadoutProviderTest {
         assertEquals(7, readout.apparentCelsius());
         assertEquals(ThermalBand.FRIO, readout.thermalBand());
         assertEquals(MoistureBand.UMIDO, readout.moistureBand());
+        assertEquals(WeatherTendency.PRECIPITACAO, readout.weatherTendency());
         assertEquals(81, readout.cropGrowth().percent());
         assertEquals(90, readout.treeGrowth().percent());
         assertEquals(85, readout.grassSpread().percent());

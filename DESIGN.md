@@ -118,6 +118,8 @@ Season-transition presentation is a narrow `CalendarProgressListener`. When a pr
 
 Player exposure (water/fire/lava) for apparent temperature is shared between HUD and climate readout through `PaperTemperatureExposureResolver`, preventing presentation drift between the two surfaces.
 
+Weather readability deliberately separates **tendency** from **applied event**. `/lw climate` displays the local `WeatherTendency` already present in its `ClimateSnapshot`; it is not described as a guaranteed forecast because the daily world weather coordinator uses a bounded representative world sample. Separately, `PaperWeatherEventAnnouncement` runs only after `PaperWeatherController.apply(...)` succeeds and emits one short message to players in that world. Stable/no-plan climate remains silent, and announcements can be disabled via `climate.weather-events.player-announcements`.
+
 ## Climate
 
 Climate is modeled from three inputs: a biome-derived base profile, the current season, and small bounded transient anomalies. The domain deliberately does not depend on Paper biome classes or weather APIs.
@@ -237,3 +239,9 @@ Nearby heat-source influence such as merely standing beside lava or campfires re
 - whether later messages need per-player locale in addition to the server default;
 - which persistent store best fits waystones/world-memory data once their data model exists;
 - whether Folia compatibility becomes a target. It is not assumed in Foundation v0.1.
+
+## M12.4 — Folhas sazonais
+
+`PaperSeasonalLeavesModule` observa movimento posicional normal em MONITOR, ignora cancelamentos/teleportes/rotação e limita tentativas a uma por jogador a cada 5 segundos (relógio monotônico). Não agenda tarefas. Consulta no máximo nove posições fixas de copa, até seis blocos acima do jogador, somente em chunks carregados e dentro da altura válida. A primeira folha encerra a busca, mesmo se a chance rejeitar o efeito. Quit e disable limpam o estado transitório. Apenas o jogador do evento recebe até três partículas; não há alteração de blocos.
+
+`SeasonalLeafVisualPolicy` decide o efeito e usa `NaturalGrowthSuitabilityPolicy` com categoria TREE, força 1 e o modificador sazonal existente. Chance visual = 0,35 × min(1, chance ecológica); esse fator visual não altera configurações/regras de crescimento. Primavera usa CHERRY_LEAVES; outono PALE_OAK_LEAVES; inverno SNOWFLAKE apenas em FRIO/CONGELANTE e fora de ARIDO/SECO; verão não emite. Folhas decorativas também podem participar; detecção de árvores naturais não faz parte desta fatia.
