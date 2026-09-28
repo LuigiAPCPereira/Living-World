@@ -1,6 +1,6 @@
 package dev.signalshards.livingworld.features.qol.autorefill.paper;
 
-import org.bukkit.inventory.ItemStack;
+import java.util.function.IntPredicate;
 
 final class HotbarAutoRefillPolicy {
     static final int FIRST_HOTBAR_SLOT = 0;
@@ -11,28 +11,27 @@ final class HotbarAutoRefillPolicy {
     boolean shouldRefill(
             int changedSlot,
             int heldSlot,
-            ItemStack oldItem,
-            ItemStack newItem
+            int oldAmount,
+            int oldMaxStackSize,
+            boolean oldEmpty,
+            boolean newEmpty
     ) {
         return changedSlot >= FIRST_HOTBAR_SLOT
                 && changedSlot <= LAST_HOTBAR_SLOT
                 && changedSlot == heldSlot
-                && !oldItem.isEmpty()
-                && oldItem.getAmount() == 1
-                && oldItem.getMaxStackSize() > 1
-                && newItem.isEmpty();
+                && !oldEmpty
+                && oldAmount == 1
+                && oldMaxStackSize > 1
+                && newEmpty;
     }
 
-    int findReplacementSlot(ItemStack[] storageContents, ItemStack depletedItem) {
+    int findReplacementSlot(int storageLength, IntPredicate matchesSlot) {
         int lastSlot = Math.min(
                 LAST_MAIN_INVENTORY_SLOT,
-                storageContents.length - 1
+                storageLength - 1
         );
         for (int slot = FIRST_MAIN_INVENTORY_SLOT; slot <= lastSlot; slot++) {
-            ItemStack candidate = storageContents[slot];
-            if (candidate != null
-                    && !candidate.isEmpty()
-                    && candidate.isSimilar(depletedItem)) {
+            if (matchesSlot.test(slot)) {
                 return slot;
             }
         }
