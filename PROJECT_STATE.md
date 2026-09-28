@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-127 — bounded physical winter, active ICE owner; LW-126 remains open awaiting client packet proof
-- **Current acceptance:** physical ICE mutations are opt-in, activity-local, loaded-chunk-only and budgeted; source water freeze is climate/dimension-gated and thaw is restricted to persistent Living World ownership
-- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 slices 1-2 pass full gates at 457 tests / 150 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-127 — bounded physical winter, ICE boundedness closed; physical SNOW is next
+- **Current acceptance:** ICE owner budgets are now executable contracts: unloaded chunks are skipped before surface lookup, no-change cycles stop at probesPerPlayer and mutation cycles stop at maxMutationsPerPlayer
+- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 ICE path passes 460 tests / 150 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint the LW-127 ICE owner, then add a focused boundedness regression for per-player probe/mutation budgets before considering physical SNOW. Runtime smoke remains pending because the user currently has no client access
+- **Next action:** checkpoint ICE boundedness, then design physical SNOW as a separate owned mutation path with no scan expansion; do not increase probe/mutation budgets merely to add snow. Runtime smoke remains pending because the user currently has no client access
 
 ## M12.4 — checkpoint local
 

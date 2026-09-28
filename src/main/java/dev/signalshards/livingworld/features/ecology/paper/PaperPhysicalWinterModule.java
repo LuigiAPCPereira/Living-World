@@ -156,7 +156,7 @@ public final class PaperPhysicalWinterModule
         }
     }
 
-    private void processPlayer(Player player) {
+    void processPlayer(Player player) {
         World world = player.getWorld();
         var origin = player.getLocation();
         int cursor = probeCursors.getOrDefault(

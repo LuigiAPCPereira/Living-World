@@ -8,11 +8,13 @@ import dev.signalshards.livingworld.features.ecology.domain.PhysicalWinterSettin
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -202,6 +204,199 @@ class PaperPhysicalWinterModuleTest {
         assertTrue(module.processCandidate(block));
         assertEquals(Material.WATER, type.get());
         assertTrue(store.load(chunk).kindAt(position).isEmpty());
+    }
+
+    @Test
+    void mutationBudgetInterrompeProbesDepoisDaPrimeiraMutacao() {
+        AtomicInteger registrations = new AtomicInteger();
+        AtomicInteger schedules = new AtomicInteger();
+        AtomicInteger highestBlockCalls = new AtomicInteger();
+        Plugin plugin = plugin(registrations, schedules);
+        PaperPhysicalWinterSettings settings =
+                new PaperPhysicalWinterSettings(
+                        false,
+                        40L,
+                        4,
+                        1,
+                        8,
+                        PhysicalWinterSettings.defaults()
+                );
+        NamespacedKey key = new NamespacedKey(
+                "livingworld",
+                "physical_winter_ownership"
+        );
+        Map<NamespacedKey, Object> data = new HashMap<>();
+        Chunk chunk = chunk(pdc(data));
+        AtomicReference<Material> type =
+                new AtomicReference<>(Material.WATER);
+        Block surface = sourceWaterBlock(chunk, type);
+        World world = (World) Proxy.newProxyInstance(
+                World.class.getClassLoader(),
+                new Class<?>[]{World.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "isChunkLoaded" -> true;
+                    case "getHighestBlockAt" -> {
+                        highestBlockCalls.incrementAndGet();
+                        yield surface;
+                    }
+                    default -> null;
+                }
+        );
+        Player player = (Player) Proxy.newProxyInstance(
+                Player.class.getClassLoader(),
+                new Class<?>[]{Player.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getWorld" -> world;
+                    case "getLocation" -> new Location(world, 0, 64, 0);
+                    case "getUniqueId" -> java.util.UUID.fromString(
+                            "4c41242d-19b5-44d4-b4c0-468099f2235f"
+                    );
+                    default -> null;
+                }
+        );
+        PaperWinterSurfaceOwnershipStore store =
+                new PaperWinterSurfaceOwnershipStore(key, settings.domain());
+        PaperPhysicalWinterModule module = new PaperPhysicalWinterModule(
+                plugin,
+                settings,
+                ignored -> new AmbientTemperature(-5.0D),
+                store,
+                new WinterThermalPhasePolicy(settings.domain()),
+                new WinterSurfaceMutationPolicy(),
+                new PaperWinterSurfaceTargetResolver(),
+                new EnvironmentalDimensionPolicy()
+        );
+
+        module.processPlayer(player);
+
+        assertEquals(1, highestBlockCalls.get());
+        assertEquals(Material.ICE, type.get());
+    }
+
+    @Test
+    void chunkNaoCarregadoNuncaEhSondado() {
+        AtomicInteger registrations = new AtomicInteger();
+        AtomicInteger schedules = new AtomicInteger();
+        AtomicInteger highestBlockCalls = new AtomicInteger();
+        Plugin plugin = plugin(registrations, schedules);
+        PaperPhysicalWinterSettings settings =
+                new PaperPhysicalWinterSettings(
+                        false,
+                        40L,
+                        4,
+                        1,
+                        8,
+                        PhysicalWinterSettings.defaults()
+                );
+        World world = (World) Proxy.newProxyInstance(
+                World.class.getClassLoader(),
+                new Class<?>[]{World.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "isChunkLoaded" -> false;
+                    case "getHighestBlockAt" -> {
+                        highestBlockCalls.incrementAndGet();
+                        yield null;
+                    }
+                    default -> null;
+                }
+        );
+        Player player = (Player) Proxy.newProxyInstance(
+                Player.class.getClassLoader(),
+                new Class<?>[]{Player.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getWorld" -> world;
+                    case "getLocation" -> new Location(world, 0, 64, 0);
+                    case "getUniqueId" -> java.util.UUID.fromString(
+                            "494f73ae-38ee-4f60-9d19-5be5378a70e4"
+                    );
+                    default -> null;
+                }
+        );
+        PaperPhysicalWinterModule module = new PaperPhysicalWinterModule(
+                plugin,
+                settings,
+                ignored -> new AmbientTemperature(-5.0D),
+                new PaperWinterSurfaceOwnershipStore(
+                        new NamespacedKey(
+                                "livingworld",
+                                "physical_winter_ownership"
+                        ),
+                        settings.domain()
+                ),
+                new WinterThermalPhasePolicy(settings.domain()),
+                new WinterSurfaceMutationPolicy(),
+                new PaperWinterSurfaceTargetResolver(),
+                new EnvironmentalDimensionPolicy()
+        );
+
+        module.processPlayer(player);
+
+        assertEquals(0, highestBlockCalls.get());
+    }
+
+    @Test
+    void probeBudgetLimitaColunasSemMutacao() {
+        AtomicInteger registrations = new AtomicInteger();
+        AtomicInteger schedules = new AtomicInteger();
+        AtomicInteger highestBlockCalls = new AtomicInteger();
+        Plugin plugin = plugin(registrations, schedules);
+        PaperPhysicalWinterSettings settings =
+                new PaperPhysicalWinterSettings(
+                        false,
+                        40L,
+                        4,
+                        1,
+                        8,
+                        PhysicalWinterSettings.defaults()
+                );
+        NamespacedKey key = new NamespacedKey(
+                "livingworld",
+                "physical_winter_ownership"
+        );
+        Map<NamespacedKey, Object> data = new HashMap<>();
+        Chunk chunk = chunk(pdc(data));
+        AtomicReference<Material> type =
+                new AtomicReference<>(Material.STONE);
+        Block surface = sourceWaterBlock(chunk, type);
+        World world = (World) Proxy.newProxyInstance(
+                World.class.getClassLoader(),
+                new Class<?>[]{World.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "isChunkLoaded" -> true;
+                    case "getHighestBlockAt" -> {
+                        highestBlockCalls.incrementAndGet();
+                        yield surface;
+                    }
+                    default -> null;
+                }
+        );
+        Player player = (Player) Proxy.newProxyInstance(
+                Player.class.getClassLoader(),
+                new Class<?>[]{Player.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getWorld" -> world;
+                    case "getLocation" -> new Location(world, 0, 64, 0);
+                    case "getUniqueId" -> java.util.UUID.fromString(
+                            "846ae166-5061-4cb8-8f06-88b62531a728"
+                    );
+                    default -> null;
+                }
+        );
+        PaperPhysicalWinterModule module = new PaperPhysicalWinterModule(
+                plugin,
+                settings,
+                ignored -> new AmbientTemperature(-5.0D),
+                new PaperWinterSurfaceOwnershipStore(key, settings.domain()),
+                new WinterThermalPhasePolicy(settings.domain()),
+                new WinterSurfaceMutationPolicy(),
+                new PaperWinterSurfaceTargetResolver(),
+                new EnvironmentalDimensionPolicy()
+        );
+
+        module.processPlayer(player);
+
+        assertEquals(4, highestBlockCalls.get());
+        assertEquals(Material.STONE, type.get());
     }
 
     private Block sourceWaterBlock(

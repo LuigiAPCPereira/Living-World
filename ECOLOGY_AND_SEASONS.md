@@ -868,6 +868,8 @@ Thaw só ocorre para `ICE` cujo `WinterSurfaceOwnershipLedger` confirma `WinterS
 
 Break/place/fade observados pelo módulo limpam ownership na posição afetada para evitar provenance obsoleta em interações normais de gameplay. Physical SNOW continua fora deste slice.
 
+**LW-127 / boundedness regressions:** testes do owner Paper fixam os budgets como contrato executável. Com `maxMutationsPerPlayer=1`, o primeiro freeze encerra os probes restantes daquele jogador; quando nenhum candidato muda, `probesPerPlayer=4` resulta em exatamente quatro consultas de superfície. Se `World#isChunkLoaded` for falso, `getHighestBlockAt` nem é chamado. Adicionar SNOW não autoriza aumentar esses limites automaticamente.
+
 Congelamento/degelo deve considerar histerese para impedir oscillation próxima de 0 °C. Valores como congelar abaixo de -2 °C e derreter acima de +2 °C são exemplos de tuning, não decisão final.
 
 O custo deve escalar principalmente com jogadores/áreas ativas e mudanças relevantes, não com tamanho total do mapa.

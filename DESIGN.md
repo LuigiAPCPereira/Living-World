@@ -363,6 +363,8 @@ LW-127 / primeiro slice: `PhysicalWinterSettings` + `WinterThermalPhasePolicy` d
 
 LW-127 / segundo slice: `PaperPhysicalWinterModule` é um owner opt-in de ICE com cadence/probe/mutation budgets explícitos e somente chunks já carregados. `PaperWinterSurfaceTargetResolver` admite apenas source water exposta para freeze; thaw exige ownership ICE persistente. Mutations são server-side reais `WATER <-> ICE`; gelo não-owned nunca é revertido. SNOW permanece separado.
 
+LW-127 / boundedness gate: regressões verificam early-stop no mutation budget, teto exato de probes quando não há mutation e ausência total de surface lookup em chunk não carregado. Esses limites são parte do contrato do owner, não apenas documentação.
+
 Performance permanece bounded: nenhum scan recorrente global; trabalho por jogador/região possui budget; mudanças são preferencialmente event/delta-driven com cache/invalidação; acesso Bukkit permanece thread-safe; async é reservado a trabalho puro quando medição justificar.
 
 O desenho completo, benchmarks de referência, transições sazonais e critérios de M12.5 estão em `ECOLOGY_AND_SEASONS.md`.
