@@ -56,7 +56,12 @@ class PaperWorldgenAmbientTemperatureResolverTest {
     @Test
     void netherIgnoraSeasonDiaEWeatherTerrestres() {
         Block block = block(
-                world(World.Environment.NETHER),
+                world(
+                        World.Environment.NETHER,
+                        2.0D,
+                        0.0D,
+                        true
+                ),
                 10,
                 80,
                 -10,
@@ -64,7 +69,29 @@ class PaperWorldgenAmbientTemperatureResolverTest {
         );
 
         assertEquals(
-                15.0D,
+                39.0D,
+                resolver.ambientTemperatureAt(block).degreesCelsius(),
+                1.0E-9D
+        );
+    }
+
+    @Test
+    void endUsaTemperaturaCoordenadaSemSazonalidadeTerrestre() {
+        Block block = block(
+                world(
+                        World.Environment.THE_END,
+                        0.5D,
+                        0.0D,
+                        false
+                ),
+                0,
+                64,
+                0,
+                15
+        );
+
+        assertEquals(
+                9.0D,
                 resolver.ambientTemperatureAt(block).degreesCelsius(),
                 1.0E-9D
         );

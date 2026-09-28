@@ -345,6 +345,8 @@ LW-125 / segundo slice: `PaperAmbientTemperatureProvider` desacopla o runtime t�
 
 LW-125 / terceiro slice: testes-regressão tornam a ausência de dependência de biome/key parte do gate. Climate sampling e ambient temperature operam apenas por propriedades coordenadas + dimensão; proxies de teste rejeitam qualquer chamada extra, incluindo futuras tentativas de depender de biome namespace.
 
+LW-125 / quarto slice: a matriz automatizada fixa NORMAL/NETHER/THE_END/CUSTOM com valores coordenados representativos. NETHER quente é consequência do escalar Paper, não de hardcode de Incendium; End/CUSTOM suprimem fatores terrestres mantendo o valor coordenado. O gate de implementação está fechado; smoke com worldgens reais permanece validação separada.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-125 — custom-worldgen compatibility gate, property-based fallback regression slice
-- **Current acceptance:** climate classification and ambient temperature remain independent of biome namespace/key; custom Overworld worldgen is resolved from Paper coordinate temperature/humidity/environment properties only
-- **Current validation:** LW-124 remains implemented-not-validated for real artifacts; LW-125 slices 1-3 pass full gates at 436 tests / 143 suites / 0 failures/errors/skips, IntelliJ build and `git diff --check`; focused regression tests explicitly reject unexpected API calls beyond the property-based contract
+- **Current task:** LW-126 — seasonal client visual projection technical spike, after LW-125 implementation closure
+- **Current acceptance:** LW-125 implementation is property-based across NORMAL/NETHER/THE_END/CUSTOM, multiworld thermal runtime is active, and no biome/mod namespace table is required
+- **Current validation:** LW-124 remains implemented-not-validated for real artifacts; LW-125 automated implementation passes 437 tests / 143 suites / 0 failures/errors/skips plus IntelliJ build and `git diff --check`; real Terralith+Tectonic/Incendium/Nullscape runtime smoke remains pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-125 dimension profiles, then make the thermal ambient resolver multi-world so players entering Nether/End use the new profile without enabling terrestrial ecology there
+- **Next action:** checkpoint LW-125 automated compatibility closure, then begin LW-126 as a technical spike: prefer public Paper/resourcepack capabilities and isolate any packet/NMS fallback before committing to seasonal biome projection
 
 ## M12.4 — checkpoint local
 

@@ -204,6 +204,10 @@ Perfis conhecidos de Terralith/Incendium/Nullscape podem refinar o resultado, ma
 
 **Slice 3:** regressões dedicadas fixam o fallback property-based como contrato. `PaperClimateSamplerTest` classifica um cenário de worldgen customizado somente por temperatura/umidade coordenadas, e `PaperWorldgenAmbientTemperatureResolverTest` resolve um Overworld customizado sem consultar biome ou namespaced key. Os proxies falham em qualquer método não explicitamente permitido, então uma futura introdução silenciosa de tabela por biome quebra o teste.
 
+**Slice 4:** a matriz automatizada cobre explicitamente as quatro categorias Paper. NORMAL preserva season/day/weather; NETHER com temperatura coordenada `2.0` resulta em 39 °C sem ganho sazonal/diurno/weather terrestre; THE_END com `0.5` resulta em 9 °C sem sazonalidade terrestre; CUSTOM mantém o fallback conservador. Assim calor do Nether e frio/neutralidade de outros mundos continuam derivados das propriedades do worldgen, não de offsets por nome.
+
+Com esse slice, LW-125 fica **implementado, mas ainda não validado com a stack real**. O aceite final exige smoke em Terralith + Tectonic, Incendium e Nullscape para confirmar que esses worldgens publicam propriedades Paper coerentes no runtime real.
+
 ### 4.2 Tectonic
 
 Tectonic deve ser tratado principalmente como geometria real do mundo, não como uma integração especial.
