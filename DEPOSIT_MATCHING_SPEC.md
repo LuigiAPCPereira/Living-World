@@ -4,7 +4,7 @@
 - **Implementation task:** LW-200
 - **Runtime validation task:** LW-201
 - **Branch:** `qol/deposit-matching`
-- **Status:** implementation extended with closed-container gesture and bounded Paper presentation; exact-HEAD automated gate is pending.
+- **Status:** LW-200 automated-validated through the closed-container gesture and bounded Paper presentation; LW-201 runtime validation pending.
 - **Product framing:** Vanilla+ convenience for already-organized storage. This is not sorting, classification, storage networking or automation.
 
 ## Player interactions

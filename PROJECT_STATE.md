@@ -8,7 +8,7 @@
 - **Architecture:** `DESIGN.md` + feature-local contracts
 - **Current task:** M20 Deposit Matching QoL on GitHub branch `qol/deposit-matching`; pending M13/M14 runtime validation on `main` remains untouched
 - **Current acceptance:** LW-200 automated implementation gate is satisfied; LW-201 real-player inventory smoke remains tracked in `RUNTIME_VALIDATION_BACKLOG.md` and may stay deferred while independent work continues
-- **Current validation:** M20 code candidate `d78a100` passed GitHub Actions CI #16 with `./gradlew clean test build`; two-axis code/spec review is complete. This validates LW-200's automated slice only. LW-201 remains runtime-pending. Previous `main` evidence remains historical for M13/M14.
+- **Current validation:** extended M20 candidate `1a515f6` passed GitHub Actions CI #29 with `./gradlew clean test build`; policy regressions cover both gestures and two-axis engineering/spec review found no remaining automated blocker. This validates LW-200's automated slice only; closed-container interaction, ItemDisplay motion and lid ownership remain runtime-pending in LW-201. Previous `main` evidence remains historical for M13/M14.
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed base branch:** `main`
 - **Observed M20 branch base:** `cb8803e` — includes the deferred-runtime validation policy
@@ -19,7 +19,7 @@
 - **Merge:** M20 is not merged; no merge to `main` is authorized by the current slice
 - **Deploy:** not applicable; no runtime deploy executed for M20
 - **Blockers:** no implementation blocker confirmed; user is currently unavailable for local real-player runtime validation
-- **Next action:** keep LW-201 queued for later real-player smoke; M20 needs no further implementation work unless runtime evidence finds a defect. Continue only with separately authorized work.
+- **Next action:** keep the expanded LW-201 matrix queued for later real-player smoke; M20 needs no further implementation work unless runtime evidence finds a defect. Continue only with separately authorized work.
 
 ## M12.4 — checkpoint local
 
@@ -61,12 +61,14 @@
 - Explicit user authorization: implement Deposit Matching as the second QoL slice, using Agent Protocol plus current Minecraft/Paper/Java guidance.
 - Branch: `qol/deposit-matching`, based on `main` commit `cb8803e`.
 - Product/interaction contract: `DEPOSIT_MATCHING_SPEC.md`.
-- Trigger: Shift + right-click an empty slot of an open supported vanilla storage inventory while cursor is empty.
+- Triggers: (1) open storage — Shift + right-click an empty top-inventory slot with empty cursor; (2) closed physical storage — sneak + right-click with empty main hand, keeping the GUI closed when the fail-closed access gate accepts the interaction.
 - Supported first slice: real chest/double chest, barrel and shulker box. Ender Chest, machines, entity storage, plugin GUIs and nearby-container scanning remain out of scope.
 - Source boundary: player main-inventory slots 9..35 only; hotbar/offhand/armor stay untouched.
 - Matching: only `ItemStack.isSimilar` categories present in the initial target snapshot; each source is revalidated against live target state before insertion.
-- Transfer: deferred from `InventoryClickEvent` to the next server tick; `Inventory.addItem` provides normal partial-stack/empty-slot insertion; unaccepted remainder stays in the original player slot.
-- Conservative UX limitation: the gesture requires an empty top-inventory slot. Fully occupied containers keep vanilla behavior even when an existing stack has spare capacity.
-- Performance boundary: event-driven only; no polling and no surrounding-container scan.
-- Automated validation: LW-200 code candidate `d78a100` passed GitHub Actions CI #16 (`./gradlew clean test build`) after the final behavior refactor; code/spec review found no remaining blocker.
-- Runtime validation: LW-201 deferred into `RUNTIME_VALIDATION_BACKLOG.md`; no runtime success is inferred from CI.
+- Transfer: both paths defer mutation to the next server tick and re-resolve/revalidate their target; `Inventory.addItem` provides normal partial-stack/empty-slot insertion; unaccepted remainder stays in the original player slot.
+- Open-GUI UX limitation: that gesture requires an empty top-inventory slot, so fully occupied containers keep vanilla occupied-slot behavior. The closed-block gesture does not depend on an empty GUI slot.
+- Closed access boundary: denied interactions, Creative/Spectator, active viewers, locks, active loot tables, blocked chests and obstructed shulkers fail closed; paired offhand use is suppressed only for the recognized same-click block interaction.
+- Presentation: optional Paper-only feedback on successful closed deposits; at most three non-persistent real-item `ItemDisplay`s live for fewer than ten ticks, one quiet vanilla sound accompanies arrival, and a `Lidded` reaction is used only when its temporary state can be owned/cleaned safely. Resource-pack enrichment is explicitly future/optional.
+- Performance boundary: event-driven only; no polling or surrounding-container scan; the closed shulker check probes one adjacent block and double chests inspect at most two physical holders.
+- Automated validation: extended candidate `1a515f6` passed GitHub Actions CI #29 (`./gradlew clean test build`) and final two-axis review found no remaining automated blocker.
+- Runtime validation: LW-201 is expanded in `RUNTIME_VALIDATION_BACKLOG.md` for closed gesture, access safety, protection-plugin behavior when available, visual motion/lid ownership, presentation-off behavior and lifecycle cleanup; no runtime success is inferred from CI.
