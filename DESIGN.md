@@ -26,11 +26,19 @@
 | `features.waystones.domain` | stable waystone identity, display name and anchor coordinates | Paper storage, GUI or teleport APIs |
 | `features.waystones.application` | registration, activation visibility and travel result contracts | player/world PDC details |
 | `features.waystones.paper` | World/Player PDC adapters, safe destination validation and async Paper teleport | economy, GUI or physical activation presentation |
+| `features.discovery.domain` | identity and vocabulary of a discovery: type, id, scope and the durable record | Paper storage, presentation or feature-specific knowledge |
+| `features.discovery.application` | the single owner of the "a discovery happened" use case: type policy, persistence routing, first-time decision and the typed event | Bukkit, i18n text or any producing feature |
+| `features.discovery.persistence` | narrow ports for per-player and per-world discovery state | PDC details or encoding |
+| `features.discovery.presentation` | the presentation contract a future visual system consumes, plus the pure localized mapping | Bukkit rendering |
+| `features.discovery.paper` | PDC adapters, the Adventure title presentation and the discovery module lifecycle | discovery rules or presentation wording |
 | future `features.hud.paper` | owns player-facing boss bars/action bar lifecycle and renders read-only projections of calendar/climate/navigation state | calendar/climate rules or persistent gameplay state |
 | future `features.ecology.domain` | pure suitability/acceptance policy for ecological reactions from effective climate | Paper events, random source or block mutation |
 | future `features.ecology.paper` | adapts vanilla natural-growth events into climate-policy decisions with bounded event-local work | world scanning, forced growth or fertilization handling |
 | future `features.*` packages | one gameplay capability and its state/listeners/tasks | unrelated feature internals |
+
 | Paper API | external server framework boundary | Living World domain decisions |
+
+Discovery adds one deliberate cross-feature dependency: `features.waystones` depends on the narrow public surface of `features.discovery.application` (`DiscoveryService`, `DiscoveryRequest` and the domain value types) in order to report a discovery. The reverse never happens — Discovery imports nothing from any other feature — and Waystones never sees a Discovery store, publisher or presentation class. The type, scope and label key for a Waystone discovery are declared by the Waystone feature in `WaystoneDiscovery`, not by the Discovery core.
 
 ## Initial package direction
 
@@ -39,14 +47,18 @@ dev.signalshards.livingworld
 ├── LivingWorldPlugin
 ├── core
 │   ├── i18n
-│   └── module
+│   ├── module
+│   └── status
 └── features
-    ├── calendar       (future)
-    ├── seasons        (future)
-    ├── climate        (future)
-    ├── desirelines    (future)
-    ├── waystones      (future)
-    └── qol            (future)
+    ├── calendar
+    ├── seasons
+    ├── climate
+    ├── desirelines
+    ├── ecology
+    ├── hud
+    ├── discovery     (M11; see DISCOVERY_ARCHITECTURE.md)
+    ├── waystones
+    └── qol
 ```
 
 Only create future packages when their task begins.
@@ -175,6 +187,22 @@ For navigation clarity, the menu derives a presentation-only ordering from the p
 The menu caps at 54 destinations in the first slice. More than 54 produces explicit fallback guidance to `/lw list`; destinations are never silently truncated. Pagination is deferred until real usage demonstrates the need.
 
 Travel through this physical interface additionally requires the configured anchor material to still exist at the stored coordinate; destroying/replacing the anchor makes the destination unsafe instead of silently teleporting to a stale point.
+
+## Discovery
+
+Discovery is a capability of its own, not a Waystone feature. A discovery is the fact that a player, or a world, has found something; a Waystone is the place itself. Keeping those separate is what lets the same foundation later hold a biome nobody has visited.
+
+Identity is the pair `(DiscoveryType, DiscoveryId)`: the type is an open, validated token declared by the producing capability, and the id identifies the thing inside that type. There is no central enum of discovery kinds, so adding biomes or landmarks is a declaration in the composition root rather than an edit in the core. `DiscoveryRegistry` is an immutable catalog of `DiscoveryTypeDefinition` — type, scope and i18n label key — and is the single owner of the scope policy; an undeclared type fails closed.
+
+Scope is part of the record, not a caller argument. `PERSONAL` means the player's PDC and an announcement to the discoverer; `WORLD` means the world PDC and collective memory. Declaring the scope on the type is what prevents a feature from writing a personal discovery into the world's store, and it is why both stores exist from the first slice even though only personal discoveries are produced today.
+
+`DiscoveryService` is the only owner of the use case: resolve the declared policy, write to the store for that scope, decide first-time, publish. `DiscoveryEventPublisher` fans a single typed event out to `DiscoveryListener`s and isolates listener failures, so a broken presentation cannot roll back a fact that is already durable — the same agreement the calendar already uses for climate reactions. An event is published only for a genuinely new record: re-finding a known place is silent.
+
+The stored record holds identity and ownership only. Labels are supplied per call by the feature that owns the name and travel on the event, which is why renaming a Waystone cannot leave a stale copy of its old name in discovery data, and why reading discoveries back later requires resolving subjects from their owning features.
+
+`DiscoveryPresentationRequest` is a Bukkit-free value — type, scope, title, subtitle — produced by a pure mapping from the event. A future visual system consumes that request instead of rewriting the wording, and disabling presentation leaves discovery state exactly as correct. The current Adventure title adapter exists to prove the whole path, not to be the final presentation.
+
+Waystone activation calls `discover(...)` after the activation has already been decided and persisted, so a discovery failure cannot un-activate a Waystone. Nothing in the Waystone lifecycle changed. See `WAYSTONE_DISCOVERY_INTEGRATION.md` for the full contract, and `DISCOVERY_ARCHITECTURE.md` for ADR-001..003.
 
 ## Future Player HUD
 

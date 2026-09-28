@@ -1,9 +1,11 @@
 package dev.signalshards.livingworld.features.waystones.paper;
-
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
+import dev.signalshards.livingworld.features.discovery.application.DiscoveryRequest;
+import dev.signalshards.livingworld.features.discovery.application.DiscoveryService;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneAnchorIndex;
+import dev.signalshards.livingworld.features.waystones.application.WaystoneDiscovery;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import dev.signalshards.livingworld.features.waystones.domain.Waystone;
 import dev.signalshards.livingworld.features.waystones.domain.WaystoneId;
@@ -31,6 +33,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
     private final PaperWaystoneSettings settings;
     private final WaystoneService waystones;
     private final PaperWaystoneTravelService travel;
+    private final DiscoveryService discovery;
     private final MessageCatalog messages;
     private final LivingWorldStatusProvider statusProvider;
     private final WaystoneAnchorIndex anchorIndex = new WaystoneAnchorIndex();
@@ -41,6 +44,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
             PaperWaystoneSettings settings,
             WaystoneService waystones,
             PaperWaystoneTravelService travel,
+            DiscoveryService discovery,
             MessageCatalog messages,
             LivingWorldStatusProvider statusProvider
     ) {
@@ -48,6 +52,7 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
         this.settings = Objects.requireNonNull(settings, "configuração de waystones");
         this.waystones = Objects.requireNonNull(waystones, "serviço de waystones");
         this.travel = Objects.requireNonNull(travel, "viagem de waystones");
+        this.discovery = Objects.requireNonNull(discovery, "serviço de descobertas");
         this.messages = Objects.requireNonNull(messages, "catálogo de mensagens");
         this.statusProvider = Objects.requireNonNull(
                 statusProvider,
@@ -148,6 +153,16 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
             event.getPlayer().sendMessage(messages.component(
                     NamedTextColor.YELLOW,
                     "waystone.already-activated",
+                    waystone.name()
+            ));
+        }
+
+        if (activated) {
+            discovery.discover(new DiscoveryRequest(
+                    WaystoneDiscovery.TYPE,
+                    WaystoneDiscovery.idFor(waystone.id()),
+                    event.getPlayer().getUniqueId(),
+                    event.getPlayer().getUniqueId(),
                     waystone.name()
             ));
         }

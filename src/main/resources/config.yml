@@ -31,6 +31,11 @@ waystones:
   # Renomear exige estar fisicamente próximo da âncora.
   rename-max-distance: 6.0
 
+discovery:
+  presentation:
+    # Desligar apenas oculta o momento; o registro da descoberta continua correto.
+    enabled: true
+
 hud:
   enabled: true
   # 10 ticks = 0,5 s. A action bar precisa ser renovada para permanecer visível.

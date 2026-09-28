@@ -21,6 +21,7 @@
 
 These are product directions, not promises that all are implemented in the current scope.
 
+- discovery: durable memory of places and things players have found, with an open type catalog for future biomes, landmarks, villages and ruins.
 - world time, calendar, months/years, and seasons;
 - climate and environmental events;
 - desire lines / paths created by repeated player movement;
@@ -29,6 +30,18 @@ These are product directions, not promises that all are implemented in the curre
 - double doors and other focused convenience mechanics;
 - environmental reactions and long-term world memory.
 - optional player HUD surfaces for calendar/season, navigation and environmental feedback.
+
+## Discovery direction
+
+- Discovery is an independent capability, not a Waystone feature and not a quest system. A discovery is the fact that a player, or the world, has found something; a Waystone is the place itself.
+- A discovery is identified by `(type, id)`. Identity is never coordinates and never a display name, so renaming a place cannot leave a stale record.
+- The vocabulary of types is open: a new capability declares its own type and id mapping instead of extending a central enum.
+- Scope belongs to the type, not the caller. `PERSONAL` discoveries live in the player's PDC and are announced to the player who found them; `WORLD` discoveries live in the world PDC and are collective memory.
+- Only the first record publishes an event. Re-finding a known place is silent; a discovery is memory, not progress, and granting nothing.
+- A stored discovery holds identity and ownership only. Labels stay with the feature that owns the name, so a rename cannot desynchronize stored data.
+- Discovery state is gameplay-correct with presentation disabled. Presentation is an adapter behind one narrow contract, replaceable by a future visual system without touching domain, application or persistence.
+- A discovery never changes the access, travel, rename or destruction rules of the feature that produced it.
+- Scope discipline: M11 ships the foundation and the Waystone integration only. Biome, landmark, village, broadcast and travel-document behaviour stay in the Discovery roadmap.
 
 ## Calendar direction
 

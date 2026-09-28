@@ -18,7 +18,7 @@ Recognize the protocol commands `<novo_projeto>`, `<adotar_protocolo>` / `<adapt
 
 **Living World** is a server-side Paper/Purpur plugin that makes survival worlds feel more alive, reactive, convenient, and evolutionary without replacing world generation.
 
-Primary directions include time/calendar/seasons, climate and environmental events, world memory such as desire lines, waystones, and focused quality-of-life mechanics.
+Primary directions include time/calendar/seasons, climate and environmental events, world memory such as desire lines and discoveries, waystones, and focused quality-of-life mechanics.
 
 Heavy custom world generation, large structure systems, and recreation of projects such as Terralith/Tectonic are explicitly outside the plugin's responsibility.
 
@@ -26,9 +26,9 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **LW-101 — runtime smoke for the M10 distance-aware Waystone navigation menu**.
+Current tasks: **LW-110/LW-111 — M11 Discovery foundation and Waystone integration (implemented, not yet runtime-validated)**, with **LW-112 — runtime discovery smoke** still pending. **LW-101** (M10 runtime menu smoke) also remains pending and still needs a connected Paper client.
 
-Keep this branch focused exclusively on Waystones; do not implement non-Waystone roadmap modules opportunistically.
+Keep this branch focused on the Discovery foundation and its Waystone integration; do not implement later Discovery milestones (biomes, landmarks, broadcast, travel documents) opportunistically.
 
 ## Architecture rules
 
