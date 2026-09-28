@@ -93,3 +93,8 @@ Preserve unrelated user changes. Inspect the diff before committing. Never commi
 ## Definition of done
 
 A task is not complete merely because code compiles. Relevant acceptance criteria, tests/build, documentation/checkpoint state, and runtime validation when applicable must be reconciled before marking it validated.
+
+
+## Deferred runtime validation
+
+Deferred real-player/client/server smokes are tracked in `RUNTIME_VALIDATION_BACKLOG.md`. A runtime-pending item does not block a separate, independent QoL slice once that slice has its own automated gates and scope evidence. Never convert deferred runtime work into implicit success: keep it explicitly runtime-pending until the recorded smoke exists.
