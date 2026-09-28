@@ -66,7 +66,7 @@ public final class PaperLocalClimateReadoutProvider
         var block = player.getLocation().getBlock();
         var snapshot = climate.snapshotAt(block);
         var season = calendar.currentSeason();
-        var ambientTemperature = climate.ambientTemperatureAt(block);
+        var ambientTemperature = climate.baseAmbientTemperatureAt(block);
 
         return new LocalClimateReadout(
                 season,

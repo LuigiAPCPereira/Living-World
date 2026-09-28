@@ -317,6 +317,8 @@ Décimo-nono slice de LW-122: `PrecipitationExposure` passou a fazer parte de `T
 
 Vigésimo slice de LW-122: precipitação Paper usa storm + skylight + gate binário por umidade local, evitando nome-table para biomas secos/custom. `DirectThermalExposure` + policy/resolver separam contato físico com FIRE/LAVA/POWDER_SNOW de calor local por distância. O breakdown diagnóstico possui taxa direta própria; nenhuma dessas exposições aplica dano ou manipula freeze ticks.
 
+Vigésimo-primeiro slice de LW-122: o sampling coordenado do Paper foi inspecionado e `World#getTemperature(x,y,z)` já incorpora `BlockPos + seaLevel`; Living World não adiciona lapse rate duplicado. `AmbientTemperatureFactors` aplica apenas ciclo diário e weather, ambos ponderados por sky exposure, sobre a temperatura base biome+season. `PaperLocalClimateResolver.baseAmbientTemperatureAt` mantém o contrato legado de `/lw climate`, enquanto `ambientTemperatureAt` alimenta o runtime térmico refinado.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

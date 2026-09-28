@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, direct exposure + precipitation-property slice
-- **Current acceptance:** dry-biome storms do not create precipitation exposure by global weather alone; FIRE/LAVA/POWDER_SNOW feed a separate thermal-rate channel without owning damage/freeze effects
-- **Current validation:** automated direct-exposure/precipitation gates plus previous connected thermal smoke; full branch gates 338 tests / 119 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; live drying/rain/direct-exposure smoke deferred while user has no game access
+- **Current task:** LW-122 — Environmental & Thermal Foundation, AmbientTemperature temporal/weather refinement
+- **Current acceptance:** Paper coordinate temperature remains the sole altitude-aware base; new thermal runtime adds only sky-exposed day/night and local weather, while legacy `/lw climate` retains the base contract
+- **Current validation:** Paper bytecode inspection confirms `CraftWorld#getTemperature(x,y,z) -> Biome#getTemperature(BlockPos, seaLevel)`; focused microclimate/compatibility tests plus full branch gates 342 tests / 119 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; runtime smoke deferred while user has no game access
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint direct exposure; refine AmbientTemperature with bounded altitude/time/weather modifiers before thermal feedback. Runtime smoke for drying/rain/direct exposure remains queued for the next player-access window
+- **Next action:** checkpoint AmbientTemperature refinement, then reconcile remaining LW-122 gaps that do not require live client access before opening LW-123; runtime smoke for drying/rain/direct exposure/day-night weather remains queued for the next player-access window
 
 ## M12.4 — checkpoint local
 

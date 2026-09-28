@@ -556,6 +556,16 @@ Armadura continua reduzindo apenas taxas positivas de wetness; secagem negativa 
 
 Importante: esse canal **não aplica dano, potion effects nem freeze ticks**. Powder snow continua sob a mecânica vanilla para overlay/dano de congelamento; Living World apenas incorpora a exposição ao estado corporal. Assim `visualFreeze != thermalDamage` continua preservado.
 
+### 5.31 AmbientTemperature: altitude nativa + hora/weather expostos
+
+**Checkpoint de implementação LW-122 / vigésimo-primeiro slice:** foi verificado no bytecode do Paper 26.3 que `CraftWorld#getTemperature(x,y,z)` delega a `Biome#getTemperature(BlockPos, seaLevel)`. Portanto altitude/posição vertical **já fazem parte do escalar térmico coordenado** que Living World consome. O plugin não aplica um segundo lapse rate, evitando double-counting em montanhas Tectonic.
+
+`AmbientTemperatureFactors` adiciona somente fatores que o escalar coordenado não representa como estado temporal do mundo: `skyExposure`, hora do dia e `AmbientWeather`. O default Vanilla+ usa uma curva diária suave: céu aberto aquece até +2,5 °C perto do meio-dia e resfria até -3,5 °C perto da meia-noite. Chuva acrescenta -1,5 °C e thunder -2,5 °C. Todos esses modificadores são multiplicados por exposição ao céu; interior/caverna com sky exposure zero mantém a temperatura base mais estável.
+
+Weather local também respeita `humidity > 0`; uma tempestade global não cria resfriamento de chuva invisível em bioma seco. Isso continua property-based e funciona para namespaces customizados sem tabela obrigatória.
+
+`PaperLocalClimateResolver` agora oferece dois contratos: `baseAmbientTemperatureAt` preserva a calibração histórica biome + season; `ambientTemperatureAt` adiciona hora/weather para o runtime corporal. `/lw climate` continua usando o base por compatibilidade explícita, enquanto `/lw thermal` usa o ambiente refinado. Assim a migração do readout legado não acontece silenciosamente.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

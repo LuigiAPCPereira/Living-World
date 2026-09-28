@@ -2,7 +2,9 @@ package dev.signalshards.livingworld.features.climate.paper;
 
 import dev.signalshards.livingworld.features.calendar.application.CalendarView;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
+import dev.signalshards.livingworld.features.climate.domain.AmbientTemperatureFactors;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperaturePolicy;
+import dev.signalshards.livingworld.features.climate.domain.AmbientWeather;
 import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
 import dev.signalshards.livingworld.features.climate.domain.ClimateSnapshot;
@@ -69,8 +71,45 @@ public final class PaperLocalClimateResolver {
         requireConfiguredWorld(block);
         return ambientTemperaturePolicy.temperature(
                 world.getTemperature(block.getX(), block.getY(), block.getZ()),
+                calendar.currentSeason(),
+                new AmbientTemperatureFactors(
+                        Math.clamp(block.getLightFromSky() / 15.0D, 0.0D, 1.0D),
+                        (int) Math.floorMod(world.getTime(), 24_000L),
+                        ambientWeather(
+                                world.hasStorm(),
+                                world.isThundering(),
+                                world.getHumidity(
+                                        block.getX(),
+                                        block.getY(),
+                                        block.getZ()
+                                )
+                        )
+                )
+        );
+    }
+
+    public AmbientTemperature baseAmbientTemperatureAt(Block block) {
+        requireConfiguredWorld(block);
+        return ambientTemperaturePolicy.temperature(
+                world.getTemperature(block.getX(), block.getY(), block.getZ()),
                 calendar.currentSeason()
         );
+    }
+
+    static AmbientWeather ambientWeather(
+            boolean storm,
+            boolean thundering,
+            double localHumidity
+    ) {
+        if (!Double.isFinite(localHumidity) || localHumidity < 0.0D) {
+            throw new IllegalArgumentException(
+                    "A umidade local deve ser finita e não negativa"
+            );
+        }
+        if (!storm || localHumidity == 0.0D) {
+            return AmbientWeather.CLEAR;
+        }
+        return thundering ? AmbientWeather.THUNDER : AmbientWeather.RAIN;
     }
 
     private void requireConfiguredWorld(Block block) {
