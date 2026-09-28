@@ -25,6 +25,10 @@ desire-lines:
 qol:
   double-doors:
     enabled: true
+  deposit-matching:
+    # Shift + clique direito em um slot vazio de chest/barrel/shulker aberto.
+    # Move apenas correspondências exatas dos slots 9..35 do inventário principal.
+    enabled: true
 
 waystones:
   enabled: true
