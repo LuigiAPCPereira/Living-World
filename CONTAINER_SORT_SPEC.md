@@ -4,7 +4,7 @@
 - **Implementation task:** LW-210
 - **Runtime validation task:** LW-211
 - **Branch:** `qol/container-sort`
-- **Status:** implementation candidate present; automated gate and real-player runtime validation still required.
+- **Status:** LW-210 automated-validated; LW-211 real-player runtime validation pending.
 - **Product framing:** explicit organization of one already-open storage inventory. This is not automatic sorting, nearby-container search, item classification, storage networking or player-inventory management.
 
 ## Player interaction

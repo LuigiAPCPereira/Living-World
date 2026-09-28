@@ -7,8 +7,8 @@
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
 - **Current task:** M21 Container Sort QoL on GitHub branch `qol/container-sort`; M20 Deposit Matching remains on its separate branch and mainline M13/M14 runtime debt is untouched
-- **Current acceptance:** LW-210 must pass the exact-branch `./gradlew clean test build` gate plus two-axis scope/engineering review; LW-211 then remains a deferred real-player storage smoke
-- **Current validation:** M21 implementation and pure regressions are present. The first CI exposed an invalid Bukkit-dependent unit-test seam and an intermediate adapter/planner mismatch; both were corrected. Exact current-HEAD automated validation is still pending and no runtime success is inferred. Historical M13/M14 evidence remains unchanged.
+- **Current acceptance:** LW-210 automated implementation gate is satisfied; LW-211 remains the deferred real-player storage smoke
+- **Current validation:** M21 candidate `471be357` passed GitHub Actions CI #37 with `./gradlew clean test build`; pure planner/policy regressions pass and two-axis scope/engineering review found no remaining automated blocker. Earlier failed/intermediate runs exposed and helped fix the invalid Bukkit-dependent test seam and adapter/planner mismatch. This validates LW-210's automated slice only; LW-211 remains runtime-pending. Historical M13/M14 evidence remains unchanged.
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `qol/container-sort` based directly on `main` commit `cb8803e`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -17,8 +17,8 @@
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** M21 is not merged; no merge to `main` is authorized by this slice
 - **Deploy:** none for M21
-- **Blockers:** no product/implementation blocker confirmed; automated exact-HEAD gate and real-player smoke remain evidence tasks
-- **Next action:** complete the M21 automated gate/review, keep LW-211 queued for later real-player smoke, then proceed only with separately authorized work
+- **Blockers:** no implementation blocker confirmed; only LW-211 real-player runtime evidence remains for M21
+- **Next action:** keep LW-211 queued for later real-player smoke; M21 needs no further implementation work unless runtime evidence finds a defect. Continue only with separately authorized work
 
 ## M12.4 — checkpoint local
 
@@ -69,4 +69,5 @@
 - Full-container limitation: the gesture intentionally requires an empty top slot so occupied Shift + left-click remains vanilla.
 - Architecture: pure runtime-independent planner + Paper adapter; no generic storage framework extracted yet.
 - Performance/lifecycle: event-driven, one already-open bounded inventory, one deferred owned task, no polling/persistence/nearby scan.
-- Validation debt: exact-HEAD automated gate is pending; LW-211 records the real-player matrix. No merge/deploy/runtime claim.
+- Automated validation: candidate `471be357` passed GitHub Actions CI #37 (`./gradlew clean test build`) after the pure-planner refactor; two-axis review found no remaining automated blocker.
+- Runtime validation: LW-211 records the real-player matrix. No merge/deploy/runtime success is inferred from CI.
