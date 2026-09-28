@@ -1,78 +1,91 @@
 package dev.signalshards.livingworld.features.qol.containersort.paper;
 
-import org.bukkit.inventory.ItemStack;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 final class ContainerSortPlanner {
-    Optional<ItemStack[]> plan(ItemStack[] source) {
-        List<Group> groups = new ArrayList<>();
+    <T> Optional<List<PlannedStack<T>>> plan(
+            List<T> source,
+            int capacity,
+            BiPredicate<T, T> similar,
+            Function<T, String> sortKey,
+            ToIntFunction<T> amount,
+            ToIntFunction<T> maxStackSize
+    ) {
+        List<Group<T>> groups = new ArrayList<>();
 
-        for (ItemStack item : source) {
-            if (item == null || item.isEmpty()) {
-                continue;
-            }
-
-            Group existing = findSimilar(groups, item);
+        for (T item : source) {
+            Group<T> existing = findSimilar(groups, item, similar);
             if (existing == null) {
-                groups.add(new Group(item.clone(), item.getAmount()));
+                groups.add(new Group<>(
+                        item,
+                        amount.applyAsInt(item)
+                ));
             } else {
-                existing.add(item.getAmount());
+                existing.add(amount.applyAsInt(item));
             }
         }
 
         groups.sort(Comparator.comparing(group ->
-                group.template().getType().getKey().toString()
+                sortKey.apply(group.template())
         ));
 
-        ItemStack[] result = new ItemStack[source.length];
-        int outputSlot = 0;
-
-        for (Group group : groups) {
-            int maxStackSize = group.template().getMaxStackSize();
-            if (maxStackSize <= 0) {
+        List<PlannedStack<T>> result = new ArrayList<>();
+        for (Group<T> group : groups) {
+            int max = maxStackSize.applyAsInt(group.template());
+            if (max <= 0) {
                 return Optional.empty();
             }
 
             long remaining = group.amount();
             while (remaining > 0) {
-                if (outputSlot >= result.length) {
+                if (result.size() >= capacity) {
                     return Optional.empty();
                 }
 
-                int amount = (int) Math.min(remaining, maxStackSize);
-                ItemStack stack = group.template().clone();
-                stack.setAmount(amount);
-                result[outputSlot++] = stack;
-                remaining -= amount;
+                int plannedAmount = (int) Math.min(remaining, max);
+                result.add(new PlannedStack<>(
+                        group.template(),
+                        plannedAmount
+                ));
+                remaining -= plannedAmount;
             }
         }
 
-        return Optional.of(result);
+        return Optional.of(List.copyOf(result));
     }
 
-    private Group findSimilar(List<Group> groups, ItemStack candidate) {
-        for (Group group : groups) {
-            if (group.template().isSimilar(candidate)) {
+    private <T> Group<T> findSimilar(
+            List<Group<T>> groups,
+            T candidate,
+            BiPredicate<T, T> similar
+    ) {
+        for (Group<T> group : groups) {
+            if (similar.test(group.template(), candidate)) {
                 return group;
             }
         }
         return null;
     }
 
-    private static final class Group {
-        private final ItemStack template;
+    record PlannedStack<T>(T template, int amount) {
+    }
+
+    private static final class Group<T> {
+        private final T template;
         private long amount;
 
-        private Group(ItemStack template, long amount) {
+        private Group(T template, long amount) {
             this.template = template;
             this.amount = amount;
         }
 
-        private ItemStack template() {
+        private T template() {
             return template;
         }
 
