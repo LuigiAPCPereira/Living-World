@@ -524,6 +524,8 @@ A profundidade da água é bounded em 32 blocos e usa probing exponencial + refi
 
 `PaperThermalRuntimeModule` é owner do pulse runtime. Default: habilitado, 20 ticks (1 s), trabalho proporcional aos jogadores do mundo climático. O primeiro pulse apenas inicializa relógio; pulsos seguintes usam elapsed real + simulação bounded. Quit/respawn limpam snapshot; mudança de mundo reinicia somente o relógio para não fabricar catch-up quando o jogador retornar. Ainda não existem dano, HUD corporal ou efeitos visuais.
 
+**Smoke Paper parcial do slice 17:** o artefato de `47241fa` foi iniciado em Paper 26.3 build 133 via configuração `Run` do IntelliJ. O servidor carregou/enabled `LivingWorld 0.1.0-SNAPSHOT` e alcançou `Done` sem exceções do runtime térmico. A primeira tentativa encontrou corretamente um `session.lock` pertencente à instância Paper antiga; essa instância foi encerrada via SIGTERM, o lock liberado e o novo processo iniciou normalmente. O cliente MCPFabric permaneceu desconectado após o restart, portanto esse smoke comprova lifecycle/startup, **não** ainda execução com jogador conectado.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

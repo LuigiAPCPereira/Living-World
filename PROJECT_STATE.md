@@ -8,7 +8,7 @@
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-122 — Environmental & Thermal Foundation, bounded Paper resolvers + coarse runtime pulse slice
 - **Current acceptance:** Paper resolves activity/armor/water/wind/shelter/local heat with explicit budgets and a 20-tick owner module advances only internal body state without feedback/damage
-- **Current validation:** Paper runtime-foundation slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 321 tests / 115 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; live Paper smoke pending
+- **Current validation:** Paper runtime-foundation slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 321 tests / 115 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; Paper 26.3 commit `47241fa` startup reached `Done` with LivingWorld enabled/no thermal exceptions; player-connected pulse smoke still pending because MCPFabric client did not auto-reconnect
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint Paper runtime foundation and perform live Paper/MCPFabric smoke before exposing thermal diagnostics or feedback
+- **Next action:** once the Fabric client reconnects, complete the player-connected thermal pulse smoke; then expose bounded thermal diagnostics before player-facing feedback/damage
 
 ## M12.4 — checkpoint local
 
