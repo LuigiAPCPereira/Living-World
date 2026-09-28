@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, gradual seasonal-temperature closure
-- **Current acceptance:** runtime AmbientTemperature transitions continuously through Early/Mid/Late season using the existing calendar/SeasonCycle authority; season labels and legacy climate readout remain unchanged
-- **Current validation:** SeasonCycle progress/boundary tests + full branch gates 344 tests / 119 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; previous connected thermal smoke remains valid for earlier slices, while drying/rain/direct/day-night/season runtime smoke is deferred
+- **Current task:** LW-123 — bounded thermal feedback, pure feedback-policy slice
+- **Current acceptance:** cold breath and frost eligibility/intensity are pure/read-only decisions; breath is driven by cold air and cadence, frost by accumulated body state; no particle/freeze-tick/damage side effect exists yet
+- **Current validation:** LW-122 implementation foundation closed at 344 tests / 119 suites with deferred recent runtime smoke; LW-123 policy slice passes full gates at 349 tests / 120 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint gradual season temperature and audit LW-122 acceptance against implementation. If no essential code gap remains, mark implementation complete but runtime-validation pending and begin only the non-visual foundation of LW-123
+- **Next action:** checkpoint LW-123 feedback policy; add bounded per-player cadence/jitter orchestration without choosing particles or manipulating freeze ticks, then defer visual smoke to the next player-access window
 
 ## M12.4 — checkpoint local
 

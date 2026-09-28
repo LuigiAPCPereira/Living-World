@@ -626,6 +626,10 @@ Objetivo visual:
 
 Partícula vanilla exata (`CLOUD`, `WHITE_ASH`, `SNOWFLAKE` ou composição) será escolhida por smoke visual. Resourcepack pode melhorar o efeito sem tornar-se requisito.
 
+**Checkpoint de implementação LW-123 / primeiro slice:** `ThermalFeedbackPolicy` produz somente um `ThermalFeedbackProfile` abstrato. Respiração visível depende da temperatura do ar, não apenas do corpo: um jogador hipotermicamente frio em ambiente quente continua com frost corporal, mas não exala vapor. A intensidade de breath cresce de forma contínua abaixo do threshold de ar frio; atividade física encurta a faixa de cadência sem aumentar artificialmente a densidade do vapor.
+
+`BreathFeedback` retorna intensidade + intervalo mínimo/máximo, deixando o jitter concreto para uma camada posterior. Submersão total desabilita emissão na boca. Nenhuma partícula foi escolhida neste slice e nenhum scheduler Paper foi criado.
+
 ### 7.2 Sensação de congelamento
 
 Frio progressivo deve combinar, quando adequado:
@@ -640,6 +644,8 @@ Frio progressivo deve combinar, quando adequado:
 O efeito vanilla de freeze/freeze ticks é candidato para aproveitar linguagem visual nativa, porém exige spike técnico. **Visual freeze e dano térmico devem permanecer conceitos separados**; não aumentar freeze ticks até causar dano acidental apenas para desenhar overlay.
 
 Resourcepack pode fornecer frost/sons próprios. Sem pack, usar feedback vanilla seguro.
+
+`ThermalFeedbackProfile.frostIntensity` deriva exclusivamente do `PlayerThermalState` acumulado e cresce progressivamente em déficit severo. A policy não manipula freeze ticks, não aplica dano e não escolhe overlay; portanto a fronteira `visualFreeze != thermalDamage` já existe antes de qualquer adapter Paper.
 
 ### 7.3 Abrigo e recuperação
 

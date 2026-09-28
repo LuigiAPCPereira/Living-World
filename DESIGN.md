@@ -321,6 +321,8 @@ Vigésimo-primeiro slice de LW-122: o sampling coordenado do Paper foi inspecion
 
 Vigésimo-segundo slice de LW-122: `SeasonCycle.progressFor` deriva progresso 0..1 da própria data/regras do calendário e `PaperCalendarModule` o publica em `CalendarView`. O runtime de `AmbientTemperaturePolicy` interpola boundaries Early/Mid/Late com smoothstep: início = média(previous,current), meio = anchor current, fim = média(current,next). Fronteiras adjacentes são iguais, eliminando saltos térmicos de troca de estação sem alterar a estação lógica.
 
+Primeiro slice de LW-123: `ThermalFeedbackPolicy` é uma policy pura sobre estado corporal + temperatura ambiente + atividade + exposição à água. Ela produz intensidade/cadência abstrata de cold breath e intensidade abstrata de frost. Breath depende do ar frio e é suprimido em submersão total; frost depende do corpo acumulado. A policy não conhece Bukkit, partículas, freeze ticks, dano ou resourcepack.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.
