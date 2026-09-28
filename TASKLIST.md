@@ -48,7 +48,7 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**M5 complete — prepare stability/performance hardening milestone before broader simulation.**
+**M12.4 accepted/validated. LW-121 documents the accepted M12.5 foundation; next executable implementation task is LW-122 when requested.**
 
 | LW-060 | M6 | Establish Paper/spark runtime baseline | validated | M5 | measure representative runtime before optimizing hot paths | spark baseline: TPS 20.0; 10s MSPT min/med/p95/max 2.8/4.4/5.9/13.7 ms; 1m 2.8/4.3/6.2/24.1 ms; no evidence justifying speculative optimization | local master |
 | LW-061 | M6 | Add /lw status operator diagnostics | validated | LW-060 | player/console can inspect runtime state and performance without files or unsafe reloads | clean gates + console-path unit test + live MCPFabric player smoke; output confirmed calendar/runtime counters/TPS/MSPT and latest.log stayed clean | local master |
@@ -75,3 +75,29 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 | LW-101 | M10 | Runtime climate readout contrast smoke | validated | LW-100 | savanna and snowy_plains show meaningfully different readouts matching existing climate/ecology behavior | live Paper/MCPFabric: savanna 39°C Escaldante/Árido with crops 50%, farmland 0%, fire 100%, no frozen persistence; snowy_plains -1°C Congelante/Equilibrado with crops 58%, farmland 39%, fire 60%, frozen persistence; random_tick_speed confirmed 3 and log clean | local master |
 
 **M10 complete — local climate readability validated in live gameplay.**
+
+| LW-120 | M12 | Add seasonal ecology modifier domain | validated | M10 | season influences ecological growth through isolated domain multipliers without Bukkit or simulation state | M12.3 reported complete by user; implementation/tests preserved in current worktree; no new code validation executed by this documentation-only pass | local master |
+| LW-121 | M12 | Document and accept M12.5 environmental/thermal architecture | validated | M12.4 | one recoverable design defines environmental truth, plugin/datapack/resourcepack ownership, worldgen compatibility, performance invariants and staged implementation without starting later features | explicit user acceptance + `ECOLOGY_AND_SEASONS.md` and continuity docs updated/reopened | local master |
+| LW-122 | M12 | Specify and separate AmbientTemperature from PlayerThermalState | pending | LW-121, M2 | define the thermal math/contracts for ambient climate, microclimate, body inertia, wetness, water/depth, wind/shelter, activity, armor/insulation and local heat/cold sources; environment still drives ecology/snow/ice independently from player state; existing HUD contract migrates only through explicit compatibility tests | not started | ecology branch intended; current worktree master |
+| LW-123 | M12 | Add bounded thermal feedback and cold-breath experience | pending | LW-122 | eligible cold players get visually convincing mouth/eye breath with jittered bounded updates; progressive frost/cold feedback remains distinct from accidental vanilla freeze damage | not started | ecology branch intended; current worktree master |
+| LW-124 | M12 | Define plugin/datapack/resourcepack runtime contracts | pending | LW-121 | plugin owns behavior; datapack/resourcepack schemas/manifests are verifiable; datapack is declarative; one pack contains all seasonal assets and has explicit fallback/status semantics | not started | ecology branch intended; current worktree master |
+| LW-125 | M12 | Pass custom-worldgen compatibility gate | pending | LW-122, LW-124 | Terralith + Tectonic Overworld, Incendium Nether, Nullscape End and an unknown biome namespace produce safe/coherent climate behavior without mandatory name-table logic | not started | ecology branch intended; current worktree master |
+| LW-126 | M12 | Spike seasonal client visual projection | pending | LW-124, LW-125 | prove or reject a bounded Paper-compatible approach for grass/foliage/water/sky/fog/precipitation presentation without making client-only solid blocks lie about gameplay collision | not started | ecology branch intended; current worktree master |
+| LW-127 | M12 | Add bounded physical winter snow/ice/thaw | pending | LW-122, LW-125 | physical snow/ice that affects gameplay is real server state, climate-gated, lazy/bounded near relevant activity and uses hysteresis/cleanup without global chunk scans | not started | ecology branch intended; current worktree master |
+| LW-128 | M12 | Establish environmental performance gate | pending | LW-123, LW-126, LW-127 | measure feature cost under representative 1/10/25/50+ player profiles where tooling permits; record TPS/MSPT plus feature probes/mutations/packets/cache metrics before comparative performance claims | not started | ecology branch intended; current worktree master |
+
+| LW-110 | M11 | Add weather tendency to local climate readout | implemented not validated | M10 | /lw climate exposes the existing WeatherTendency from the same local ClimateSnapshot without claiming a future forecast | clean IntelliJ/Gradle gates; hot/dry=Tempo limpo and cold/wet=Precipitação provider assertions pass; live Paper pending | local master |
+| LW-111 | M11 | Add player feedback for applied Living World weather events | implemented not validated | M2 | when the climate coordinator actually applies clear/precipitation/storm weather, online players receive one short configurable message; stable/no-plan state stays silent | clean gates; coordinator sends one message after apply and disabled toggle stays silent; live Paper pending | local master |
+| LW-112 | M11 | Runtime weather feedback smoke | pending | LW-110, LW-111 | live logical-day advance applies a weather plan, player sees matching event feedback and /lw climate tendency remains coherent | not validated | local master |
+
+**LW-112 — runtime weather feedback smoke.**
+
+## Checkpoint M12.4 — 2026-09-27
+
+M12.3 informado concluído pelo usuário; integração sazonal existente preservada. Esta atualização substitui o ponteiro antigo LW-120 para o trabalho atual.
+
+| Task | State | Evidence / remaining validation |
+| --- | --- | --- |
+| M12.4 — Folhas sazonais próximas ao jogador | validated | ./gradlew clean test build aprovado (152 testes, 0 falhas); smoke visual Paper 26.3 + MCPFabric comprovado em runtime sob copa de folhas (partículas em outono, inverno condicionado por clima frio, verão nulo); fixture e mundo 100% restaurados |
+
+M12.4 recebeu aceite formal. Próxima ação executável quando autorizada: **LW-122**, preservando primeiro a fundação ambiental antes de ampliar flora/neve física.

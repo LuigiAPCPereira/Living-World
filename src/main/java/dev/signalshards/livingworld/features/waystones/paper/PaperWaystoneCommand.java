@@ -7,6 +7,7 @@ import dev.signalshards.livingworld.features.climate.application.LocalClimateRea
 import dev.signalshards.livingworld.features.climate.application.LocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
+import dev.signalshards.livingworld.features.climate.domain.WeatherTendency;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneService;
 import io.papermc.paper.command.brigadier.BasicCommand;
@@ -154,6 +155,11 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 thermalText(snapshot.thermalBand()),
                 moistureText(snapshot.moistureBand())
         ));
+        player.sendMessage(messages.component(
+                NamedTextColor.BLUE,
+                "climate.readout-weather",
+                weatherTendencyText(snapshot.weatherTendency())
+        ));
         sendRule(
                 player,
                 "climate.readout-crops",
@@ -248,6 +254,15 @@ public final class PaperWaystoneCommand implements BasicCommand {
             case EQUILIBRADO -> "climate.moisture.balanced";
             case UMIDO -> "climate.moisture.humid";
             case ENCHARCADO -> "climate.moisture.saturated";
+        });
+    }
+
+    private String weatherTendencyText(WeatherTendency tendency) {
+        return messages.text(switch (tendency) {
+            case TEMPO_LIMPO -> "climate.weather.clear";
+            case ESTAVEL -> "climate.weather.stable";
+            case PRECIPITACAO -> "climate.weather.precipitation";
+            case TEMPESTADE -> "climate.weather.storm";
         });
     }
 

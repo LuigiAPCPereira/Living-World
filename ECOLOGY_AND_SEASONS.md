@@ -1,0 +1,752 @@
+# Living World — Ecologia, Seasons e Arquitetura Ambiental
+
+## Estado e autoridade
+
+- **Estado:** direção arquitetural aceita pelo usuário em 2026-09-27; implementação além de M12.4 ainda pendente.
+- **Escopo:** evolução da frente de ecologia, clima, temperatura, seasons e apresentação ambiental.
+- **Autoridades superiores:** `PRODUCT.md` para intenção de produto, `DESIGN.md` para arquitetura geral, `TASKLIST.md` para execução e `ROADMAP.md` para sequência.
+- **Função deste documento:** preservar decisões, objetivos, limites e arquitetura especializada desta frente sem criar uma segunda fonte concorrente.
+- **Branch:** o usuário decidiu manter uma frente/branch dedicada à ecologia e usar a linha principal para outras áreas. No momento desta documentação o worktree observado ainda está em `master`; nenhuma criação/troca de branch é realizada por este documento.
+
+## 1. Objetivo da frente ecológica
+
+Living World deve evoluir de um conjunto de efeitos sazonais para um **sistema ambiental coerente**, em que calendário, estação, clima, temperatura, ecologia, apresentação e mudanças físicas compartilham a mesma verdade.
+
+O objetivo de produto é competir em qualidade percebida, profundidade e eficiência com referências como:
+
+- AdvancedSeasons;
+- RealisticSeasons;
+- Aeternum Seasons;
+- Serene Seasons;
+- ThermoSurvival.
+
+Esses projetos são **benchmarks e fontes de inspiração**, não especificações a copiar. Living World deve provar suas próprias vantagens por comportamento observado e medição. Não declarar que é mais rápido ou melhor que concorrentes sem benchmark comparável.
+
+Referências estudadas:
+
+- https://github.com/AdvancedPlugins/Seasons — repositório público sob Apache-2.0;
+- https://github.com/parlamentum/ThermoSurvival — referência de produto/temperatura; o README observado informa MIT, mas nenhuma licença raiz foi confirmada nesta sessão;
+- https://github.com/KinkinxD12/Aeternum-Seasons — referência de produto; o README observado declara que o código-fonte ainda não foi aberto;
+- https://www.curseforge.com/minecraft/mc-mods/serene-seasons — referência de experiência sazonal em mod client+server;
+- RealisticSeasons — referência de experiência, projeção visual e temperatura.
+
+Nenhum código de terceiros deve ser copiado apenas por estar publicamente visível. Reuso exige licença compatível, atribuição quando aplicável e necessidade real.
+
+## 2. Princípio central
+
+O plugin é a **única autoridade de comportamento**.
+
+```text
+Calendar / logical time
+        |
+        v
+Season
+        |
+        v
+ClimateSnapshot
+        |
+        v
+Environmental State
+        |
+        +--> Ecology policies
+        +--> Ambient temperature
+        +--> Player thermal state
+        +--> Visual projection
+        +--> Physical ecology
+```
+
+Regras sazonais não devem ser duplicadas em listeners, datapack, resourcepack ou features independentes.
+
+## 3. Plugin + datapack + resourcepack
+
+Living World pode explorar três frentes, mas com ownership explícito.
+
+### 3.1 Plugin Paper — cérebro e orquestrador
+
+O plugin possui:
+
+- calendário e estado lógico de seasons;
+- clima e `ClimateSnapshot`;
+- perfis ambientais por dimensão/bioma;
+- temperatura ambiente;
+- estado térmico do jogador;
+- políticas ecológicas;
+- decisões de neve, gelo, degelo, flora e riscos térmicos;
+- projeção visual client-side quando tecnicamente segura;
+- mudanças físicas do mundo quando gameplay exigir estado real;
+- lifecycle, configuração, cache, budgets, métricas e diagnóstico;
+- descoberta/verificação do datapack;
+- entrega/verificação do resourcepack.
+
+Datapack e resourcepack nunca calculam uma estação concorrente.
+
+### 3.2 Datapack — dados Minecraft-native declarativos
+
+O datapack complementar pode conter:
+
+- tags próprias;
+- predicates;
+- metadados/classificações declarativas;
+- biomas auxiliares/visuais se um spike técnico comprovar a estratégia;
+- worldgen próprio somente se existir requisito futuro explícito;
+- integração declarativa com registries vanilla.
+
+O datapack **não** deve virar o motor de simulação. Evitar `tick.mcfunction` permanente executando lógica ambiental global, scans, fills ou loops que concorram com o plugin.
+
+O plugin deve verificar o datapack no bootstrap/startup e sua versão/schema. Não usar reload de datapack como mecanismo normal de troca de estação.
+
+### 3.3 Resourcepack — apresentação
+
+O resourcepack contém apresentação, não verdade de gameplay:
+
+- texturas sazonais;
+- assets de atmosfera;
+- sons de vento, frio, calor e ambiente;
+- partículas/assets customizados quando suportados;
+- UI e ícones;
+- feedback térmico refinado.
+
+Deve existir **um único pack** contendo assets das quatro estações; não trocar o ZIP inteiro a cada mudança de season.
+
+O plugin gerencia:
+
+```text
+PlayerJoin
+  -> request pack + hash
+  -> observe status
+  -> LOADED / DECLINED / FAILED
+```
+
+O gameplay principal deve continuar coerente sem resourcepack, usando fallback vanilla quando possível. Servidores podem futuramente optar por exigir o pack, mas isso é configuração explícita.
+
+### 3.4 Contratos e versionamento
+
+Plugin, datapack e resourcepack devem usar versão de contrato/schema, não depender apenas de igualdade textual de versões.
+
+Exemplo conceitual:
+
+```text
+plugin 1.4.2
+datapack 1.4.0 -> schema 3
+resourcepack 1.3.8 -> schema 5
+
+plugin espera datapack schema 3 e resource schema 5
+=> compatível
+```
+
+Manifests devem permitir diagnóstico de versão, schema, hash e compatibilidade.
+
+## 4. Compatibilidade de worldgen como requisito de arquitetura
+
+Ambiente-alvo oficial para desenvolvimento e smoke:
+
+```text
+Overworld: Terralith + Tectonic
+Nether:    Incendium
+End:       Nullscape
+```
+
+Compatibilidade não deve depender de hardcode obrigatório dos nomes desses projetos.
+
+### 4.1 Regra de fallback
+
+Um biome namespaced desconhecido deve continuar funcionando:
+
+```text
+Namespaced biome
+  -> propriedades ambientais observáveis
+  -> dimensão
+  -> temperatura/humidade coordenada
+  -> altitude/exposição
+  -> perfil climático conservador
+```
+
+Perfis conhecidos de Terralith/Incendium/Nullscape podem refinar o resultado, mas não ser pré-condição para funcionamento.
+
+### 4.2 Tectonic
+
+Tectonic deve ser tratado principalmente como geometria real do mundo, não como uma integração especial.
+
+Evitar regras frágeis como `Y > 80 = mountain`. Preferir:
+
+- altitude real/normalizada da dimensão;
+- referência local de elevação quando necessária;
+- exposição ao céu;
+- perfil do bioma;
+- weather/season.
+
+Uma montanha muito alta criada pelo worldgen deve emergir naturalmente como ambiente mais frio/exposto.
+
+### 4.3 Dimensões
+
+O calendário pode existir globalmente, mas o efeito ambiental da season é dependente da dimensão.
+
+**Overworld**
+
+- seasons completas;
+- clima/temperatura;
+- neve/gelo quando climaticamente válidos;
+- ecologia/vegetação;
+- apresentação sazonal.
+
+**Nether / Incendium**
+
+- não aplicar primavera/verão/outono/inverno terrestre de forma literal;
+- perfil térmico próprio e geralmente extremo;
+- biomas modulam calor/risco;
+- efeitos de calor e exposição podem existir sem snow/freeze terrestre.
+
+**End / Nullscape**
+
+- não aplicar seasons terrestres por padrão;
+- perfil ambiental próprio/alienígena;
+- custom biomes devem continuar classificáveis por fallback;
+- nenhuma neve terrestre automática apenas porque o calendário está no inverno.
+
+## 5. Separar temperatura ambiente de estado térmico do jogador
+
+O modelo futuro deve separar dois conceitos que hoje estão parcialmente combinados no `ApparentTemperaturePolicy`.
+
+### 5.1 AmbientTemperature
+
+Representa o ambiente e governa ecologia/físicas como neve e gelo.
+
+Entradas candidatas:
+
+- temperatura/humidade do local;
+- season;
+- anomalia climática;
+- hora/fase do dia;
+- weather;
+- altitude;
+- exposição ao céu;
+- dimensão;
+- perfil ambiental do bioma/região.
+
+Roupa do jogador nunca pode impedir um rio de congelar.
+
+### 5.2 PlayerThermalState
+
+Representa como o jogador está termicamente.
+
+Entradas candidatas:
+
+- temperatura ambiente;
+- água/molhado;
+- abrigo e exposição;
+- sprint/atividade;
+- armadura/isolamento;
+- fontes de calor/frio próximas;
+- contato direto com lava/fogo/água;
+- acumulação/recuperação ao longo do tempo.
+
+Isso permite:
+
+```text
+AmbientTemperature = -12 °C
+PlayerThermalState  = recovering
+porque o jogador entrou em abrigo aquecido.
+```
+
+A atual temperatura aparente do HUD continua sendo contrato existente até uma fatia específica migrá-la com testes e compatibilidade.
+
+### 5.3 Princípio Vanilla+ do sistema térmico
+
+A simulação interna pode ser relativamente sofisticada, mas a leitura pelo jogador deve continuar intuitiva e baseada em comportamentos vanilla.
+
+Princípio:
+
+> **Condição ambiental cria o cenário; exposição determina a velocidade da troca; equipamento altera resistência; tempo produz consequência.**
+
+Fluxo conceitual:
+
+```text
+Ambient Conditions
+        |
+        v
+Exposure / Microclimate
+        |
+        v
+Thermal Exchange Rate
+        |
+        v
+Equipment / Insulation / Wetness / Activity
+        |
+        v
+BodyThermalLoad over time
+        |
+        v
+PlayerThermalState
+        |
+        v
+Feedback / Gameplay consequence
+```
+
+O jogador não precisa conhecer valores internos como `BodyThermalLoad=-0.61`. Ele deve conseguir concluir, pela própria experiência de Minecraft, que está molhado, exposto ao vento, no alto de uma montanha e precisa de abrigo/calor.
+
+Itens e comportamentos vanilla devem ganhar significado ambiental antes de Living World inventar equipamentos próprios.
+
+### 5.4 BodyThermalLoad e inércia
+
+`PlayerThermalState` não deve ser recalculado como uma temperatura corporal instantânea derivada apenas de somas de graus.
+
+Direção proposta:
+
+```text
+delta =
+    environmentalExchange
+  + localHeatSources
+  + activityHeat
+  - waterCooling
+  - windCooling
+  +/- equipment modifiers
+
+BodyThermalLoad += delta * elapsedTime
+```
+
+O nome final/tipo matemático ainda será decidido no LW-122. A propriedade obrigatória é **inércia**:
+
+- entrar numa casa quente não recupera o jogador instantaneamente;
+- teleportar para um pico congelado muda o ambiente imediatamente, mas o corpo esfria ao longo do tempo;
+- teleportar de uma região congelante para o Nether não causa sobreaquecimento instantâneo;
+- exposições breves podem ser toleradas;
+- exposições severas prolongadas acumulam consequências.
+
+Bandas futuras podem incluir `EXTREME_COLD`, `FREEZING`, `VERY_COLD`, `COLD`, `COOL`, `COMFORTABLE`, `WARM`, `HOT`, `OVERHEATING` e `EXTREME_HEAT`. Os thresholds e taxas são tuning a validar, não constantes fechadas.
+
+### 5.5 Armadura, isolamento e cobertura
+
+Armadura não adiciona graus diretamente; ela altera troca térmica. Evitar `Leather Chestplate = +5 °C`. Preferir que isolamento/retenção modulem `heatLoss` e `heatGain` antes de atualizar o estado corporal.
+
+Direção de gameplay:
+
+- couro deve ganhar utilidade real de isolamento no frio;
+- chainmail tende a baixo isolamento/alta ventilação;
+- metais não devem receber bônus térmicos arbitrários apenas para diferenciar materiais;
+- Netherite pode ter alta retenção térmica, ajudando no frio e dificultando dissipação em calor extremo;
+- Diamond deve continuar forte sem obrigatoriamente ser a melhor solução térmica;
+- cobertura importa: chest/legs tendem a pesar mais que head/feet;
+- um conjunto completo deve ser mais relevante que uma única peça.
+
+Essas identidades são hipóteses de balanceamento a validar no LW-122/LW-123, não valores finais. O modelo pode expor propriedades como `Insulation`, `HeatRetention` e `WaterResistance` sem exigir que todo material possua valores diferentes.
+
+### 5.6 Encantamentos
+
+Encantamentos só devem influenciar temperatura quando sua semântica vanilla sustentar essa expectativa:
+
+- `Fire Protection` pode reduzir transferência térmica extrema de fogo/lava;
+- `Frost Walker` pode futuramente reduzir exposição fria de contato nos pés, se playtest justificar;
+- `Protection` genérico permanece neutro por padrão;
+- não transformar encantamentos em uma tabela oculta de bônus de temperatura;
+- evitar punição/bônus duplicado com mecânicas vanilla já existentes.
+
+### 5.7 Wetness
+
+Molhamento deve ser estado acumulável separado da temperatura ambiente: `Wetness = 0.0 .. 1.0`.
+
+Fontes candidatas: chuva, contato parcial com água, natação/submersão e outras precipitações apenas quando fizer sentido. Recuperação vem de tempo, abrigo, calor, fogueira e condições secas.
+
+Wetness aumenta troca térmica com ambiente frio; não significa automaticamente `-X °C`. Uma tempestade quente de verão não deve causar hipotermia só porque o jogador está molhado.
+
+Armadura pode modificar velocidade de molhamento/secagem ou eficiência de isolamento quando molhada, mas a primeira implementação deve permanecer simples. Exemplo de direção: `dry + leather -> bom isolamento`; `wet + leather -> ainda ajuda, mas menos`.
+
+### 5.8 Água e profundidade
+
+Água deve ser uma exposição térmica de alta transferência, não apenas um modificador fixo. Estados úteis: contato leve/pés, submersão parcial, natação e submersão completa. Quanto maior a fração corporal submersa, maior a troca térmica.
+
+Também deve existir um conceito de `WaterTemperature` derivado do ambiente, dimensão, season e profundidade quando necessário. Não precisa reproduzir oceanografia real; precisa ser coerente e previsível.
+
+Profundidade deve importar gradualmente: perto da superfície há pouca penalidade extra; em água profunda o ambiente pode ficar mais severo; em grande profundidade entram frio, baixa luz e isolamento do clima superficial. Não adicionar dano de pressão automaticamente.
+
+### 5.9 Água sob gelo
+
+Água abaixo de gelo deve ser um dos cenários frios mais perigosos: `cold ambient + near-freezing water + full submersion -> high thermal loss + high wetness`.
+
+Ao sair, o jogador permanece molhado e continua perdendo calor até secar/ser aquecido. Cair em lago congelado deve ser mais perigoso que caminhar na neve, mas ainda oferecer tempo de reação.
+
+### 5.10 Fontes locais de calor e frio
+
+Fontes térmicas devem alterar a **taxa de troca térmica local**, não reescrever `AmbientTemperature`.
+
+Modelo conceitual: `sourceFlux = sourcePower * distanceFalloff * exposureFactor * optionalLineOfSightFactor`.
+
+Ordem conceitual, sujeita a tuning: torch/lantern = pequeno conforto; furnace/smoker aceso = moderado; fire = forte; campfire = forte e apropriado para recuperação; lava = extremo e perigoso.
+
+Uma tocha não deve resolver sozinha um inverno extremo. Fogueira deve ter papel claro de sobrevivência. Lava aquece sem contato e exposição prolongada pode levar a sobreaquecimento.
+
+Fontes frias candidatas: powder snow, ice, packed ice, blue ice e água extremamente fria. Não criar scans por raio a cada tick; fontes locais exigem desenho cached/indexed/bounded.
+
+### 5.11 Atividade física
+
+Atividade pode gerar calor metabólico moderado: parado = baseline; walking = pequeno efeito; sprinting = maior geração; swimming = atividade + alta troca com água; climbing = pequeno/moderado; Elytra/high-speed exposure pode aumentar convecção quando aplicável.
+
+Sprint nunca deve substituir abrigo/fogueira em frio extremo. Em calor, atividade + armadura de alta retenção pode acelerar sobreaquecimento.
+
+### 5.12 Vento, exposição e altitude
+
+`WindExposure` pode derivar de weather/storm, sky exposure, altitude, shelter e deslocamento/voo quando relevante. Em frio, `cold + wet + wind` aumenta muito o resfriamento; em calor, fluxo de ar pode ajudar dissipação.
+
+Isso é especialmente importante para Terralith + Tectonic: picos devem ser severos pela combinação de altitude, exposição, clima e vento, não por um único threshold de Y.
+
+### 5.13 Abrigo sem detectar semanticamente uma casa
+
+Living World não deve tentar provar que uma construção é uma casa. Preferir `SkyExposure`, `WindExposure`, `RainExposure`, `ShelterFactor` e fontes térmicas locais.
+
+Isso permite cabanas, cavernas, castelos, buracos improvisados e construções customizadas. Materiais de parede com propriedades térmicas específicas ficam adiados até haver evidência de que melhoram gameplay sem tornar o cálculo caro.
+
+### 5.14 Cavernas
+
+Profundidade subterrânea não deve equivaler automaticamente a mais quente. Cavernas profundas devem tender a condições mais estáveis: menor influência de hora/weather, pouco vento e influência sazonal superficial reduzida quando apropriado. Lava/fogo local podem criar microclima quente sem alterar a temperatura base de toda a caverna.
+
+### 5.15 Nether / Incendium e calor
+
+No Nether, a experiência térmica deve ser sobre **acúmulo de calor**, não dano ambiental constante obrigatório. `hot biome + nearby lava + sprint/activity + high heat-retention armor` pode evoluir de `WARM` para `HOT` e `OVERHEATING`.
+
+O sistema deve criar pressão e escolhas, não transformar toda permanência no Nether em punição inevitável. Perfis de Incendium refinam intensidade, mas o fallback dimensional continua funcional.
+
+### 5.16 Powder Snow
+
+Powder Snow já possui congelamento vanilla. `PlayerThermalState` pode reconhecer o contato como exposição fria extrema, enquanto dano/overlay vanilla continuam sob responsabilidade principal da mecânica vanilla. Objetivo: coerência, não double punishment.
+
+### 5.17 Comida e fome
+
+Evitar tabela de itens como `steak = +4 °C` e `apple = -2 °C`. Alimentação/saturação pode influenciar capacidade de recuperação/manutenção térmica; fome severa pode prejudicar retenção/recuperação. Stews/sopas só ganham papel especial se playtest justificar.
+
+### 5.18 Sono
+
+Sono cruza tempo lógico rapidamente, mas `PlayerThermalState` é estado corporal de curto prazo. Não integrar automaticamente horas fictícias de troca térmica apenas porque o calendário pulou a noite. Dormir em local seguro pode oferecer recuperação controlada com semântica própria e testada.
+
+### 5.19 Morte, respawn e teleporte
+
+No respawn, redefinir estados corporais de curto prazo como wetness, thermal load e exposições transitórias. Clima do mundo permanece independente.
+
+Em teleporte, `AmbientTemperature` muda imediatamente para o destino; `PlayerThermalState` mantém inércia e começa a reagir ao novo ambiente; caches espaciais do local anterior devem ser invalidados.
+
+### 5.20 Veículos e estados vanilla
+
+O sistema deve respeitar contexto real: barco sobre água não equivale a submersão; chuva ainda pode molhar quando aplicável; cair do barco inicia exposição à água; mount/vehicle não deve ser tratado como contato térmico com o bloco abaixo sem evidência real.
+
+### 5.21 Consequências progressivas
+
+Para preservar Vanilla+: frio/calor leve -> feedback; exposição relevante -> desconforto; exposição severa prolongada -> penalidades leves; extremo prolongado -> dano.
+
+Não aplicar dano/Slowness forte imediatamente ao entrar em um bioma. O jogador deve receber sinais claros e tempo para reagir, aprender e utilizar abrigo/equipamento/ambiente.
+
+### 5.22 Performance do microclima
+
+Não executar `for each player every tick -> scan radius N for lava/torches/ice`.
+
+Direção: cache de contexto térmico por jogador; invalidação por movimento significativo/região, weather/season, equipamento/wetness e block place/break de fontes térmicas; índice bounded de fontes por chunk/região quando necessário; atualização coarse para integração temporal sem re-scan completo; jitter para pulsos visuais; chunks carregados por padrão, sem force-load para temperatura.
+
+O desenho final deve medir se um índice de fontes é realmente mais barato que sampling bounded antes de adotá-lo.
+
+## 6. Cálculo incremental, cache e invalidação
+
+Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.
+
+Preferir:
+
+```text
+season mudou?          -> invalida componente sazonal
+biome/região mudou?    -> invalida perfil local
+weather mudou?         -> invalida componente de weather
+faixa de altitude mudou? -> invalida altitude
+equipamento mudou?     -> invalida isolamento
+wet state mudou?       -> invalida umidade corporal
+heat-source context mudou? -> invalida microclima
+```
+
+Um pulso coarse e limitado pode existir como rede de segurança, mas não deve substituir ownership/eventos/cache.
+
+Mundo/Bukkit só é acessado em thread segura. Cálculo puro, agregação e preparação podem ser assíncronos quando houver benefício medido; "jogar tudo async" não é estratégia de performance.
+
+## 7. Feedback térmico: o jogador deve sentir o frio
+
+Temperatura não deve ser apenas um número no HUD.
+
+Bandas de experiência propostas:
+
+- `COMFORTABLE`;
+- `COOL`;
+- `COLD`;
+- `VERY_COLD`;
+- `FREEZING`;
+- `EXTREME_COLD`.
+
+Os limites numéricos ainda são tuning de gameplay, não contrato fechado.
+
+### 7.1 Respiração visível
+
+Em frio suficiente, o jogador deve emitir vapor próximo à boca/olhos.
+
+Objetivo visual:
+
+- emissão pequena;
+- origem próxima ao eye location, deslocada levemente na direção do olhar;
+- intervalo irregular/jitter para evitar sincronização de dezenas de jogadores;
+- densidade crescente com frio;
+- não revelar jogadores invisíveis/vanished;
+- somente jogadores elegíveis entram no conjunto de atualização.
+
+Partícula vanilla exata (`CLOUD`, `WHITE_ASH`, `SNOWFLAKE` ou composição) será escolhida por smoke visual. Resourcepack pode melhorar o efeito sem tornar-se requisito.
+
+### 7.2 Sensação de congelamento
+
+Frio progressivo deve combinar, quando adequado:
+
+- respiração;
+- som/vento;
+- feedback visual de frost;
+- tremor ou feedback audiovisual sutil;
+- penalidades leves em frio severo;
+- hipotermia/dano somente em extremo e de forma configurável.
+
+O efeito vanilla de freeze/freeze ticks é candidato para aproveitar linguagem visual nativa, porém exige spike técnico. **Visual freeze e dano térmico devem permanecer conceitos separados**; não aumentar freeze ticks até causar dano acidental apenas para desenhar overlay.
+
+Resourcepack pode fornecer frost/sons próprios. Sem pack, usar feedback vanilla seguro.
+
+### 7.3 Abrigo e recuperação
+
+Entrar em construção/abrigo deve ser perceptível:
+
+```text
+exterior frio + vento + molhado
+   -> abrigo reduz exposição
+   -> fonte de calor local ajuda
+   -> PlayerThermalState recupera gradualmente
+   -> frost e respiração diminuem
+```
+
+Detecção de abrigo e fontes térmicas próximas precisa de desenho bounded/cached; não escanear área ao redor de cada jogador a cada HUD refresh.
+
+## 8. Visual seasonal projection vs ecologia física
+
+Living World deve usar modelo híbrido:
+
+```text
+Environmental State
+        |
+        +--> Visual Projection (client/player)
+        |
+        +--> Physical Ecology (server/world)
+```
+
+### 8.1 Visual Projection
+
+Boa para efeitos sem consequência física:
+
+- foliage/grass tint;
+- water/sky/fog;
+- atmosfera;
+- partículas;
+- sons;
+- apresentação de chuva/neve;
+- assets sazonais.
+
+Uma direção técnica a investigar é usar biomas auxiliares sazonais definidos em datapack/registry e projetados ao cliente sem reescrever a verdade ecológica do servidor. Isso é **spike**, não arquitetura implementada. Validar primeiro compatibilidade Paper 26.3, registry/packets, custo, reconnect e clients vanilla.
+
+Evitar NMS/packets se API pública suficiente existir; se packet-level for necessário, isolar em adapter estreito e documentar razão.
+
+### 8.2 Physical Ecology
+
+Se o efeito muda colisão/gameplay, o estado real do servidor deve ser coerente.
+
+Exemplos:
+
+- snow layer física;
+- WATER -> ICE caminhável;
+- ICE -> WATER no degelo;
+- mudanças de flora que realmente alteram blocos.
+
+Não fingir gelo sólido apenas no cliente quando o servidor continua vendo água.
+
+## 9. Inverno físico bounded e lazy
+
+Neve/gelo físicos devem ser aplicados apenas quando climate/policy permitirem e sempre com orçamento explícito.
+
+Fluxo conceitual:
+
+```text
+active player / relevant event
+  -> ClimateSnapshot / AmbientTemperature
+  -> candidate surface
+  -> policy
+  -> bounded mutation budget
+  -> real server block mutation
+```
+
+Não:
+
+```text
+winter started
+  -> scan every loaded chunk
+  -> repaint/freeze whole world
+```
+
+Congelamento/degelo deve considerar histerese para impedir oscillation próxima de 0 °C. Valores como congelar abaixo de -2 °C e derreter acima de +2 °C são exemplos de tuning, não decisão final.
+
+O custo deve escalar principalmente com jogadores/áreas ativas e mudanças relevantes, não com tamanho total do mapa.
+
+## 10. Transições sazonais graduais
+
+Visual futuro não deve ser uma troca binária instantânea:
+
+```text
+Summer
+  -> Late Summer
+  -> Early Autumn
+  -> Mid Autumn
+  -> Late Autumn
+  -> Early Winter
+```
+
+Usar progresso dentro da season para interpolar apresentação quando tecnicamente viável.
+
+Exemplos de direção:
+
+**Primavera**
+
+- brotação/floração;
+- vegetação mais viva;
+- partículas leves;
+- retorno gradual após dormência.
+
+**Verão**
+
+- maturidade;
+- atmosfera quente sutil;
+- efeitos visuais reduzidos onde não agregam valor.
+
+**Outono**
+
+- múltiplos tons de copa;
+- queda de folhas;
+- vegetação entrando em dormência;
+- atmosfera mais seca/fria.
+
+**Inverno**
+
+- vegetação dormente/desaturada;
+- precipitação/neve onde climate permite;
+- superfícies frias;
+- rios/lagos congelando fisicamente apenas quando válido;
+- respiração/frost para jogadores expostos.
+
+Deserto quente em inverno pode permanecer sem neve/gelo. Season influencia, mas não substitui clima local.
+
+## 11. Performance como contrato
+
+Princípio:
+
+> trabalho ambiental deve ser proporcional à atividade real, com budgets explícitos e mensuráveis.
+
+Cada feature deve declarar limites, por exemplo:
+
+- máximo de probes por ativação;
+- máximo de mutações físicas por janela;
+- máximo de packets/efeitos por jogador;
+- máximo de entries em cache;
+- frequência máxima de fallback/coarse update.
+
+Valores concretos serão definidos por implementação/benchmark, não por estética de código.
+
+Técnicas desejadas:
+
+- event-driven antes de polling;
+- dirty flags/invalidation;
+- caches por jogador/região quando justificados;
+- jitter para tarefas visuais periódicas, evitando herd effect;
+- work queues bounded para transformações;
+- chunks já carregados por padrão; evitar force-load apenas para estética;
+- nenhum scan recorrente de mundo/chunks.
+
+## 12. Benchmark obrigatório antes de alegar vantagem
+
+Perfis mínimos futuros:
+
+```text
+1 jogador
+10 jogadores
+25 jogadores
+50+ jogadores
+```
+
+Medir quando ferramentas permitirem:
+
+- TPS/MSPT;
+- tempo da feature/tick ou evento;
+- allocations;
+- quantidade de probes;
+- mutações;
+- packets enviados;
+- cache hit/miss;
+- event invocations;
+- backlog/budget saturation.
+
+Comparar baseline sem a feature e com a feature. Não dizer "mais performático que X" sem evidência comparável.
+
+## 13. Próximo bloco — M12.5 Environmental & Thermal Foundation
+
+Ordem proposta e aceita como direção:
+
+1. **Climate profiles e compatibilidade de dimensão/custom biome**
+   - manter sampling por coordenada;
+   - namespaced/fallback;
+   - Overworld/Nether/End com respostas ambientais próprias.
+2. **AmbientTemperature**
+   - separar temperatura do ambiente da sensação corporal.
+3. **PlayerThermalState**
+   - exposição, água, atividade, isolamento, abrigo e calor com trabalho bounded.
+4. **Thermal Feedback**
+   - cold breath;
+   - sensação progressiva de congelamento;
+   - feedback vanilla/resourcepack com fallback seguro.
+5. **Plugin/datapack/resourcepack contracts**
+   - schemas/manifests;
+   - bootstrap do datapack;
+   - resourcepack delivery/status;
+   - nenhum motor concorrente.
+6. **Worldgen Compatibility Gate**
+   - Terralith + Tectonic;
+   - Incendium;
+   - Nullscape;
+   - namespace desconhecido.
+7. **Seasonal Visual Projection spike**
+   - validar técnica de cores/biomas/packets antes de compromisso.
+8. **Bounded Physical Winter**
+   - neve real;
+   - gelo real;
+   - degelo;
+   - budgets/histerese.
+9. **Performance gate**
+   - benchmark e limites antes de expandir flora/efeitos.
+
+M12.5 deve fortalecer a fundação antes de adicionar volume de efeitos. Flora sazonal mais ampla vem depois de a infraestrutura ambiental e de apresentação estar comprovada.
+
+## 14. Não objetivos
+
+- não recriar Terralith/Tectonic/Incendium/Nullscape;
+- não exigir Fabric/NeoForge no cliente;
+- não transformar datapack em scheduler global;
+- não trocar resourcepack inteiro por estação;
+- não manter duas fontes de season/climate;
+- não aplicar snow/freeze terrestre ao Nether/End por simples calendário;
+- não fazer block scans globais;
+- não usar fake client blocks sólidos se isso quebrar colisão/verdade de gameplay;
+- não otimizar por intuição nem prometer superioridade sem medição;
+- não iniciar implementação das etapas futuras apenas porque foram documentadas.
+
+## 15. Critérios arquiteturais de sucesso
+
+Esta direção é considerada preservada quando:
+
+- calendar/season/climate continuam com uma única autoridade;
+- `AmbientTemperature` e `PlayerThermalState` são conceitos distintos quando a migração ocorrer;
+- custom worldgen participa sem tabela obrigatória de nomes;
+- Overworld/Nether/End podem ter respostas ambientais diferentes;
+- plugin controla contratos de datapack/resourcepack;
+- resourcepack é apresentação e possui fallback quando configurado como opcional;
+- efeitos físicos têm verdade server-side;
+- efeitos puramente visuais podem usar projeção client-side;
+- todo trabalho recorrente é bounded e possui owner;
+- performance é medida antes de alegações comparativas.

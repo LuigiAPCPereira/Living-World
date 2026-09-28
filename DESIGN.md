@@ -2,6 +2,7 @@
 
 - **Observed baseline:** Paper plugin, Java 25, Gradle, package `dev.signalshards.livingworld`.
 - **Requirements:** `PRODUCT.md`.
+- **Environmental specialization:** `ECOLOGY_AND_SEASONS.md`.
 - **Current implementation scope:** Foundation v0.1 / TASKLIST M0.
 - **Status:** architecture is intentionally small and expected to evolve with real features.
 
@@ -27,8 +28,8 @@
 | `features.waystones.application` | registration, activation visibility and travel result contracts | player/world PDC details |
 | `features.waystones.paper` | World/Player PDC adapters, safe destination validation and async Paper teleport | economy, GUI or physical activation presentation |
 | future `features.hud.paper` | owns player-facing boss bars/action bar lifecycle and renders read-only projections of calendar/climate/navigation state | calendar/climate rules or persistent gameplay state |
-| future `features.ecology.domain` | pure suitability/acceptance policy for ecological reactions from effective climate | Paper events, random source or block mutation |
-| future `features.ecology.paper` | adapts vanilla natural-growth events into climate-policy decisions with bounded event-local work | world scanning, forced growth or fertilization handling |
+| `features.ecology.domain` | pure suitability/acceptance/visual policies for ecological reactions from effective climate and season | Paper events, random source or block mutation |
+| `features.ecology.paper` | adapts bounded Paper events/player-local triggers into ecology decisions | world scanning, forced global simulation or duplicated climate rules |
 | future `features.*` packages | one gameplay capability and its state/listeners/tasks | unrelated feature internals |
 | Paper API | external server framework boundary | Living World domain decisions |
 
@@ -117,6 +118,8 @@ Season-transition presentation is a narrow `CalendarProgressListener`. When a pr
 `/lw climate` is a read-only explanation layer over the existing climate/ecology rules. `PaperLocalClimateReadoutProvider` resolves the player's effective `ClimateSnapshot`, current season and the same apparent-temperature policy used by the HUD. It then evaluates the already-configured crop/tree/grass growth, farmland retention, fire spread and frozen-surface policies with their current strengths/enabled flags. The command displays those actual percentages and state; it does not introduce thresholds, scans, polling, persistence or a second balance model.
 
 Player exposure (water/fire/lava) for apparent temperature is shared between HUD and climate readout through `PaperTemperatureExposureResolver`, preventing presentation drift between the two surfaces.
+
+Weather readability deliberately separates **tendency** from **applied event**. `/lw climate` displays the local `WeatherTendency` already present in its `ClimateSnapshot`; it is not described as a guaranteed forecast because the daily world weather coordinator uses a bounded representative world sample. Separately, `PaperWeatherEventAnnouncement` runs only after `PaperWeatherController.apply(...)` succeeds and emits one short message to players in that world. Stable/no-plan climate remains silent, and announcements can be disabled via `climate.weather-events.player-announcements`.
 
 ## Climate
 
@@ -237,3 +240,38 @@ Nearby heat-source influence such as merely standing beside lava or campfires re
 - whether later messages need per-player locale in addition to the server default;
 - which persistent store best fits waystones/world-memory data once their data model exists;
 - whether Folia compatibility becomes a target. It is not assumed in Foundation v0.1.
+
+## M12.4 — Folhas sazonais
+
+`PaperSeasonalLeavesModule` observa movimento posicional normal em MONITOR, ignora cancelamentos/teleportes/rotação e limita tentativas a uma por jogador a cada 5 segundos (relógio monotônico). Não agenda tarefas. Consulta no máximo nove posições fixas de copa, até seis blocos acima do jogador, somente em chunks carregados e dentro da altura válida. A primeira folha encerra a busca, mesmo se a chance rejeitar o efeito. Quit e disable limpam o estado transitório. Apenas o jogador do evento recebe até três partículas; não há alteração de blocos.
+
+`SeasonalLeafVisualPolicy` decide o efeito e usa `NaturalGrowthSuitabilityPolicy` com categoria TREE, força 1 e o modificador sazonal existente. Chance visual = 0,35 × min(1, chance ecológica); esse fator visual não altera configurações/regras de crescimento. Primavera usa CHERRY_LEAVES; outono PALE_OAK_LEAVES; inverno SNOWFLAKE apenas em FRIO/CONGELANTE e fora de ARIDO/SECO; verão não emite. Folhas decorativas também podem participar; detecção de árvores naturais não faz parte desta fatia.
+
+## M12.5 — Environmental & Thermal Foundation (direção aceita)
+
+A próxima evolução não adiciona efeitos de forma isolada. Ela introduz uma fundação ambiental explícita:
+
+```text
+Calendar -> Season -> ClimateSnapshot -> Environmental State
+                                     |-> AmbientTemperature
+                                     |-> PlayerThermalState
+                                     |-> Ecology policies
+                                     |-> Visual Projection
+                                     +-> Physical Ecology
+```
+
+`AmbientTemperature` descreve o ambiente e pode governar neve/gelo/ecologia. `PlayerThermalState` descreve a exposição corporal e pode considerar umidade, abrigo, atividade, isolamento e fontes térmicas. A migração deve preservar o contrato atual da temperatura aparente do HUD até haver uma tarefa específica e testes.
+
+O modelo térmico segue um princípio Vanilla+: condições ambientais definem o cenário; microclima/exposição definem a taxa de troca; equipamento/isolamento/wetness/atividade modulam essa taxa; inércia ao longo do tempo produz o estado corporal. Armadura não soma graus diretamente. Água/submersão, vento, abrigo, atividade, fontes como torch/campfire/lava e estados vanilla como powder snow entram como contribuições ao mesmo modelo, não como sistemas paralelos. Teleporte muda o ambiente imediatamente sem zerar a inércia corporal; respawn limpa estado corporal transitório. Detalhes/casos estão em `ECOLOGY_AND_SEASONS.md`.
+
+Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
+
+Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.
+
+Feedback térmico deve progredir de frio perceptível a congelamento severo, incluindo cold breath e frost. Uso de freeze ticks vanilla é um spike: apresentação de frost e dano térmico permanecem conceitos separados para evitar dano acidental causado apenas por feedback visual.
+
+Visual sazonal amplo pode ser projetado ao cliente; estado com colisão/gameplay, como gelo caminhável e snow layers físicas, deve existir no servidor. Biomas auxiliares sazonais/packets são hipótese técnica a validar antes de compromisso com NMS/registry machinery.
+
+Performance permanece bounded: nenhum scan recorrente global; trabalho por jogador/região possui budget; mudanças são preferencialmente event/delta-driven com cache/invalidação; acesso Bukkit permanece thread-safe; async é reservado a trabalho puro quando medição justificar.
+
+O desenho completo, benchmarks de referência, transições sazonais e critérios de M12.5 estão em `ECOLOGY_AND_SEASONS.md`.

@@ -6,6 +6,7 @@ import dev.signalshards.livingworld.features.climate.application.ClimateRuleRead
 import dev.signalshards.livingworld.features.climate.application.LocalClimateReadout;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
+import dev.signalshards.livingworld.features.climate.domain.WeatherTendency;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneAccessStore;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneRegistry;
@@ -135,6 +136,7 @@ class PaperWaystoneCommandTest {
                         23,
                         ThermalBand.QUENTE,
                         MoistureBand.SECO,
+                        WeatherTendency.TEMPO_LIMPO,
                         new ClimateRuleReadout(true, 79),
                         new ClimateRuleReadout(true, 89),
                         new ClimateRuleReadout(true, 84),

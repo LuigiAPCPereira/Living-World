@@ -3,6 +3,12 @@ package dev.signalshards.livingworld.features.ecology.paper;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
+import dev.signalshards.livingworld.features.ecology.domain.GrowthCategory;
+import dev.signalshards.livingworld.features.ecology.domain.SeasonalEcologyModifier;
+import dev.signalshards.livingworld.features.ecology.domain.DefaultSeasonalEcologyModifier;
+import dev.signalshards.livingworld.features.calendar.application.CalendarView;
+import dev.signalshards.livingworld.features.calendar.domain.CalendarDate;
+import dev.signalshards.livingworld.features.seasons.domain.Season;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -23,6 +29,8 @@ public final class PaperGroundCoverSpreadModule
     private final PaperEcologySettings settings;
     private final PaperLocalClimateResolver climate;
     private final NaturalGrowthSuitabilityPolicy growthPolicy;
+    private final CalendarView calendar;
+    private final SeasonalEcologyModifier seasonalModifier;
     private final DoubleSupplier random;
 
     public PaperGroundCoverSpreadModule(
@@ -38,7 +46,20 @@ public final class PaperGroundCoverSpreadModule
                 settings,
                 climate,
                 growthPolicy,
-                () -> ThreadLocalRandom.current().nextDouble()
+                new CalendarView() {
+                    public CalendarDate currentDate() {
+                        return new CalendarDate(1, 1, 1);
+                    }
+
+                    public Season currentSeason() {
+                        return Season.PRIMAVERA;
+                    }
+
+                    public int daysPerMonth() {
+                        return 8;
+                    }
+                },
+                new DefaultSeasonalEcologyModifier()
         );
     }
 
@@ -50,6 +71,61 @@ public final class PaperGroundCoverSpreadModule
             NaturalGrowthSuitabilityPolicy growthPolicy,
             DoubleSupplier random
     ) {
+        this(
+                plugin,
+                world,
+                settings,
+                climate,
+                growthPolicy,
+                new CalendarView() {
+                    public CalendarDate currentDate() {
+                        return new CalendarDate(1, 1, 1);
+                    }
+
+                    public Season currentSeason() {
+                        return Season.PRIMAVERA;
+                    }
+
+                    public int daysPerMonth() {
+                        return 8;
+                    }
+                },
+                new DefaultSeasonalEcologyModifier(),
+                random
+        );
+    }
+
+    public PaperGroundCoverSpreadModule(
+            Plugin plugin,
+            World world,
+            PaperEcologySettings settings,
+            PaperLocalClimateResolver climate,
+            NaturalGrowthSuitabilityPolicy growthPolicy,
+            CalendarView calendar,
+            SeasonalEcologyModifier seasonalModifier
+    ) {
+        this(
+                plugin,
+                world,
+                settings,
+                climate,
+                growthPolicy,
+                calendar,
+                seasonalModifier,
+                () -> ThreadLocalRandom.current().nextDouble()
+        );
+    }
+
+    PaperGroundCoverSpreadModule(
+            Plugin plugin,
+            World world,
+            PaperEcologySettings settings,
+            PaperLocalClimateResolver climate,
+            NaturalGrowthSuitabilityPolicy growthPolicy,
+            CalendarView calendar,
+            SeasonalEcologyModifier seasonalModifier,
+            DoubleSupplier random
+    ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.world = Objects.requireNonNull(world, "mundo");
         this.settings = Objects.requireNonNull(settings, "configuração ecológica");
@@ -57,6 +133,11 @@ public final class PaperGroundCoverSpreadModule
         this.growthPolicy = Objects.requireNonNull(
                 growthPolicy,
                 "política de crescimento"
+        );
+        this.calendar = Objects.requireNonNull(calendar, "calendário");
+        this.seasonalModifier = Objects.requireNonNull(
+                seasonalModifier,
+                "modificador sazonal"
         );
         this.random = Objects.requireNonNull(random, "fonte aleatória");
     }
@@ -86,7 +167,11 @@ public final class PaperGroundCoverSpreadModule
 
         double acceptanceChance = growthPolicy.acceptanceChance(
                 climate.snapshotAt(event.getBlock()),
+                calendar.currentSeason(),
+                GrowthCategory.GROUND_COVER,
                 settings.groundCoverSpreadStrength()
+                ,
+                seasonalModifier
         );
         if (nextRandomSample() >= acceptanceChance) {
             event.setCancelled(true);

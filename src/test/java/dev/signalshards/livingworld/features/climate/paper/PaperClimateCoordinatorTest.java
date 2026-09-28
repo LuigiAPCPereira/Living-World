@@ -11,6 +11,7 @@ import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresh
 import dev.signalshards.livingworld.features.seasons.domain.SeasonCycle;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +28,8 @@ class PaperClimateCoordinatorTest {
     @Test
     void reageUmaVezAoEstadoFinalDoDiaComPlanoLimitado() {
         List<String> weatherCalls = new ArrayList<>();
-        World world = fakeWorld(weatherCalls);
+        AtomicInteger announcements = new AtomicInteger();
+        World world = fakeWorld(weatherCalls, announcements);
         Logger logger = Logger.getAnonymousLogger();
         logger.setUseParentHandlers(false);
         PaperClimateCoordinator coordinator = new PaperClimateCoordinator(
@@ -39,6 +42,10 @@ class PaperClimateCoordinatorTest {
                 new ClimatePolicy(),
                 new WeatherEventPlanner(WeatherEventSettings.defaults()),
                 new PaperWeatherController(),
+                new PaperWeatherEventAnnouncement(
+                        new MessageCatalog(Locale.forLanguageTag("pt-BR")),
+                        true
+                ),
                 SeasonCycle.livingWorldDefaults(),
                 new MessageCatalog(Locale.forLanguageTag("pt-BR")),
                 logger
@@ -56,14 +63,34 @@ class PaperClimateCoordinatorTest {
                 "setStorm:false",
                 "setClearWeatherDuration:12000"
         ), weatherCalls);
+        assertEquals(1, announcements.get());
     }
 
-    private World fakeWorld(List<String> weatherCalls) {
-        return (World) Proxy.newProxyInstance(
+    private World fakeWorld(
+            List<String> weatherCalls,
+            AtomicInteger announcements
+    ) {
+        final World[] holder = new World[1];
+        Player player = (Player) Proxy.newProxyInstance(
+                Player.class.getClassLoader(),
+                new Class<?>[]{Player.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getLocation" -> new Location(holder[0], 0, 64, 0);
+                    case "sendMessage" -> {
+                        announcements.incrementAndGet();
+                        yield null;
+                    }
+                    case "toString" -> "PlayerFake";
+                    case "hashCode" -> System.identityHashCode(proxy);
+                    case "equals" -> proxy == args[0];
+                    default -> defaultValue(method.getReturnType());
+                }
+        );
+        World world = (World) Proxy.newProxyInstance(
                 World.class.getClassLoader(),
                 new Class<?>[]{World.class},
                 (proxy, method, args) -> switch (method.getName()) {
-                    case "getPlayers" -> List.of();
+                    case "getPlayers" -> List.of(player);
                     case "getSpawnLocation" -> new Location((World) proxy, 0, 64, 0);
                     case "getTemperature" -> 0.8;
                     case "getHumidity" -> 0.5;
@@ -76,10 +103,41 @@ class PaperClimateCoordinatorTest {
                     case "toString" -> "WorldFake";
                     case "hashCode" -> System.identityHashCode(proxy);
                     case "equals" -> proxy == args[0];
-                    default -> throw new UnsupportedOperationException(
-                            "Método não esperado no teste: " + method.getName()
-                    );
+                    default -> defaultValue(method.getReturnType());
                 }
         );
+        holder[0] = world;
+        return world;
+    }
+
+    private Object defaultValue(Class<?> type) {
+        if (!type.isPrimitive()) {
+            return null;
+        }
+        if (type == boolean.class) {
+            return false;
+        }
+        if (type == byte.class) {
+            return (byte) 0;
+        }
+        if (type == short.class) {
+            return (short) 0;
+        }
+        if (type == int.class) {
+            return 0;
+        }
+        if (type == long.class) {
+            return 0L;
+        }
+        if (type == float.class) {
+            return 0.0F;
+        }
+        if (type == double.class) {
+            return 0.0D;
+        }
+        if (type == char.class) {
+            return '\0';
+        }
+        return null;
     }
 }

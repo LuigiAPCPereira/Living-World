@@ -15,6 +15,8 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M8 — Waystone visual navigation | add an optional visual travel surface over the same validated Waystone identity/access/travel rules | M3, M7 | LW-080..LW-081 | validated |
 | M9 — Seasonal transition feedback | make season boundaries perceptible to players using existing calendar transition events without introducing polling or simulation state | M1, M4 | LW-090..LW-091 | validated |
 | M10 — Local climate readability | expose the effective local climate and already-active ecology probabilities so survival players can understand why the world reacts differently by place/season | M2, M5, M9 | LW-100..LW-101 | validated |
+| M11 — Weather readability | expose current local weather tendency and announce weather events only when Living World actually applies them, without fake forecasting or new simulation state | M2, M10 | LW-110..LW-112 | in progress |
+| M12 — Seasonal ecology & environmental foundation | evolve validated seasonal ecology into a shared thermal/environmental foundation before broader visual/physical simulation | M10, M11 | LW-120..LW-128 | in progress |
 
 ## Sequencing principles
 
@@ -30,3 +32,21 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 - Environmental systems can become tick-heavy if implemented as global scans.
 - Persistence requirements are not yet known and should not be guessed.
 - Visual seasonal effects may eventually need optional resource-pack support; not part of Foundation v0.1.
+
+## Checkpoint M12.4
+
+M12.3 concluído conforme confirmação do usuário. M12.4 implementa a primeira fatia visual de folhas via movimento limitado por jogador, sem scans periódicos ou mutações de blocos, e teve aceite/runtime smoke concluídos.
+
+## Direção M12.5 — Environmental & Thermal Foundation
+
+Antes de ampliar flora/efeitos, consolidar:
+
+1. arquitetura ambiental e contratos plugin/datapack/resourcepack;
+2. `AmbientTemperature` separado de `PlayerThermalState`;
+3. feedback térmico (cold breath + sensação progressiva de congelamento);
+4. compatibilidade por propriedades/fallback com Terralith + Tectonic, Incendium, Nullscape e namespaces desconhecidos;
+5. spike de projeção visual sazonal client-side;
+6. inverno físico bounded/lazy (snow/ice/thaw) somente após a fundação;
+7. performance gate medido antes de alegar vantagem comparativa.
+
+Detalhes e limites: `ECOLOGY_AND_SEASONS.md`.

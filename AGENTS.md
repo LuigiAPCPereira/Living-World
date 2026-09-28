@@ -10,7 +10,7 @@ This repository uses the Agent Development Protocol snapshot in `DOCUMENTATION_A
 - `ENGINEERING_DNA.md` SHA-256: `461427c820cd4ebf746d1f2031fee3a8af374566ae2c31de55549d0e58203672`
 - External/Notion publication state is not assumed from this repository snapshot.
 
-Before substantial work, recover `PRODUCT.md`, `DESIGN.md`, `TASKLIST.md`, `ROADMAP.md`, and `PROJECT_STATE.md`, then inspect the real Git/build state.
+Before substantial work, recover `PRODUCT.md`, `DESIGN.md`, `TASKLIST.md`, `ROADMAP.md`, and `PROJECT_STATE.md`, then inspect the real Git/build state. For climate/seasons/temperature/ecology/resourcepack/datapack work, also read `ECOLOGY_AND_SEASONS.md`.
 
 Recognize the protocol commands `<novo_projeto>`, `<adotar_protocolo>` / `<adaptar_protocolo>`, `<continuar>`, `<sincronizar>`, `<status>`, and `<encerrar>` only when invoked by the user.
 
@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current task: **M11 planning — choose the next survival-value slice after local climate readability validation**.
+Current direction: **M12.5 — Environmental & Thermal Foundation**. M12.4 is accepted/validated; implementation tasks for M12.5 remain staged in `TASKLIST.md`.
 
 Do not implement later roadmap modules opportunistically.
 
@@ -48,6 +48,8 @@ Do not implement later roadmap modules opportunistically.
 - Performance-sensitive features require measurement/profiling before claims of optimization.
 - Do not alter gameplay as a hidden performance optimization.
 - Background or scheduled work must have an owner, bounded work, failure handling, and cancellation.
+- Environmental cost should scale primarily with active players/relevant changes, not total world size.
+- Datapack/resourcepack must not become independent sources of season/climate truth; the Paper plugin owns behavior and compatibility contracts.
 
 ## Internationalization policy
 

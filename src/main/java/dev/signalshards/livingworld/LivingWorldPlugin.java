@@ -17,13 +17,17 @@ import dev.signalshards.livingworld.features.climate.paper.PaperClimateSampler;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherController;
+import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventAnnouncement;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSettingsLoader;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperDesireLinesModule;
 import dev.signalshards.livingworld.features.desirelines.paper.PaperPathWearSettingsLoader;
 import dev.signalshards.livingworld.features.ecology.domain.FarmlandMoistureRetentionPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.FireSpreadSuitabilityPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.FrozenSurfacePolicy;
+import dev.signalshards.livingworld.features.ecology.domain.SeasonalLeafVisualPolicy;
+import dev.signalshards.livingworld.features.ecology.paper.PaperSeasonalLeavesModule;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
+import dev.signalshards.livingworld.features.ecology.domain.DefaultSeasonalEcologyModifier;
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettings;
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettingsLoader;
 import dev.signalshards.livingworld.features.ecology.paper.PaperFrozenSurfaceModule;
@@ -81,6 +85,13 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         PaperWeatherEventSettingsLoader.load(getConfig())
                 ),
                 new PaperWeatherController(),
+                new PaperWeatherEventAnnouncement(
+                        messages,
+                        getConfig().getBoolean(
+                                "climate.weather-events.player-announcements",
+                                true
+                        )
+                ),
                 seasons,
                 messages,
                 getLogger()
@@ -143,7 +154,9 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 calendarWorld,
                 ecologySettings,
                 localClimate,
-                new NaturalGrowthSuitabilityPolicy()
+                new NaturalGrowthSuitabilityPolicy(),
+                calendarModule,
+                new DefaultSeasonalEcologyModifier()
         );
         PaperFrozenSurfaceModule frozenSurfaces = new PaperFrozenSurfaceModule(
                 this,
@@ -158,7 +171,9 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         calendarWorld,
                         ecologySettings,
                         localClimate,
-                        new NaturalGrowthSuitabilityPolicy()
+                        new NaturalGrowthSuitabilityPolicy(),
+                        calendarModule,
+                        new DefaultSeasonalEcologyModifier()
                 );
         PaperFarmlandMoistureModule farmlandMoisture =
                 new PaperFarmlandMoistureModule(
@@ -184,6 +199,14 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new FarmlandMoistureRetentionPolicy(),
                 new FireSpreadSuitabilityPolicy(),
                 new FrozenSurfacePolicy()
+        );
+
+        PaperSeasonalLeavesModule seasonalLeaves = new PaperSeasonalLeavesModule(
+                this, calendarWorld, calendarModule, localClimate,
+                new SeasonalLeafVisualPolicy(
+                        new NaturalGrowthSuitabilityPolicy(),
+                        new DefaultSeasonalEcologyModifier()
+                )
         );
 
         LivingWorldStatusProvider statusProvider = () -> {
@@ -218,6 +241,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 groundCoverSpread,
                 farmlandMoisture,
                 fireSpread,
+                seasonalLeaves,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)
