@@ -860,6 +860,14 @@ winter started
 
 Nenhum bloco é alterado neste slice. O próximo owner Paper deve usar apenas chunks já carregados, budget explícito e atividade local; ownership persistente vem antes da primeira mutação.
 
+**LW-127 / slice 2:** `PaperPhysicalWinterModule` introduz a primeira mutação física ativa, ainda restrita a ICE e desligada por default. O owner percorre apenas jogadores online e, a cada 40 ticks, usa no máximo 4 probes por jogador, raio 8 e no máximo 1 mutação por jogador. Antes de qualquer `getHighestBlockAt`, confirma que o chunk alvo já está carregado; não força load nem percorre todos os chunks.
+
+Freeze só ocorre quando `PaperWinterSurfaceTargetResolver` encontra WATER source (`Levelled.level == 0`) exposta ao céu (`lightFromSky == 15`) com bloco acima vazio, a dimensão permite frozen surfaces e `WinterThermalPhasePolicy` está em `FREEZING`. A mutação é `WATER -> ICE`, sem física, seguida de claim persistente no chunk PDC.
+
+Thaw só ocorre para `ICE` cujo `WinterSurfaceOwnershipLedger` confirma `WinterSurfaceKind.ICE`. Em `THAWING` — ou em dimensão que não permite frozen surfaces — a mutação é `ICE -> WATER` e o ownership é removido. ICE natural ou de jogador sem ownership é tratado como `OTHER` e nunca é removido por este módulo.
+
+Break/place/fade observados pelo módulo limpam ownership na posição afetada para evitar provenance obsoleta em interações normais de gameplay. Physical SNOW continua fora deste slice.
+
 Congelamento/degelo deve considerar histerese para impedir oscillation próxima de 0 °C. Valores como congelar abaixo de -2 °C e derreter acima de +2 °C são exemplos de tuning, não decisão final.
 
 O custo deve escalar principalmente com jogadores/áreas ativas e mudanças relevantes, não com tamanho total do mapa.

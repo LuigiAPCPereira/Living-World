@@ -98,3 +98,13 @@ ecology:
     strength: 0.65
   frozen-surfaces:
     enabled: true
+  physical-winter:
+    # Mutação ativa de WATER <-> ICE permanece opt-in até smoke runtime.
+    enabled: false
+    update-period-ticks: 40
+    probes-per-player: 4
+    max-mutations-per-player: 1
+    radius-blocks: 8
+    freeze-at-or-below-celsius: -1.0
+    thaw-at-or-above-celsius: 2.0
+    max-owned-positions-per-chunk: 256

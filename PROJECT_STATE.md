@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-127 — bounded physical winter, ownership/hysteresis foundation; LW-126 remains open awaiting client packet proof
-- **Current acceptance:** plugin-created winter surfaces have a persistent per-chunk ownership model and freeze/thaw hysteresis is expressed in AmbientTemperature °C before any block mutation is allowed
-- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 slice 1 passes full gates at 444 tests / 146 suites / 0 failures/errors/skips plus IntelliJ build and `git diff --check`
+- **Current task:** LW-127 — bounded physical winter, active ICE owner; LW-126 remains open awaiting client packet proof
+- **Current acceptance:** physical ICE mutations are opt-in, activity-local, loaded-chunk-only and budgeted; source water freeze is climate/dimension-gated and thaw is restricted to persistent Living World ownership
+- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 slices 1-2 pass full gates at 457 tests / 150 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** implement the LW-127 Paper owner with explicit mutation/probe budgets, loaded-chunk-only activity and ownership-safe freeze/thaw; snow accumulation policy remains separate from ice until the bounded owner is proven. Keep LW-126 open until client access returns
+- **Next action:** checkpoint the LW-127 ICE owner, then add a focused boundedness regression for per-player probe/mutation budgets before considering physical SNOW. Runtime smoke remains pending because the user currently has no client access
 
 ## M12.4 — checkpoint local
 
