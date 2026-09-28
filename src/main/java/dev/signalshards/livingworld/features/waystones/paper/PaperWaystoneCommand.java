@@ -5,6 +5,10 @@ import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.climate.application.ClimateRuleReadout;
 import dev.signalshards.livingworld.features.climate.application.LocalClimateReadout;
 import dev.signalshards.livingworld.features.climate.application.LocalClimateReadoutProvider;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadout;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadoutProvider;
+import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
+import dev.signalshards.livingworld.features.climate.domain.PlayerThermalBand;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
 import dev.signalshards.livingworld.features.climate.domain.WeatherTendency;
@@ -21,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @NullMarked
@@ -32,6 +37,7 @@ public final class PaperWaystoneCommand implements BasicCommand {
     private final double renameMaxDistance;
     private final PaperWaystoneMenu menu;
     private final LocalClimateReadoutProvider climateReadoutProvider;
+    private final ThermalRuntimeReadoutProvider thermalReadoutProvider;
 
     public PaperWaystoneCommand(
             WaystoneService waystones,
@@ -40,7 +46,8 @@ public final class PaperWaystoneCommand implements BasicCommand {
             LivingWorldStatusProvider statusProvider,
             double renameMaxDistance,
             PaperWaystoneMenu menu,
-            LocalClimateReadoutProvider climateReadoutProvider
+            LocalClimateReadoutProvider climateReadoutProvider,
+            ThermalRuntimeReadoutProvider thermalReadoutProvider
     ) {
         this.waystones = Objects.requireNonNull(waystones, "serviço de waystones");
         this.travel = Objects.requireNonNull(travel, "viagem de waystones");
@@ -59,6 +66,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
         this.climateReadoutProvider = Objects.requireNonNull(
                 climateReadoutProvider,
                 "leitura de clima local"
+        );
+        this.thermalReadoutProvider = Objects.requireNonNull(
+                thermalReadoutProvider,
+                "diagnóstico térmico"
         );
     }
 
@@ -99,6 +110,10 @@ public final class PaperWaystoneCommand implements BasicCommand {
             climate(player);
             return;
         }
+        if (args[0].equalsIgnoreCase("thermal")) {
+            thermal(player);
+            return;
+        }
 
         player.sendMessage(messages.component(
                 NamedTextColor.YELLOW,
@@ -113,6 +128,7 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 return List.of(
                         "status",
                         "climate",
+                        "thermal",
                         "list",
                         "travel",
                         "rename",
@@ -205,6 +221,76 @@ public final class PaperWaystoneCommand implements BasicCommand {
                             : "climate.readout-frozen-no"
             ));
         }
+    }
+
+    private void thermal(Player player) {
+        ThermalRuntimeReadout snapshot = thermalReadoutProvider.snapshot(player);
+        player.sendMessage(messages.component(
+                NamedTextColor.GOLD,
+                "thermal.readout-header"
+        ));
+        player.sendMessage(messages.component(
+                NamedTextColor.AQUA,
+                "thermal.readout-body",
+                thermalBandText(snapshot.thermalBand()),
+                formatSigned(snapshot.thermalLoad()),
+                (int) Math.round(snapshot.wetness() * 100.0D)
+        ));
+        player.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                "thermal.readout-environment",
+                snapshot.ambientCelsius(),
+                activityText(snapshot.activity()),
+                (int) Math.round(snapshot.submergedFraction() * 100.0D),
+                snapshot.waterDepthBlocks()
+        ));
+        player.sendMessage(messages.component(
+                NamedTextColor.GRAY,
+                "thermal.readout-exposure",
+                (int) Math.round(snapshot.windExposure() * 100.0D),
+                (int) Math.round(snapshot.shelterFactor() * 100.0D),
+                snapshot.armorPieces(),
+                snapshot.localHeatSources()
+        ));
+        player.sendMessage(messages.component(
+                NamedTextColor.DARK_AQUA,
+                "thermal.readout-rates",
+                formatSigned(snapshot.airRatePerSecond()),
+                formatSigned(snapshot.waterRatePerSecond()),
+                formatSigned(snapshot.activityRatePerSecond()),
+                formatSigned(snapshot.localHeatRatePerSecond()),
+                formatSigned(snapshot.netRatePerSecond())
+        ));
+    }
+
+    private String thermalBandText(PlayerThermalBand band) {
+        return messages.text(switch (band) {
+            case EXTREME_COLD -> "thermal.band.extreme-cold";
+            case FREEZING -> "thermal.band.freezing";
+            case VERY_COLD -> "thermal.band.very-cold";
+            case COLD -> "thermal.band.cold";
+            case COOL -> "thermal.band.cool";
+            case COMFORTABLE -> "thermal.band.comfortable";
+            case WARM -> "thermal.band.warm";
+            case HOT -> "thermal.band.hot";
+            case OVERHEATING -> "thermal.band.overheating";
+            case EXTREME_HEAT -> "thermal.band.extreme-heat";
+        });
+    }
+
+    private String activityText(PlayerActivity activity) {
+        return messages.text(switch (activity) {
+            case RESTING -> "thermal.activity.resting";
+            case WALKING -> "thermal.activity.walking";
+            case SPRINTING -> "thermal.activity.sprinting";
+            case SWIMMING -> "thermal.activity.swimming";
+            case CLIMBING -> "thermal.activity.climbing";
+            case GLIDING -> "thermal.activity.gliding";
+        });
+    }
+
+    private String formatSigned(double value) {
+        return String.format(Locale.ROOT, "%+.4f", value);
     }
 
     private void sendRule(

@@ -18,6 +18,7 @@ import dev.signalshards.livingworld.features.climate.paper.PaperClimateSampler;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalEnvironmentResolver;
+import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeReadoutProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeModule;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeSettingsLoader;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherController;
@@ -180,12 +181,18 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 climateClassifier,
                 climatePolicy
         );
+        var thermalEnvironment = new PaperThermalEnvironmentResolver(localClimate);
+        var thermalRuntimeService = new PlayerThermalRuntimeService();
         PaperThermalRuntimeModule thermalRuntime = new PaperThermalRuntimeModule(
                 this,
                 calendarWorld,
                 PaperThermalRuntimeSettingsLoader.load(getConfig()),
-                new PaperThermalEnvironmentResolver(localClimate),
-                new PlayerThermalRuntimeService()
+                thermalEnvironment,
+                thermalRuntimeService
+        );
+        var thermalReadoutProvider = new PaperThermalRuntimeReadoutProvider(
+                thermalEnvironment,
+                thermalRuntimeService
         );
         PaperNaturalGrowthModule naturalGrowth = new PaperNaturalGrowthModule(
                 this,
@@ -301,7 +308,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         discovery,
                         messages,
                         statusProvider,
-                        climateReadoutProvider
+                        climateReadoutProvider,
+                        thermalReadoutProvider
                 ),
                 hud
         );

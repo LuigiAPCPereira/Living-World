@@ -526,6 +526,14 @@ A profundidade da água é bounded em 32 blocos e usa probing exponencial + refi
 
 **Smoke Paper parcial do slice 17:** o artefato de `47241fa` foi iniciado em Paper 26.3 build 133 via configuração `Run` do IntelliJ. O servidor carregou/enabled `LivingWorld 0.1.0-SNAPSHOT` e alcançou `Done` sem exceções do runtime térmico. A primeira tentativa encontrou corretamente um `session.lock` pertencente à instância Paper antiga; essa instância foi encerrada via SIGTERM, o lock liberado e o novo processo iniciou normalmente. O cliente MCPFabric permaneceu desconectado após o restart, portanto esse smoke comprova lifecycle/startup, **não** ainda execução com jogador conectado.
 
+### 5.28 Diagnóstico térmico somente leitura
+
+**Checkpoint de implementação LW-122 / décimo-oitavo slice:** `ThermalRuntimeReadout` + `PaperThermalRuntimeReadoutProvider` expõem diagnóstico bounded sem avançar estado. O provider lê o snapshot já acumulado do jogador, resolve o ambiente atual e calcula um breakdown instantâneo via `ThermalExchangeComposer`.
+
+`/lw thermal` apresenta: faixa corporal + carga + wetness; temperatura ambiente + atividade + contato/profundidade da água; vento + abrigo + quantidade de peças de armadura + fontes locais de calor; e as contribuições por segundo de ar, água, atividade, calor local e taxa líquida.
+
+O comando é **observacional**: não salva novo snapshot, não altera relógio, não aplica dano/efeitos e não duplica matemática. Ele existe para smoke/tuning antes de qualquer feedback corporal player-facing.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

@@ -4,7 +4,10 @@ import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
 import dev.signalshards.livingworld.features.climate.application.ClimateRuleReadout;
 import dev.signalshards.livingworld.features.climate.application.LocalClimateReadout;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadout;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
+import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
+import dev.signalshards.livingworld.features.climate.domain.PlayerThermalBand;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
 import dev.signalshards.livingworld.features.climate.domain.WeatherTendency;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
@@ -16,6 +19,7 @@ import dev.signalshards.livingworld.features.waystones.domain.WaystoneId;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
@@ -27,6 +31,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PaperWaystoneCommandTest {
     @Test
@@ -55,6 +60,34 @@ class PaperWaystoneCommandTest {
 
         assertEquals(9, messagesSent.get());
         assertEquals(List.of("status"), List.copyOf(command.suggest(source, new String[0])));
+    }
+
+    @Test
+    void thermalMostraDiagnosticoSomenteLeituraAoJogador() {
+        AtomicInteger messagesSent = new AtomicInteger();
+        Player player = proxy(
+                Player.class,
+                (proxy, method, args) -> {
+                    if (method.getName().equals("sendMessage")) {
+                        messagesSent.incrementAndGet();
+                        return null;
+                    }
+                    return defaultValue(proxy, method.getName(), args);
+                }
+        );
+        CommandSourceStack source = proxy(
+                CommandSourceStack.class,
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getSender" -> player;
+                    default -> defaultValue(proxy, method.getName(), args);
+                }
+        );
+
+        PaperWaystoneCommand command = command();
+        command.execute(source, new String[]{"thermal"});
+
+        assertEquals(5, messagesSent.get());
+        assertTrue(command.suggest(source, new String[]{""}).contains("thermal"));
     }
 
     private PaperWaystoneCommand command() {
@@ -144,6 +177,24 @@ class PaperWaystoneCommandTest {
                         new ClimateRuleReadout(true, 100),
                         true,
                         false
+                ),
+                player -> new ThermalRuntimeReadout(
+                        PlayerThermalBand.COMFORTABLE,
+                        0.0D,
+                        0.0D,
+                        20.0D,
+                        PlayerActivity.RESTING,
+                        0.0D,
+                        0.0D,
+                        0.0D,
+                        0.0D,
+                        0,
+                        0,
+                        0.0D,
+                        0.0D,
+                        0.0D,
+                        0.0D,
+                        0.0D
                 )
         );
     }
