@@ -26,9 +26,13 @@ qol:
   double-doors:
     enabled: true
   deposit-matching:
-    # Shift + clique direito em um slot vazio de chest/barrel/shulker aberto.
+    # Aberto: Shift + clique direito em um slot vazio do storage.
+    # Fechado: agachado + clique direito com a mão principal vazia no storage.
     # Move apenas correspondências exatas dos slots 9..35 do inventário principal.
     enabled: true
+    presentation:
+      # Feedback curto server-side: tampa quando segura + até 3 itens voando.
+      enabled: true
 
 waystones:
   enabled: true
