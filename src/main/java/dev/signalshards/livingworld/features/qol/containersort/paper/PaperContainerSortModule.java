@@ -134,13 +134,50 @@ public final class PaperContainerSortModule implements LivingWorldModule, Listen
             return;
         }
 
-        Optional<ItemStack[]> planned = planner.plan(liveContents);
-        if (planned.isEmpty() || sameContents(liveContents, planned.get())) {
+        List<ItemStack> sortable = new ArrayList<>();
+        for (ItemStack item : liveContents) {
+            if (item != null && !item.isEmpty()) {
+                sortable.add(item.clone());
+            }
+        }
+
+        Optional<List<ContainerSortPlanner.PlannedStack<ItemStack>>> planned =
+                planner.plan(
+                        sortable,
+                        liveContents.length,
+                        ItemStack::isSimilar,
+                        item -> item.getType().getKey().toString(),
+                        ItemStack::getAmount,
+                        ItemStack::getMaxStackSize
+                );
+        if (planned.isEmpty()) {
             return;
         }
 
-        liveTarget.setStorageContents(planned.get());
+        ItemStack[] sorted = materialize(
+                liveContents.length,
+                planned.get()
+        );
+        if (sameContents(liveContents, sorted)) {
+            return;
+        }
+
+        liveTarget.setStorageContents(sorted);
         player.updateInventory();
+    }
+
+    private ItemStack[] materialize(
+            int capacity,
+            List<ContainerSortPlanner.PlannedStack<ItemStack>> planned
+    ) {
+        ItemStack[] result = new ItemStack[capacity];
+        for (int slot = 0; slot < planned.size(); slot++) {
+            var stack = planned.get(slot);
+            ItemStack item = stack.template().clone();
+            item.setAmount(stack.amount());
+            result[slot] = item;
+        }
+        return result;
     }
 
     private boolean isSupportedVanillaStorage(Inventory inventory) {
