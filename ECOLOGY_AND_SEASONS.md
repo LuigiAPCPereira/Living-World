@@ -196,6 +196,12 @@ Namespaced biome
 
 Perfis conhecidos de Terralith/Incendium/Nullscape podem refinar o resultado, mas não ser pré-condição para funcionamento.
 
+**Checkpoint LW-125 / slice 1:** `EnvironmentalDimensionPolicy` deriva comportamento apenas de `World.Environment`: NORMAL mantém season/day/weather/ecology/frozen surfaces terrestres; NETHER/THE_END/CUSTOM zeram os modificadores sazonais/diurnos/weather e desabilitam ecology/frozen-surface flags, preservando a temperatura coordenada observada pelo Paper.
+
+**Slice 2:** `PaperWorldgenAmbientTemperatureResolver` aplica esse profile ao bloco no mundo atual do jogador. `PaperThermalRuntimeModule` e `PaperThermalFeedbackModule` deixaram de iterar um único `World` configurado e agora percorrem `Server#getOnlinePlayers()`, permitindo que o mesmo runtime corporal atravesse Overworld, Nether, End e mundos CUSTOM sem trocar de motor.
+
+`PaperAmbientTemperatureProvider` desacopla o consumidor térmico da implementação de clima local. O resolver legado do Overworld continua implementando essa interface, enquanto o novo resolver multiworld usa `World#getTemperature(x,y,z)`, ambiente Paper, skylight, hora/weather quando permitidos pelo profile e o mesmo calendário global. Nenhum namespace de biome/mod é consultado neste slice.
+
 ### 4.2 Tectonic
 
 Tectonic deve ser tratado principalmente como geometria real do mundo, não como uma integração especial.

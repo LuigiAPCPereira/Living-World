@@ -12,6 +12,7 @@ import dev.signalshards.livingworld.features.climate.domain.WindExposure;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -82,6 +83,35 @@ class PaperThermalRuntimeModuleTest {
         assertEquals(0, f.environmentReads);
     }
 
+    @Test
+    void trocaDeDimensaoPreservaInerciaCorporalEReiniciaSomenteAmostragem() {
+        Fixture f = new Fixture(true);
+        f.module.enable();
+        f.module.pulse();
+        f.now = 1_000_000_000L;
+        f.module.pulse();
+        var before = f.runtime.snapshot(f.playerId).orElseThrow();
+
+        f.module.onChangedWorld(new PlayerChangedWorldEvent(
+                f.player,
+                f.previousWorld
+        ));
+
+        assertEquals(
+                before,
+                f.runtime.snapshot(f.playerId).orElseThrow()
+        );
+        assertTrue(f.feedback.profile(f.playerId).isEmpty());
+
+        f.now = 2_000_000_000L;
+        f.module.pulse();
+        assertEquals(1, f.environmentReads);
+        assertEquals(
+                before,
+                f.runtime.snapshot(f.playerId).orElseThrow()
+        );
+    }
+
     private static final class Fixture {
         long now;
         int environmentReads;
@@ -97,10 +127,15 @@ class PaperThermalRuntimeModuleTest {
             case "isDead" -> false;
             default -> unexpected(method.getName());
         });
-        final World world = stub(World.class, (proxy, method, args) -> switch (method.getName()) {
-            case "getPlayers" -> List.of(player);
-            default -> unexpected(method.getName());
-        });
+        final World previousWorld = stub(
+                World.class,
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "toString" -> "PreviousWorld";
+                    case "hashCode" -> System.identityHashCode(proxy);
+                    case "equals" -> proxy == args[0];
+                    default -> unexpected(method.getName());
+                }
+        );
         final BukkitTask task = stub(BukkitTask.class, (proxy, method, args) -> switch (method.getName()) {
             case "cancel" -> {
                 cancellations++;
@@ -125,6 +160,7 @@ class PaperThermalRuntimeModuleTest {
         final Server server = stub(Server.class, (proxy, method, args) -> switch (method.getName()) {
             case "getPluginManager" -> pluginManager;
             case "getScheduler" -> scheduler;
+            case "getOnlinePlayers" -> List.of(player);
             default -> unexpected(method.getName());
         });
         final Plugin plugin = stub(Plugin.class, (proxy, method, args) -> switch (method.getName()) {
@@ -149,7 +185,6 @@ class PaperThermalRuntimeModuleTest {
         Fixture(boolean enabled) {
             module = new PaperThermalRuntimeModule(
                     plugin,
-                    world,
                     new PaperThermalRuntimeSettings(enabled, 20L),
                     environment,
                     runtime,

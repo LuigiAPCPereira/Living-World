@@ -14,7 +14,7 @@ import org.bukkit.block.Block;
 
 import java.util.Objects;
 
-public final class PaperLocalClimateResolver {
+public final class PaperLocalClimateResolver implements PaperAmbientTemperatureProvider {
     private final World world;
     private final CalendarView calendar;
     private final ClimateProfileClassifier classifier;
@@ -67,6 +67,7 @@ public final class PaperLocalClimateResolver {
         );
     }
 
+    @Override
     public AmbientTemperature ambientTemperatureAt(Block block) {
         requireConfiguredWorld(block);
         return ambientTemperaturePolicy.temperature(

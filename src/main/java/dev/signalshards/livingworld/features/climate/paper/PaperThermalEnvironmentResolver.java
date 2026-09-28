@@ -21,16 +21,21 @@ import java.util.Objects;
  * fontes locais permanecem em baseline explícito até seus resolvers próprios.</p>
  */
 public final class PaperThermalEnvironmentResolver implements PaperThermalEnvironmentProvider {
-    private final PaperLocalClimateResolver climate;
+    private final PaperAmbientTemperatureProvider ambientTemperature;
 
-    public PaperThermalEnvironmentResolver(PaperLocalClimateResolver climate) {
-        this.climate = Objects.requireNonNull(climate, "clima local");
+    public PaperThermalEnvironmentResolver(
+            PaperAmbientTemperatureProvider ambientTemperature
+    ) {
+        this.ambientTemperature = Objects.requireNonNull(
+                ambientTemperature,
+                "temperatura ambiente"
+        );
     }
 
     @Override
     public ThermalEnvironmentContext forPlayer(Player player) {
         Objects.requireNonNull(player, "jogador");
-        AmbientTemperature ambient = climate.ambientTemperatureAt(
+        AmbientTemperature ambient = ambientTemperature.ambientTemperatureAt(
                 player.getLocation().getBlock()
         );
         PaperWindShelterResolver.Observation windShelter =

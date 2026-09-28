@@ -3,7 +3,6 @@ package dev.signalshards.livingworld.features.climate.paper;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -27,12 +26,12 @@ import java.util.logging.Level;
 /**
  * Owner Paper do estado térmico runtime por jogador.
  *
- * <p>Executa somente no mundo climático configurado, em cadence coarse.
- * Resolvers observam o mundo; toda matemática permanece na camada application/domain.</p>
+ * <p>Executa para jogadores online em qualquer dimensão, em cadence coarse.
+ * Resolvers observam o mundo atual do jogador; toda matemática permanece na
+ * camada application/domain.</p>
  */
 public final class PaperThermalRuntimeModule implements LivingWorldModule, Listener {
     private final Plugin plugin;
-    private final World world;
     private final PaperThermalRuntimeSettings settings;
     private final PaperThermalEnvironmentProvider environmentProvider;
     private final PlayerThermalRuntimeService runtime;
@@ -45,7 +44,6 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
 
     public PaperThermalRuntimeModule(
             Plugin plugin,
-            World world,
             PaperThermalRuntimeSettings settings,
             PaperThermalEnvironmentProvider environmentProvider,
             PlayerThermalRuntimeService runtime,
@@ -53,7 +51,6 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
     ) {
         this(
                 plugin,
-                world,
                 settings,
                 environmentProvider,
                 runtime,
@@ -64,7 +61,6 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
 
     PaperThermalRuntimeModule(
             Plugin plugin,
-            World world,
             PaperThermalRuntimeSettings settings,
             PaperThermalEnvironmentProvider environmentProvider,
             PlayerThermalRuntimeService runtime,
@@ -72,7 +68,6 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
             LongSupplier clock
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
-        this.world = Objects.requireNonNull(world, "mundo");
         this.settings = Objects.requireNonNull(settings, "configuração térmica");
         this.environmentProvider = Objects.requireNonNull(
                 environmentProvider,
@@ -120,7 +115,7 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
             return;
         }
         long now = clock.getAsLong();
-        for (Player player : world.getPlayers()) {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (!player.isOnline() || player.isDead()) {
                 continue;
             }

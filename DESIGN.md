@@ -341,6 +341,8 @@ LW-124 / quarto slice: manifests vêm de caminhos fixos sob `plugins/LivingWorld
 
 LW-125 / primeiro slice: `EnvironmentalDimensionPolicy` + `PaperEnvironmentalDimensionMapper` separam dimensão de namespace de worldgen. NORMAL usa profile terrestre completo; NETHER/THE_END/CUSTOM zeram season/day/weather terrestres e desabilitam ecology/frozen-surface flags, mantendo coordinate temperature como propriedade observável. O caminho OVERWORLD existente permanece compatível.
 
+LW-125 / segundo slice: `PaperAmbientTemperatureProvider` desacopla o runtime térmico de um único `PaperLocalClimateResolver`. `PaperWorldgenAmbientTemperatureResolver` resolve cada bloco pelo `World.Environment` atual; runtime e feedback percorrem jogadores online de todas as dimensões. Não há tabela de nomes de Terralith/Tectonic/Incendium/Nullscape e o readout climático legado do Overworld permanece separado.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

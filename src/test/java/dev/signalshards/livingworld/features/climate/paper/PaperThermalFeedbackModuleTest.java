@@ -224,7 +224,6 @@ class PaperThermalFeedbackModuleTest {
         final ThermalFeedbackCoordinator feedback = new ThermalFeedbackCoordinator();
         final GameMode gameMode;
         final Player player;
-        final World world;
         final BukkitTask task = stub(BukkitTask.class, (proxy, method, args) -> switch (method.getName()) {
             case "cancel" -> {
                 cancellations++;
@@ -246,16 +245,8 @@ class PaperThermalFeedbackModuleTest {
             }
             return unexpected(method.getName());
         });
-        final Server server = stub(Server.class, (proxy, method, args) -> switch (method.getName()) {
-            case "getPluginManager" -> pluginManager;
-            case "getScheduler" -> scheduler;
-            default -> unexpected(method.getName());
-        });
-        final Plugin plugin = stub(Plugin.class, (proxy, method, args) -> switch (method.getName()) {
-            case "getServer" -> server;
-            case "getLogger" -> Logger.getLogger("PaperThermalFeedbackModuleTest");
-            default -> unexpected(method.getName());
-        });
+        final Server server;
+        final Plugin plugin;
         final PaperThermalFeedbackModule module;
 
         Fixture(boolean enabled) {
@@ -281,13 +272,19 @@ class PaperThermalFeedbackModuleTest {
                 case "getGameMode" -> this.gameMode;
                 default -> unexpected(method.getName());
             });
-            world = stub(World.class, (proxy, method, args) -> switch (method.getName()) {
-                case "getPlayers" -> List.of(player);
+            server = stub(Server.class, (proxy, method, args) -> switch (method.getName()) {
+                case "getPluginManager" -> pluginManager;
+                case "getScheduler" -> scheduler;
+                case "getOnlinePlayers" -> List.of(player);
+                default -> unexpected(method.getName());
+            });
+            plugin = stub(Plugin.class, (proxy, method, args) -> switch (method.getName()) {
+                case "getServer" -> server;
+                case "getLogger" -> Logger.getLogger("PaperThermalFeedbackModuleTest");
                 default -> unexpected(method.getName());
             });
             module = new PaperThermalFeedbackModule(
                     plugin,
-                    world,
                     settings,
                     feedback,
                     (ignored, intensity) -> emissions++,

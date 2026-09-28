@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-125 — custom-worldgen compatibility gate, dimension-profile foundation
-- **Current acceptance:** dimension behavior derives from Paper Environment, not Terralith/Incendium/Nullscape names; Overworld keeps terrestrial season/day/weather while Nether/End/CUSTOM suppress those terrestrial modifiers and retain coordinate temperature
-- **Current validation:** LW-124 remains implemented-not-validated for real artifacts; LW-125 slice 1 passes full gates at 430 tests / 142 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-125 — custom-worldgen compatibility gate, multiworld thermal-runtime slice
+- **Current acceptance:** dimension behavior derives from Paper Environment and the thermal runtime follows every online player's current world rather than a single configured climate world; Overworld preserves terrestrial factors while Nether/End/CUSTOM suppress them conservatively
+- **Current validation:** LW-124 remains implemented-not-validated for real artifacts; LW-125 slices 1-2 pass full gates at 434 tests / 143 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`

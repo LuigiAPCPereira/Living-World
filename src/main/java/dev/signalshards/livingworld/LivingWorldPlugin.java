@@ -27,6 +27,7 @@ import dev.signalshards.livingworld.features.climate.paper.PaperClimateCoordinat
 import dev.signalshards.livingworld.features.climate.paper.PaperClimateSampler;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReadoutProvider;
+import dev.signalshards.livingworld.features.climate.paper.PaperWorldgenAmbientTemperatureResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalEnvironmentResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperColdBreathPresenter;
 import dev.signalshards.livingworld.features.climate.paper.PaperSnowflakeFrostPresenter;
@@ -195,7 +196,12 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 climateClassifier,
                 climatePolicy
         );
-        var thermalEnvironment = new PaperThermalEnvironmentResolver(localClimate);
+        var thermalAmbient = new PaperWorldgenAmbientTemperatureResolver(
+                calendarModule
+        );
+        var thermalEnvironment = new PaperThermalEnvironmentResolver(
+                thermalAmbient
+        );
         var thermalRuntimeService = new PlayerThermalRuntimeService();
         var thermalFeedback = new ThermalFeedbackCoordinator();
         var resourcePackSessions = new ResourcePackSessionStore();
@@ -226,7 +232,6 @@ public final class LivingWorldPlugin extends JavaPlugin {
         );
         PaperThermalRuntimeModule thermalRuntime = new PaperThermalRuntimeModule(
                 this,
-                calendarWorld,
                 PaperThermalRuntimeSettingsLoader.load(getConfig()),
                 thermalEnvironment,
                 thermalRuntimeService,
@@ -235,7 +240,6 @@ public final class LivingWorldPlugin extends JavaPlugin {
         PaperThermalFeedbackModule thermalFeedbackModule =
                 new PaperThermalFeedbackModule(
                         this,
-                        calendarWorld,
                         PaperThermalFeedbackSettingsLoader.load(getConfig()),
                         thermalFeedback,
                         new PaperColdBreathPresenter(),

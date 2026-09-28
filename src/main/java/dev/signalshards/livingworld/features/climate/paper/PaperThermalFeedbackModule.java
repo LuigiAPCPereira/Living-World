@@ -3,7 +3,6 @@ package dev.signalshards.livingworld.features.climate.paper;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import org.bukkit.GameMode;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -30,7 +29,6 @@ import java.util.logging.Level;
  */
 public final class PaperThermalFeedbackModule implements LivingWorldModule, Listener {
     private final Plugin plugin;
-    private final World world;
     private final PaperThermalFeedbackSettings settings;
     private final ThermalFeedbackCoordinator feedback;
     private final PaperThermalFeedbackPresenter presenter;
@@ -42,7 +40,6 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
 
     public PaperThermalFeedbackModule(
             Plugin plugin,
-            World world,
             PaperThermalFeedbackSettings settings,
             ThermalFeedbackCoordinator feedback,
             PaperThermalFeedbackPresenter presenter,
@@ -50,7 +47,6 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
     ) {
         this(
                 plugin,
-                world,
                 settings,
                 feedback,
                 presenter,
@@ -61,7 +57,6 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
 
     PaperThermalFeedbackModule(
             Plugin plugin,
-            World world,
             PaperThermalFeedbackSettings settings,
             ThermalFeedbackCoordinator feedback,
             PaperThermalFeedbackPresenter presenter,
@@ -69,7 +64,6 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
             LongSupplier clock
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
-        this.world = Objects.requireNonNull(world, "mundo");
         this.settings = Objects.requireNonNull(settings, "configuração de feedback");
         this.feedback = Objects.requireNonNull(feedback, "coordenador de feedback");
         this.presenter = Objects.requireNonNull(presenter, "presenter térmico");
@@ -112,7 +106,7 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
             return;
         }
         long now = clock.getAsLong();
-        for (Player player : world.getPlayers()) {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (!player.isOnline()
                     || player.isDead()
                     || player.getGameMode() == GameMode.SPECTATOR) {
