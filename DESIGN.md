@@ -321,6 +321,12 @@ Vigésimo-primeiro slice de LW-122: o sampling coordenado do Paper foi inspecion
 
 Vigésimo-segundo slice de LW-122: `SeasonCycle.progressFor` deriva progresso 0..1 da própria data/regras do calendário e `PaperCalendarModule` o publica em `CalendarView`. O runtime de `AmbientTemperaturePolicy` interpola boundaries Early/Mid/Late com smoothstep: início = média(previous,current), meio = anchor current, fim = média(current,next). Fronteiras adjacentes são iguais, eliminando saltos térmicos de troca de estação sem alterar a estação lógica.
 
+LW-123 / primeiro slice: `ThermalFeedbackPolicy` é domínio puro e produz `ThermalFeedbackProfile`. Breath deriva de ar frio + atividade + submersão e retorna intensidade/janela de cadência; frost deriva do body load acumulado. Breath e frost são causas independentes e nenhuma delas implica dano. Partículas, jitter concreto, visibility rules e freeze presentation pertencem a adapters/presentation posteriores.
+
+LW-123 / segundo slice: `ThermalFeedbackCadencePolicy` + `ThermalFeedbackRuntimeService` implementam jitter bounded por UUID/profile sem catch-up burst. `ThermalFeedbackCoordinator` cacheia profiles produzidos pelo runtime térmico coarse, portanto pulses visuais não repetem resolução ambiental. Estado de cadence existe apenas enquanto algum feedback é elegível.
+
+LW-123 / terceiro slice: `PaperThermalFeedbackModule` pulsa profiles cacheados a cada 10 ticks por default e delega breath a `PaperThermalFeedbackPresenter`. `PaperColdBreathPresenter` usa CLOUD perto da boca, 1..3 partículas e no máximo 16 viewers filtrados por invisibilidade/`canSee`. O módulo não usa freeze ticks, não aplica dano e não possui probes ambientais próprios.
+
 Primeiro slice de LW-123: `ThermalFeedbackPolicy` é uma policy pura sobre estado corporal + temperatura ambiente + atividade + exposição à água. Ela produz intensidade/cadência abstrata de cold breath e intensidade abstrata de frost. Breath depende do ar frio e é suprimido em submersão total; frost depende do corpo acumulado. A policy não conhece Bukkit, partículas, freeze ticks, dano ou resourcepack.
 
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.

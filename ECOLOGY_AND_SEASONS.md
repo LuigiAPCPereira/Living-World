@@ -576,6 +576,37 @@ Exemplo com os anchors atuais: Primavera começa entre Inverno (-6 °C) e Primav
 
 O overload legado de `AmbientTemperaturePolicy.temperature(paperTemperature, season)` continua usando o anchor discreto e `/lw climate` permanece compatível. Apenas o caminho runtime de `ambientTemperatureAt` consome progresso sazonal gradual.
 
+### 5.33 LW-123 — feedback térmico puro
+
+**Checkpoint de implementação LW-123 / primeiro slice:** `ThermalFeedbackPolicy` separa explicitamente duas causas que não devem ser confundidas:
+
+- **cold breath** depende da temperatura do ar ao redor do rosto, não apenas de o corpo já estar frio;
+- **frost/cold sensation** depende do `PlayerThermalState` acumulado, mesmo se o jogador acabou de entrar em ambiente mais quente.
+
+`BreathFeedback` retorna intensidade normalizada e uma janela `minimumInterval..maximumInterval` para jitter posterior. O ar mais frio aumenta intensidade e reduz a janela de intervalo. Sprint/caminhada/natação/escalada alteram apenas cadência, não a intensidade visual do vapor. Submersão total suprime breath na boca.
+
+`ThermalFeedbackProfile` também retorna `frostIntensity` progressiva. Frost começa apenas após déficit corporal relevante e cresce até frio severo. A policy é domínio puro e **não escolhe partículas, não agenda tarefas, não usa freeze ticks, não aplica dano e não altera o estado térmico**.
+
+Esse slice preserva o contrato central: `visualFreeze != thermalDamage`. O próximo passo é agendamento bounded/jittered; somente depois entra um adapter Paper de apresentação.
+
+### 5.34 LW-123 — cadência/jitter bounded
+
+**Segundo slice:** `ThermalFeedbackCadencePolicy` converte uma amostra normalizada em um intervalo dentro da janela pedida por `BreathFeedback`. `ThermalFeedbackRuntimeService` mantém apenas countdown por UUID para breath elegível, emite no máximo um pulso por avaliação e nunca tenta recuperar múltiplas emissões após lag/catch-up.
+
+O primeiro profile elegível agenda sem emitir imediatamente, evitando uma parede sincronizada de vapor ao entrar num bioma frio. Profiles mais severos podem reduzir o restante da espera ao novo `maximumInterval`. Quando breath deixa de ser elegível, o countdown é removido imediatamente. `reset` e `clear` garantem cleanup de lifecycle.
+
+`ThermalFeedbackCoordinator` é a ponte entre o runtime térmico coarse e a apresentação. Ele calcula o profile somente quando o runtime ambiental já resolveu o contexto e o cacheia; o pulse visual não repete probes Paper. Jogadores sem breath e sem frost não permanecem observados.
+
+### 5.35 LW-123 — cold breath Paper
+
+**Terceiro slice:** `PaperThermalFeedbackModule` roda em pulse visual configurável (default 10 ticks) sobre profiles já cacheados. Ele não lê blocos, clima, armadura ou fontes de calor; apenas avança a cadência e chama um presenter quando há emissão.
+
+`PaperColdBreathPresenter` usa fallback vanilla `Particle.CLOUD` próximo à boca/olhos, ligeiramente à frente da direção de visão. Intensidade mapeia para **1..3 partículas**. Cada emissão possui orçamento de **no máximo 16 viewers**; o próprio jogador recebe o efeito e viewers rastreando a entidade só recebem quando `canSee(subject)`. Jogador invisível não emite, evitando denunciar invisibilidade/vanish.
+
+O módulo ignora SPECTATOR, usa elapsed real por jogador e não produz burst depois de pausa longa. Nenhum efeito desse slice altera `PlayerThermalState`, aplica dano, usa freeze ticks ou adiciona novos probes de mundo.
+
+Frost continua apenas como `frostIntensity` no profile até existir uma apresentação segura que não conflite com HUD/action bar nem com o sistema vanilla de congelamento.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

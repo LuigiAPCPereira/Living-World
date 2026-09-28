@@ -10,6 +10,7 @@ import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
 import dev.signalshards.livingworld.features.climate.domain.ApparentTemperaturePolicy;
 import dev.signalshards.livingworld.features.climate.application.WeatherEventPlanner;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
+import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresholds;
@@ -18,6 +19,9 @@ import dev.signalshards.livingworld.features.climate.paper.PaperClimateSampler;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalEnvironmentResolver;
+import dev.signalshards.livingworld.features.climate.paper.PaperColdBreathPresenter;
+import dev.signalshards.livingworld.features.climate.paper.PaperThermalFeedbackModule;
+import dev.signalshards.livingworld.features.climate.paper.PaperThermalFeedbackSettingsLoader;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeReadoutProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeModule;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeSettingsLoader;
@@ -183,13 +187,23 @@ public final class LivingWorldPlugin extends JavaPlugin {
         );
         var thermalEnvironment = new PaperThermalEnvironmentResolver(localClimate);
         var thermalRuntimeService = new PlayerThermalRuntimeService();
+        var thermalFeedback = new ThermalFeedbackCoordinator();
         PaperThermalRuntimeModule thermalRuntime = new PaperThermalRuntimeModule(
                 this,
                 calendarWorld,
                 PaperThermalRuntimeSettingsLoader.load(getConfig()),
                 thermalEnvironment,
-                thermalRuntimeService
+                thermalRuntimeService,
+                thermalFeedback
         );
+        PaperThermalFeedbackModule thermalFeedbackModule =
+                new PaperThermalFeedbackModule(
+                        this,
+                        calendarWorld,
+                        PaperThermalFeedbackSettingsLoader.load(getConfig()),
+                        thermalFeedback,
+                        new PaperColdBreathPresenter()
+                );
         var thermalReadoutProvider = new PaperThermalRuntimeReadoutProvider(
                 thermalEnvironment,
                 thermalRuntimeService
@@ -288,6 +302,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 fireSpread,
                 seasonalLeaves,
                 thermalRuntime,
+                thermalFeedbackModule,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

@@ -1,6 +1,7 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
+import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import dev.signalshards.livingworld.features.climate.application.ThermalEnvironmentContext;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
@@ -87,6 +88,7 @@ class PaperThermalRuntimeModuleTest {
         int cancellations;
         final UUID playerId = UUID.randomUUID();
         final PlayerThermalRuntimeService runtime = new PlayerThermalRuntimeService();
+        final ThermalFeedbackCoordinator feedback = new ThermalFeedbackCoordinator();
         final Player player = stub(Player.class, (proxy, method, args) -> switch (method.getName()) {
             case "getUniqueId" -> playerId;
             case "isOnline" -> true;
@@ -149,6 +151,7 @@ class PaperThermalRuntimeModuleTest {
                     new PaperThermalRuntimeSettings(enabled, 20L),
                     environment,
                     runtime,
+                    feedback,
                     () -> now
             );
         }
