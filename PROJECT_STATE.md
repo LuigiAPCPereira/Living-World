@@ -6,8 +6,8 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M13/M14 integration — Waystone navigation clarity + Discovery foundation on `main`
-- **Current acceptance:** integrated code must pass main gates, then a real player confirms nearest-first menu/lore/travel and one-time Discovery behavior without regressions in climate/Waystones
+- **Current task:** M19 Hotbar Auto-Refill implementation on GitHub branch `qol/hotbar-auto-refill`; pending M13/M14 runtime validation on `main` remains untouched
+- **Current acceptance:** M19 must pass automated policy/build gates and GitHub CI, then a real player confirms conservative refill behavior; existing LW-131/LW-142 acceptance remains pending on `main`
 - **Current validation:** merged tree passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks` (183 tests, 57 suites, 0 failures/errors/skips), IntelliJ build and cached diff whitespace gate; user confirmed the first live Discovery title (`Descoberto`), while the remaining LW-131/LW-142 scenarios are still pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `main`
@@ -18,7 +18,8 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** complete the remaining LW-131/LW-142 real-player scenarios, then return to LW-122 environmental/thermal specification
+- **Active GitHub QoL branch:** `qol/hotbar-auto-refill` from main HEAD `5a81fba`; no deploy or main merge authorized by this slice
+- **Next action:** finish M19 automated/CI validation on `qol/hotbar-auto-refill`, then run LW-191 real-player smoke; main still retains LW-131/LW-142 before returning to LW-122
 
 ## M12.4 — checkpoint local
 
@@ -54,3 +55,13 @@
 - Runtime parcial confirmado pelo usuário em 2026-09-27: uma interação física de Waystone exibiu o título `Descoberto`. Isso comprova o caminho de apresentação inicial, mas não encerra sozinho os checks de repetição, rename/travel, clima e destruição/memória.
 - Runtime ainda pendente: completar LW-131/LW-142 com jogador real. Validar menu/lore/travel, silêncio na repetição, backfill idempotente, rename/travel intactos, `/lw climate` coexistente e destruição do anchor sem apagar memória de Discovery.
 - GitHub sync confirmed: local `main` pushed to `LuigiAPCPereira/Living-World`, upstream set to `origin/main`, and follow-up `git pull --ff-only origin main` reported `Already up to date`. No deploy was executed.
+
+
+## M19 — Hotbar Auto-Refill branch checkpoint
+
+- Explicit user authorization: implement Hotbar Auto-Refill in a dedicated QoL branch and add GitHub Actions CI while preserving Vanilla+ behavior and project engineering rules.
+- Scope boundary: selected hotbar slot only; stackable items only; exact metadata-aware matching; source limited to main-inventory slots 9..35; no item creation, tools, armor, totems, containers, sorting or persistence.
+- Intent preservation: explicit inventory click/drag, item drop and main/offhand swap suppress refill for that interaction.
+- Runtime model: Paper `PlayerInventorySlotChangeEvent` identifies the depleted slot; one bounded next-tick task rechecks live inventory state before moving a source stack.
+- Performance bound: no polling and no world/entity scans; at most 27 inventory slots are inspected per actual candidate depletion.
+- Validation at this checkpoint: implementation/tests/CI definition are being committed; runtime LW-191 remains pending and must not be inferred from automated gates.
