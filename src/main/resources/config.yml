@@ -25,6 +25,9 @@ desire-lines:
 qol:
   double-doors:
     enabled: true
+  hotbar-auto-refill:
+    # Reabastece apenas o slot selecionado quando uma stack empilhável se esgota.
+    enabled: true
 
 waystones:
   enabled: true
