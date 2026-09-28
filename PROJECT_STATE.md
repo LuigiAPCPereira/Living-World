@@ -8,7 +8,7 @@
 - **Architecture:** `DESIGN.md`
 - **Current task:** M19 Hotbar Auto-Refill implementation on GitHub branch `qol/hotbar-auto-refill`; pending M13/M14 runtime validation on `main` remains untouched
 - **Current acceptance:** M19 must pass automated policy/build gates and GitHub CI, then a real player confirms conservative refill behavior; existing LW-131/LW-142 acceptance remains pending on `main`
-- **Current validation:** merged tree passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks` (183 tests, 57 suites, 0 failures/errors/skips), IntelliJ build and cached diff whitespace gate; user confirmed the first live Discovery title (`Descoberto`), while the remaining LW-131/LW-142 scenarios are still pending
+- **Current validation:** M19 branch CI run #6 passed `./gradlew clean test build` on code/workflow HEAD `1fcee136`; LW-190 automated gate is validated and LW-191 live gameplay remains pending. The previous `main` evidence (183 tests / 57 suites and partial Discovery smoke) remains historical evidence for M13/M14, whose remaining LW-131/LW-142 scenarios are still pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `main`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -19,7 +19,7 @@
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
 - **Active GitHub QoL branch:** `qol/hotbar-auto-refill` from main HEAD `5a81fba`; no deploy or main merge authorized by this slice
-- **Next action:** finish M19 automated/CI validation on `qol/hotbar-auto-refill`, then run LW-191 real-player smoke; main still retains LW-131/LW-142 before returning to LW-122
+- **Next action:** run LW-191 real-player Hotbar Auto-Refill smoke on a server build from `qol/hotbar-auto-refill`; main still retains LW-131/LW-142 before returning to LW-122
 
 ## M12.4 — checkpoint local
 
@@ -64,4 +64,4 @@
 - Intent preservation: explicit inventory click/drag, item drop and main/offhand swap suppress refill for that interaction.
 - Runtime model: Paper `PlayerInventorySlotChangeEvent` identifies the depleted slot; one bounded next-tick task rechecks live inventory state before moving a source stack.
 - Performance bound: no polling and no world/entity scans; at most 27 inventory slots are inspected per actual candidate depletion.
-- Validation at this checkpoint: implementation/tests/CI definition are being committed; runtime LW-191 remains pending and must not be inferred from automated gates.
+- Validation at this checkpoint: GitHub Actions CI run #6 passed `./gradlew clean test build` on code/workflow HEAD `1fcee136`. This validates LW-190's automated gate only; runtime LW-191 remains pending and must not be inferred from CI.
