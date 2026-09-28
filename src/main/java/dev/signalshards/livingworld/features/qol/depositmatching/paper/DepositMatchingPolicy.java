@@ -24,6 +24,24 @@ final class DepositMatchingPolicy {
                 && !excludedGameMode;
     }
 
+    boolean shouldTriggerClosedStorage(
+            boolean supportedStorage,
+            boolean mainHand,
+            boolean sneaking,
+            boolean mainHandEmpty,
+            boolean interactedBlockAllowed,
+            boolean targetAccessible,
+            boolean excludedGameMode
+    ) {
+        return supportedStorage
+                && mainHand
+                && sneaking
+                && mainHandEmpty
+                && interactedBlockAllowed
+                && targetAccessible
+                && !excludedGameMode;
+    }
+
     List<Integer> matchingSourceSlots(
             int storageLength,
             IntPredicate matchesPreexistingContainerItem
