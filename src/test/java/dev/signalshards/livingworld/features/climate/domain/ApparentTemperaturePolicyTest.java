@@ -34,6 +34,13 @@ class ApparentTemperaturePolicyTest {
 
     @Test
     void exposicaoDiretaAlteraApenasTemperaturaAparente() {
+        AmbientTemperature ambient = new AmbientTemperature(15.0D);
+
+        assertEquals(15, policy.degreesCelsius(ambient, TemperatureExposure.NONE));
+        assertEquals(11, policy.degreesCelsius(ambient, TemperatureExposure.WATER));
+        assertEquals(23, policy.degreesCelsius(ambient, TemperatureExposure.FIRE));
+        assertEquals(35, policy.degreesCelsius(ambient, TemperatureExposure.LAVA));
+
         assertEquals(
                 11,
                 policy.degreesCelsius(

@@ -250,6 +250,8 @@ porque o jogador entrou em abrigo aquecido.
 
 A atual temperatura aparente do HUD continua sendo contrato existente até uma fatia específica migrá-la com testes e compatibilidade.
 
+**Checkpoint de implementação LW-122 / primeiro slice:** `AmbientTemperature` e `AmbientTemperaturePolicy` foram introduzidos como domínio puro. A calibração já validada de Paper temperature + season foi movida para essa política; `ApparentTemperaturePolicy` passa a compor sobre o ambiente e mantém `WATER/FIRE/LAVA` apenas como exposição pessoal legada. O resolver climático Paper pode consultar `ambientTemperatureAt(Block)`. Nenhuma matemática corporal, wetness, armadura, abrigo ou fonte próxima foi implementada neste slice.
+
 ### 5.3 Princípio Vanilla+ do sistema térmico
 
 A simulação interna pode ser relativamente sofisticada, mas a leitura pelo jogador deve continuar intuitiva e baseada em comportamentos vanilla.

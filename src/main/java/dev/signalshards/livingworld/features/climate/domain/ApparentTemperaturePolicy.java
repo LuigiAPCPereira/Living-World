@@ -5,19 +5,30 @@ import dev.signalshards.livingworld.features.seasons.domain.Season;
 import java.util.Objects;
 
 /**
- * Converte a temperatura escalar exposta pelo mundo em uma escala de gameplay
- * expressa em graus Celsius para apresentação do Living World.
+ * Converte temperatura ambiente + exposição pessoal em uma temperatura
+ * aparente de apresentação do Living World.
  *
- * <p>Não é uma conversão oficial do Minecraft. O ponto neutro inicial é
- * 0,8 -> 15 °C, cada unidade do escalar vale 20 °C e a estação aplica um
- * ajuste moderado. O resultado é limitado para manter o HUD legível.</p>
+ * <p>A calibração ambiental pertence a {@link AmbientTemperaturePolicy}.
+ * Esta política mantém os modificadores pessoais legados e o clamp do HUD
+ * durante a migração para o modelo térmico corporal. A escala continua sendo
+ * uma convenção de gameplay do Living World, não uma conversão oficial do
+ * Minecraft.</p>
  */
 public final class ApparentTemperaturePolicy {
-    private static final double NEUTRAL_PAPER_TEMPERATURE = 0.8D;
-    private static final double NEUTRAL_CELSIUS = 15.0D;
-    private static final double CELSIUS_PER_PAPER_UNIT = 20.0D;
     private static final int MIN_CELSIUS = -40;
     private static final int MAX_CELSIUS = 55;
+    private final AmbientTemperaturePolicy ambientTemperaturePolicy;
+
+    public ApparentTemperaturePolicy() {
+        this(new AmbientTemperaturePolicy());
+    }
+
+    ApparentTemperaturePolicy(AmbientTemperaturePolicy ambientTemperaturePolicy) {
+        this.ambientTemperaturePolicy = Objects.requireNonNull(
+                ambientTemperaturePolicy,
+                "política de temperatura ambiente"
+        );
+    }
 
     public int degreesCelsius(double paperTemperature, Season season) {
         return degreesCelsius(
@@ -38,15 +49,19 @@ public final class ApparentTemperaturePolicy {
         Objects.requireNonNull(season, "estação");
         Objects.requireNonNull(exposure, "exposição térmica");
 
-        double base = NEUTRAL_CELSIUS
-                + ((paperTemperature - NEUTRAL_PAPER_TEMPERATURE)
-                * CELSIUS_PER_PAPER_UNIT);
-        double seasonalAdjustment = switch (season) {
-            case PRIMAVERA -> 2.0D;
-            case VERAO -> 6.0D;
-            case OUTONO -> 0.0D;
-            case INVERNO -> -6.0D;
-        };
+        AmbientTemperature ambientTemperature = ambientTemperaturePolicy.temperature(
+                paperTemperature,
+                season
+        );
+        return degreesCelsius(ambientTemperature, exposure);
+    }
+
+    public int degreesCelsius(
+            AmbientTemperature ambientTemperature,
+            TemperatureExposure exposure
+    ) {
+        Objects.requireNonNull(ambientTemperature, "temperatura ambiente");
+        Objects.requireNonNull(exposure, "exposição térmica");
         double exposureAdjustment = switch (exposure) {
             case NONE -> 0.0D;
             case WATER -> -4.0D;
@@ -55,8 +70,8 @@ public final class ApparentTemperaturePolicy {
         };
 
         long rounded = Math.round(
-                base + seasonalAdjustment + exposureAdjustment
+                ambientTemperature.degreesCelsius() + exposureAdjustment
         );
-        return (int) Math.max(MIN_CELSIUS, Math.min(MAX_CELSIUS, rounded));
+        return Math.clamp(rounded, MIN_CELSIUS, MAX_CELSIUS);
     }
 }

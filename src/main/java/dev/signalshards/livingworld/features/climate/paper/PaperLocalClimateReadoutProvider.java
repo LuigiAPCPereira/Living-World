@@ -66,17 +66,12 @@ public final class PaperLocalClimateReadoutProvider
         var block = player.getLocation().getBlock();
         var snapshot = climate.snapshotAt(block);
         var season = calendar.currentSeason();
-        double paperTemperature = player.getWorld().getTemperature(
-                block.getX(),
-                block.getY(),
-                block.getZ()
-        );
+        var ambientTemperature = climate.ambientTemperatureAt(block);
 
         return new LocalClimateReadout(
                 season,
                 temperaturePolicy.degreesCelsius(
-                        paperTemperature,
-                        season,
+                        ambientTemperature,
                         PaperTemperatureExposureResolver.forPlayer(player)
                 ),
                 snapshot.temperature(),

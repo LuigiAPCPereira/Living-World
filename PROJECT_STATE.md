@@ -6,11 +6,11 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M13/M14 integration — Waystone navigation clarity + Discovery foundation on `main`
-- **Current acceptance:** integrated code must pass main gates, then a real player confirms nearest-first menu/lore/travel and one-time Discovery behavior without regressions in climate/Waystones
-- **Current validation:** merged tree passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks` (183 tests, 57 suites, 0 failures/errors/skips), IntelliJ build and cached diff whitespace gate; user confirmed the first live Discovery title (`Descoberto`), while the remaining LW-131/LW-142 scenarios are still pending
+- **Current task:** LW-122 — Environmental & Thermal Foundation, first AmbientTemperature separation slice
+- **Current acceptance:** ambient environment temperature exists as a domain concept independent from player exposure; existing HUD/climate readout remains behavior-compatible while body-state math stays deferred to later LW-122 slices
+- **Current validation:** first AmbientTemperature slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 190 tests / 60 suites / 0 failures/errors/skips, IntelliJ build and `git diff --check`; no runtime behavior change is claimed beyond preserved tested readout semantics
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
-- **Observed branch:** `main`
+- **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
 - **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability validated; M12.3 concluído; M12.4 implementado/validado; M13 LW-130 validated by integrated-main gates; M14 LW-140/LW-141 implemented with runtime smoke pending
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** complete the remaining LW-131/LW-142 real-player scenarios, then return to LW-122 environmental/thermal specification
+- **Next action:** finish full gates for the AmbientTemperature slice, checkpoint it, then design the next LW-122 body/microclimate contract without prematurely fixing wetness/armor/heat-source tuning
 
 ## M12.4 — checkpoint local
 
