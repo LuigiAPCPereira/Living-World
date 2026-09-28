@@ -488,6 +488,12 @@ Direção: cache de contexto térmico por jogador; invalidação por movimento s
 
 O desenho final deve medir se um índice de fontes é realmente mais barato que sampling bounded antes de adotá-lo.
 
+### 5.23 Composição térmica instantânea
+
+**Checkpoint de implementação LW-122 / décimo-terceiro slice:** `ThermalExchangeContext` agrega somente valores já resolvidos para uma avaliação instantânea: estado corporal atual, wetness, ambiente, água, atividade, vento, abrigo, armadura e observações bounded de calor local. `ThermalExchangeComposer` orquestra as policies existentes e retorna `ThermalExchangeResolution` com breakdown explícito de `airRate`, `waterRate`, `activityRate`, `localHeatRate`, `netRate`, `wetnessRate`, fator final do ar e `WaterTemperature` opcional.
+
+O compositor **não mantém estado, não avança relógio, não acessa Paper e não procura blocos**. Em submersão total, a parcela de troca com o ar vai a zero; em submersão parcial, apenas a fração corporal ainda exposta ao ar contribui. Isso preserva ownership e evita transformar a composição em um `EnvironmentManager` global.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

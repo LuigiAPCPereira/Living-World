@@ -301,6 +301,8 @@ Décimo-primeiro slice de LW-122: `LocalHeatSourceCatalog` + `LocalHeatSourcePol
 
 Décimo-segundo slice de LW-122: `ArmorWetnessPolicy` aplica `waterResistance` somente à entrada positiva de wetness, ponderada por cobertura. `ArmorInsulationPolicy` também considera `WetnessState`, reduzindo isolamento quando molhado. Secagem/retensão específica por material segue fora deste slice; nenhuma armadura torna o jogador impermeável.
 
+Décimo-terceiro slice de LW-122: `ThermalExchangeContext` + `ThermalExchangeComposer` formam a camada de composição application-level sem estado. O compositor resolve breakdown de ar/água/atividade/calor local/wetness usando somente policies puras e contexto já resolvido; não acessa Bukkit, não integra tempo e não localiza fontes. `ThermalExchangeResolution` mantém os componentes separados para diagnóstico e tuning.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.
