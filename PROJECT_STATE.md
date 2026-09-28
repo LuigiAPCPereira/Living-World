@@ -10,8 +10,8 @@
 - **Observed repository/worktree:** `/home/luigiapcp/IdeaProjects/Living World-waystones-m10`
 - **Observed branch:** `chatgpt/discovery-foundation`, created from `ab24861` (previous branch `chatgpt/waystones-m10` left untouched at the same commit, with LW-101 still open there)
 - **Baseline before this work:** `./gradlew test` green on the untouched tree; 133 tests
-- **Implementation:** Discovery feature (domain/application/persistence/presentation/paper) plus one additive call in the existing Waystone activation path. No Waystone behaviour, command, menu, travel, rename or destruction rule changed.
-- **Validation:** `./gradlew test --rerun-tasks` and `./gradlew build` green (157 tests, 24 new). Paper 26.3 boot smoke: plugin enabled ("Living World ativado."), `/lw status` answered from console, clean disable, no plugin warnings or errors.
+- **Implementation:** Discovery feature (domain/application/persistence/presentation/paper) plus one additive call in the existing Waystone physical-interaction path. Discovery is invoked even when Waystone access already existed, enabling legacy backfill while preserving activation idempotency. Discovery PDC payloads are explicitly versioned as V1 and still read the brief headerless V1 shape. No Waystone command, menu, travel, rename or destruction rule changed.
+- **Validation:** `./gradlew test --rerun-tasks` and `./gradlew build` green after hardening (162 tests total; 29 above the 133-test baseline). Dedicated regressions cover legacy Waystone-access backfill, explicit V1 schema marker, headerless V1 compatibility, unknown-version rejection and malformed versioned payloads. IntelliJ inspections are clean on the changed Java/test files. Paper 26.3 boot smoke from the foundation commit: plugin enabled ("Living World ativado."), `/lw status` answered from console, clean disable, no plugin warnings or errors.
 - **Not validated:** the player-visible discovery moment. Exercising it needs a connected client, exactly like LW-101. No live interaction evidence exists for LW-110/LW-111.
 - **Merge:** not integrated / no remote merge observed; no remote repository observed
 - **Deploy:** not applicable

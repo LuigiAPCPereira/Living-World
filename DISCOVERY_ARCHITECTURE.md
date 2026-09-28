@@ -132,9 +132,9 @@ Discovery state is split by ownership, not by convenience:
 | `PERSONAL` | the player | `PlayerDiscoveryStore` | online `Player` PDC |
 | `WORLD` | the world | `WorldDiscoveryStore` | `World` PDC |
 
-Encoding is a `STRING_ARRAY` of `(type, id)` pairs under one namespaced key per container (`discovery_learned`). Pairs avoid any delimiter ambiguity between a namespaced type and an id that may itself contain `:`.
+Encoding uses one namespaced `STRING_ARRAY` per container (`discovery_learned`). The current payload starts with the explicit marker `@livingworld-discovery:v1`, followed by `(type, id)` pairs. The marker cannot collide with a valid `DiscoveryType`, and pairs avoid delimiter ambiguity when an id contains `:`.
 
-Ordering is discovery order: the persisted array preserves insertion order, and load returns a `LinkedHashSet`-backed set. No timestamp is stored because nothing consumes age or ordering-by-date yet; adding one later is additive to the payload.
+Ordering is discovery order: the persisted array preserves insertion order, and load returns a `LinkedHashSet`-backed set. The original foundation briefly wrote headerless `(type, id)` pairs; the V1 decoder accepts that legacy shape and the next mutation rewrites it with the explicit marker. No timestamp is stored because nothing consumes age or ordering-by-date yet. If timestamp/history metadata becomes justified, it requires a new schema version rather than silently changing the V1 tuple width.
 
 Mutation rules (deliberately asymmetric, and covered by tests):
 
@@ -198,6 +198,16 @@ Adding a new *presentation* (title, action bar, book, future visual system) mean
 **Decision:** the registry is an immutable catalog of `DiscoveryTypeDefinition` — type, scope, i18n label key — and is the single owner of the scope policy. Undeclared types fail closed.
 
 **Consequences:** the vocabulary of discoveries is open without editing the core, and the scope of a type cannot be contradicted by a caller. An enum of `BIOME/WAYSTONE/LANDMARK` was rejected: it hard-codes today's vocabulary into the core and would need a core edit for every future type.
+
+### ADR-004 — Persisted discovery payloads are explicitly versioned
+
+**Status:** accepted.
+
+**Context:** Discovery is world/player memory expected to outlive individual plugin builds. The first implementation encoded only repeated `(type, id)` pairs. That shape is sufficient for V1, but changing tuple width later (for example, adding a timestamp) would be ambiguous without a schema discriminator.
+
+**Decision:** every newly written payload begins with an impossible-to-collide schema marker, currently `@livingworld-discovery:v1`. Headerless even-length payloads are accepted as legacy V1 for compatibility. Unknown explicit versions fail closed instead of being guessed.
+
+**Consequences:** future persistence evolution gets an intentional migration boundary. V1 stays minimal and stores no speculative metadata; adding fields later means introducing V2 plus a documented decoder/migration path.
 
 ## 10. Invariants and non-goals
 

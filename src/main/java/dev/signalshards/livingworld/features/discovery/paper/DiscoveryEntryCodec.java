@@ -24,6 +24,14 @@ import java.util.UUID;
  * isso a mesma identidade nunca pode ser gravada em outro escopo.
  */
 final class DiscoveryEntryCodec {
+    /**
+     * Marcador impossível de colidir com {@link DiscoveryType}: o tipo não aceita
+     * {@code '@'} nem {@code ':'}. Payloads antigos sem marcador continuam sendo lidos
+     * como V1 e são regravados no formato versionado na próxima mutação.
+     */
+    static final String CURRENT_SCHEMA_MARKER = "@livingworld-discovery:v1";
+    private static final String SCHEMA_MARKER_PREFIX = "@livingworld-discovery:v";
+
     static final ListPersistentDataType<String, String> ENTRY_TYPE =
             PersistentDataType.LIST.strings();
 
@@ -31,7 +39,8 @@ final class DiscoveryEntryCodec {
     }
 
     static List<String> encode(Collection<DiscoveryRecord> records) {
-        List<String> entries = new ArrayList<>(records.size() * 2);
+        List<String> entries = new ArrayList<>(1 + records.size() * 2);
+        entries.add(CURRENT_SCHEMA_MARKER);
         for (DiscoveryRecord record : records) {
             entries.add(record.type().value());
             entries.add(record.id().value());
@@ -40,12 +49,18 @@ final class DiscoveryEntryCodec {
     }
 
     static Set<DiscoveryRecord> decode(List<String> entries, DiscoveryScope scope, UUID owner) {
-        if ((entries.size() & 1) != 0) {
+        if (entries.isEmpty()) {
+            return Set.of();
+        }
+
+        int firstEntry = schemaPayloadStart(entries);
+        int payloadSize = entries.size() - firstEntry;
+        if ((payloadSize & 1) != 0) {
             throw new IllegalStateException("As descobertas persistidas estão malformadas");
         }
 
         Set<DiscoveryRecord> records = new LinkedHashSet<>();
-        for (int index = 0; index < entries.size(); index += 2) {
+        for (int index = firstEntry; index < entries.size(); index += 2) {
             records.add(new DiscoveryRecord(
                     typeOf(entries.get(index)),
                     idOf(entries.get(index + 1)),
@@ -54,6 +69,21 @@ final class DiscoveryEntryCodec {
             ));
         }
         return records;
+    }
+
+    private static int schemaPayloadStart(List<String> entries) {
+        String first = entries.getFirst();
+        if (!first.startsWith(SCHEMA_MARKER_PREFIX)) {
+            // Compatibilidade com o primeiro formato produzido pela foundation:
+            // pares (type, id) sem cabeçalho explícito.
+            return 0;
+        }
+        if (!CURRENT_SCHEMA_MARKER.equals(first)) {
+            throw new IllegalStateException(
+                    "Versão de persistência de descobertas não suportada: " + first
+            );
+        }
+        return 1;
     }
 
     private static DiscoveryType typeOf(String raw) {

@@ -31,6 +31,8 @@ Living World is a cooperative survival server, not a server hub. A `/warp` list 
 
 **Waystone case (implemented, M11):** activating a Waystone anchor for the first time. The existing chat feedback (`Waystone criada e ativada: …` / `Waystone ativada: …`) is unchanged, and a discovery moment is added on top of it.
 
+Compatibility rule: Waystone access predates the Discovery feature. If a player already had access but has no corresponding Discovery record, the next physical interaction with that Waystone is treated as their one missing discovery moment. This is a backfill of memory, not a second activation.
+
 ## 3. World discovery
 
 **Definition:** the fact belongs to the world and is shared by everyone who plays on it.
@@ -89,6 +91,7 @@ There is no Title System in Living World today, and this foundation does not cre
 | --- | --- |
 | First activation of a Waystone anchor | existing chat message + short title `Descoberto` / `<nome> • Waystone` |
 | Re-clicking an already activated anchor | existing chat message only; no repeated discovery moment |
+| First re-click of a legacy activated anchor with no Discovery record | existing "already activated" chat message + one discovery moment; later clicks are silent |
 | Renaming a Waystone near its anchor | unchanged; the stored discovery is identity-only and cannot go stale |
 | Breaking a registered anchor | unchanged; the memory of the discovery remains, the Waystone itself is removed |
 

@@ -35,7 +35,7 @@ PaperWaystoneModule.onAnchorInteract
         +-- existing: WaystoneService.activate(player, waystone)
         |        -> chat feedback (created-and-activated / activated / already-activated)
         |
-        +-- new (only when activation is genuinely new):
+        +-- new (after every valid physical interaction):
                  DiscoveryService.discover(
                      type      = WaystoneDiscovery.TYPE,
                      id        = WaystoneDiscovery.idFor(waystone.id()),
@@ -53,11 +53,13 @@ PaperWaystoneModule.onAnchorInteract
                  PaperDiscoveryPresentation -> Adventure title
 ```
 
-The call sits *after* the activation has already been decided and persisted, so:
+The call sits *after* the activation attempt and is deliberately independent of the boolean returned by `WaystoneService.activate(...)`, so:
 
 - A failure in the discovery path cannot un-activate a Waystone.
 - A player with a broken discovery presentation still gets a fully working Waystone.
 - The Waystone module depends on Discovery's public application surface only; it never sees a store, a publisher, or a presentation class.
+- A player who already had Waystone access before Discovery existed receives a one-time backfill on the next physical interaction.
+- Repeated interactions remain silent because idempotency belongs to `DiscoveryService`, not to Waystone activation.
 
 ## 4. Behaviour matrix
 
@@ -66,6 +68,7 @@ The call sits *after* the activation has already been decided and persisted, so:
 | First interaction, unregistered anchor | creates + activates, green chat message | records `waystone/<uuid>` in that player's PDC, publishes, shows the moment |
 | First interaction, existing Waystone never activated by this player | activates, green chat message | records + publishes + moment |
 | Interaction with a Waystone this player already activated | yellow "already activated" message | no store write, no publish, no moment |
+| Legacy activated Waystone with no Discovery record | yellow "already activated" message | backfills the missing record, publishes + moment once; later interactions are silent |
 | `/lw rename` near the anchor | renames, keeps UUID and access | untouched — the stored discovery holds no name (ADR-002) |
 | `/lw rename` far from the anchor | rejected | untouched |
 | Breaking a registered anchor | removed from registry + index, red chat message | untouched; the memory of having found it remains |

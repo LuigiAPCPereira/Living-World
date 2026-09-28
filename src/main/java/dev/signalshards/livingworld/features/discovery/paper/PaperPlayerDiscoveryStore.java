@@ -47,7 +47,7 @@ public final class PaperPlayerDiscoveryStore implements PlayerDiscoveryStore {
     @Override
     public boolean add(UUID playerId, DiscoveryRecord record) {
         Objects.requireNonNull(record, "registro de descoberta");
-        requireSameOwner(record, playerId, "jogador");
+        requireSameOwner(record, playerId);
 
         PersistentDataContainer container = containerFor(playerId);
         LinkedHashSet<DiscoveryRecord> records = new LinkedHashSet<>(read(container, playerId));
@@ -77,16 +77,16 @@ public final class PaperPlayerDiscoveryStore implements PlayerDiscoveryStore {
         return player.getPersistentDataContainer();
     }
 
-    private void requireSameOwner(DiscoveryRecord record, UUID owner, String ownerKind) {
+    private void requireSameOwner(DiscoveryRecord record, UUID owner) {
         if (record.scope() != SCOPE) {
             throw new IllegalArgumentException(
-                    "Uma descoberta " + record.scope() + " não pertence ao armazenamento do "
-                            + ownerKind
+                    "Uma descoberta " + record.scope()
+                            + " não pertence ao armazenamento do jogador"
             );
         }
         if (!record.owner().equals(owner)) {
             throw new IllegalArgumentException(
-                    "A descoberta não pode ser gravada em um " + ownerKind + " diferente do dono"
+                    "A descoberta não pode ser gravada em um jogador diferente do dono"
             );
         }
     }

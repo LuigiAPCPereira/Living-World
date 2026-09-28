@@ -1,8 +1,8 @@
 package dev.signalshards.livingworld.features.waystones.paper;
+
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
-import dev.signalshards.livingworld.features.discovery.application.DiscoveryRequest;
 import dev.signalshards.livingworld.features.discovery.application.DiscoveryService;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneAnchorIndex;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneDiscovery;
@@ -157,15 +157,11 @@ public final class PaperWaystoneModule implements LivingWorldModule, Listener {
             ));
         }
 
-        if (activated) {
-            discovery.discover(new DiscoveryRequest(
-                    WaystoneDiscovery.TYPE,
-                    WaystoneDiscovery.idFor(waystone.id()),
-                    event.getPlayer().getUniqueId(),
-                    event.getPlayer().getUniqueId(),
-                    waystone.name()
-            ));
-        }
+        WaystoneDiscovery.recordInteraction(
+                discovery,
+                event.getPlayer().getUniqueId(),
+                waystone
+        );
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
