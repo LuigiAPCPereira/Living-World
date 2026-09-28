@@ -410,11 +410,17 @@ Sprint nunca deve substituir abrigo/fogueira em frio extremo. Em calor, atividad
 
 `WindExposure` pode derivar de weather/storm, sky exposure, altitude, shelter e deslocamento/voo quando relevante. Em frio, `cold + wet + wind` aumenta muito o resfriamento; em calor, fluxo de ar pode ajudar dissipação.
 
+**Checkpoint de implementação LW-122 / oitavo slice:** `WindExposure` e `ShelterFactor` existem como valores normalizados independentes. `AirTransferPolicy` combina os dois em `AirThermalTransferFactor` bounded: vento aumenta transferência; abrigo reduz. O domínio continua sem saber o que é uma casa, caverna ou pico — adapters futuros apenas precisam fornecer fatores observáveis.
+
+Um cenário integrado compara dois jogadores molhados sob o mesmo `AmbientTemperature`: um em pico ventoso/exposto e outro fortemente abrigado/calmo. Após o mesmo intervalo, o exposto acumula déficit térmico maior. Isso valida a direção de gameplay antes de qualquer probe Paper.
+
 Isso é especialmente importante para Terralith + Tectonic: picos devem ser severos pela combinação de altitude, exposição, clima e vento, não por um único threshold de Y.
 
 ### 5.13 Abrigo sem detectar semanticamente uma casa
 
 Living World não deve tentar provar que uma construção é uma casa. Preferir `SkyExposure`, `WindExposure`, `RainExposure`, `ShelterFactor` e fontes térmicas locais.
+
+O `ShelterFactor` implementado neste estágio é apenas domínio. A futura resolução Paper deve usar probes bounded/cached de exposição, sem flood-fill de interiores, sem reconhecimento de paredes/portas e sem scans recorrentes de chunks.
 
 Isso permite cabanas, cavernas, castelos, buracos improvisados e construções customizadas. Materiais de parede com propriedades térmicas específicas ficam adiados até haver evidência de que melhoram gameplay sem tornar o cálculo caro.
 
