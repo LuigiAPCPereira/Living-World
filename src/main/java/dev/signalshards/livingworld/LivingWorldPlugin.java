@@ -2,7 +2,14 @@ package dev.signalshards.livingworld;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.companion.ResourcePackSessionStore;
+import dev.signalshards.livingworld.core.companion.CompanionPackKind;
+import dev.signalshards.livingworld.core.companion.CompanionPackPaths;
+import dev.signalshards.livingworld.core.companion.FileCompanionPackManifestSource;
+import dev.signalshards.livingworld.core.companion.paper.PaperResourcePackDeliveryModule;
+import dev.signalshards.livingworld.core.companion.paper.PaperResourcePackDeliverySettingsLoader;
 import dev.signalshards.livingworld.core.companion.paper.PaperResourcePackStatusModule;
+import dev.signalshards.livingworld.core.companion.paper.PaperDatapackContractModule;
+import dev.signalshards.livingworld.core.companion.paper.PaperDatapackContractSettingsLoader;
 import dev.signalshards.livingworld.core.module.ModuleManager;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
@@ -192,9 +199,30 @@ public final class LivingWorldPlugin extends JavaPlugin {
         var thermalRuntimeService = new PlayerThermalRuntimeService();
         var thermalFeedback = new ThermalFeedbackCoordinator();
         var resourcePackSessions = new ResourcePackSessionStore();
+        var datapackContract = new PaperDatapackContractModule(
+                this,
+                PaperDatapackContractSettingsLoader.load(getConfig()),
+                new FileCompanionPackManifestSource(
+                        CompanionPackPaths.manifest(
+                                getDataFolder().toPath(),
+                                CompanionPackKind.DATAPACK
+                        )
+                )
+        );
         var resourcePackStatus = new PaperResourcePackStatusModule(
                 this,
                 resourcePackSessions
+        );
+        var resourcePackDelivery = new PaperResourcePackDeliveryModule(
+                this,
+                PaperResourcePackDeliverySettingsLoader.load(getConfig()),
+                resourcePackSessions,
+                new FileCompanionPackManifestSource(
+                        CompanionPackPaths.manifest(
+                                getDataFolder().toPath(),
+                                CompanionPackKind.RESOURCE_PACK
+                        )
+                )
         );
         PaperThermalRuntimeModule thermalRuntime = new PaperThermalRuntimeModule(
                 this,
@@ -302,6 +330,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
         };
 
         moduleManager = new ModuleManager(
+                datapackContract,
                 desireLines,
                 calendarModule,
                 naturalGrowth,
@@ -313,6 +342,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 thermalRuntime,
                 thermalFeedbackModule,
                 resourcePackStatus,
+                resourcePackDelivery,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

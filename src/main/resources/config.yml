@@ -29,6 +29,21 @@ climate:
     frost:
       enabled: true
 
+companions:
+  datapack:
+    # Verifica somente um datapack já instalado antes do startup do plugin.
+    enabled: false
+    paper-name: ""
+    required: false
+  resource-pack:
+    # Desligado até existir artifact/hosting configurado.
+    enabled: false
+    url: ""
+    # SHA-1 de 40 caracteres exigido pelo protocolo Minecraft; não é o SHA-256 do manifest.
+    sha1: ""
+    required: false
+    prompt: "Living World environmental visuals"
+
 desire-lines:
   enabled: true
   grass-to-dirt-visits: 12

@@ -154,6 +154,21 @@ O store é efêmero por UUID do jogador, substitui sessão anterior quando uma n
 
 `PaperDatapackRuntimeResolver` recebe uma compatibilidade já validada e apenas consulta `DatapackManager#getPack(name)` + `isEnabled()`. Ele **não chama `refreshPacks()`**, não habilita/desabilita pack e não executa reload. Bootstrap ativo continua para o próximo slice.
 
+**Quarto slice:** manifests físicos são procurados somente em caminhos fixos do data folder do plugin:
+
+    plugins/LivingWorld/companions/datapack/living-world-pack.properties
+    plugins/LivingWorld/companions/resourcepack/living-world-pack.properties
+
+`companions.datapack.enabled=false` por default. Quando opt-in, `PaperDatapackContractModule` valida o manifest e observa o datapack previamente instalado pelo operador através do nome Paper configurado. Ele continua sem copiar arquivo, sem `refreshPacks()`, sem `setEnabled()` e sem reload. Se `required=true`, manifest ausente/incompatível ou pack ausente/disabled falham o bootstrap antes dos módulos de gameplay.
+
+`companions.resource-pack.enabled=false` por default. Quando opt-in e o manifest schema 1 é compatível, `PaperResourcePackDeliveryModule` envia **um único pack** usando a API Adventure moderna `ResourcePackRequest`, registra UUID próprio por jogador e deixa `PaperResourcePackStatusModule` acompanhar o lifecycle. Jogadores online no enable e joins posteriores recebem a mesma configuração.
+
+O hash do protocolo Minecraft é explicitamente separado do manifest: delivery exige `sha1` de 40 hex chars para caching do cliente; o `sha256` opcional do manifest continua sendo integridade do artifact/contrato e nunca é reutilizado silenciosamente como SHA-1.
+
+Pack opcional sem manifest compatível não é enviado e cai para apresentação vanilla. Pack obrigatório inválido falha o módulo de forma explícita. Nenhum ZIP sazonal é trocado por season; o contrato é para um único resourcepack contendo todos os assets sazonais quando esses assets forem produzidos.
+
+Com isso, LW-124 fica **implementado, mas ainda não validado com artifacts reais**. Não existe datapack/resourcepack físico nesta fatia; portanto não há alegação de que conteúdo, hosting ou download reais já foram testados.
+
 ## 4. Compatibilidade de worldgen como requisito de arquitetura
 
 Ambiente-alvo oficial para desenvolvimento e smoke:

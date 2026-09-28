@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-124 — companion pack runtime contracts, Paper observation adapter
-- **Current acceptance:** Paper resourcepack events are mapped into Living World sessions only for known request UUIDs; unknown/server-owned requests are ignored, lifecycle cleanup is explicit, and datapack enabled state is read without refresh/reload
-- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 slices 1-3 pass full gates at 408 tests / 135 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-125 — custom-worldgen compatibility gate, after LW-124 implementation closure
+- **Current acceptance:** LW-124 now has schema/manifest contracts, explicit runtime states, Paper status observation, opt-in single-pack delivery and startup datapack verification; default config sends/installs nothing and no runtime reload exists
+- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 implementation gates pass at 426 tests / 140 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; actual datapack/resourcepack artifacts are intentionally absent, so artifact-level runtime validation remains pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-124 Paper observation adapters, then add opt-in config/loading for manifests and resourcepack delivery; defaults must send/install nothing when artifacts are not configured
+- **Next action:** checkpoint LW-124 opt-in bootstrap/delivery and begin LW-125 by formalizing dimension/custom-biome fallback behavior for Overworld/Nether/End before any external worldgen smoke
 
 ## M12.4 — checkpoint local
 
