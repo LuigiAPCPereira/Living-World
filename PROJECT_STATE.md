@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, local heat-source domain slice
-- **Current acceptance:** local heat sources contribute bounded positive `ThermalExchangeRate` by type/distance/exposure/LoS without changing ambient temperature or scanning blocks in the domain
-- **Current validation:** local-heat slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 277 tests / 97 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-122 — Environmental & Thermal Foundation, armor wetness/insulation integration slice
+- **Current acceptance:** armor water resistance slows wetness ingress without waterproofing, while wetness reduces part of armor insulation without erasing protection
+- **Current validation:** armor/wetness slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 283 tests / 99 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint local heat; next LW-122 slice should connect armor water resistance to wetness before Paper runtime adapters
+- **Next action:** checkpoint armor/wetness integration; then begin composition/runtime foundation instead of adding more isolated domain policies
 
 ## M12.4 — checkpoint local
 

@@ -330,6 +330,10 @@ O isolamento atua nas duas direções: em frio reduz perda de calor, mas também
 
 `waterResistance` já existe no perfil do material, mas **ainda não modifica WetnessRate** neste slice; isso será ligado separadamente para evitar misturar isolamento seco com comportamento de armadura molhada.
 
+**Checkpoint de implementação LW-122 / décimo-segundo slice:** `ArmorWetnessPolicy` agora usa `waterResistance` ponderada por cobertura para reduzir apenas taxas positivas de `WetnessRate`. Nenhuma armadura fica impermeável; secagem negativa não é alterada neste estágio. Em paralelo, `ArmorInsulationPolicy` passou a receber `WetnessState` e degrada parte do isolamento efetivo quando o jogador está molhado, sem zerar toda proteção.
+
+Cenários provam que conjunto de couro retarda saturação na água sem impedi-la e que couro saturado isola menos que couro seco. Turtle shell oferece maior resistência local à água que capacete de ferro pelos defaults atuais. Retenção de água/secagem específica por material continua adiada até playtest justificar esse nível de detalhe.
+
 Direção de gameplay:
 
 - couro deve ganhar utilidade real de isolamento no frio;

@@ -42,8 +42,19 @@ public final class ArmorInsulationPolicy {
             AirThermalTransferFactor baseFactor,
             ArmorThermalLoadout loadout
     ) {
+        return apply(baseFactor, loadout, WetnessState.dry());
+    }
+
+    public AirThermalTransferFactor apply(
+            AirThermalTransferFactor baseFactor,
+            ArmorThermalLoadout loadout,
+            WetnessState wetness
+    ) {
         Objects.requireNonNull(baseFactor, "fator base do ar");
-        double insulation = effectiveInsulation(loadout);
+        Objects.requireNonNull(wetness, "wetness");
+        double dryInsulation = effectiveInsulation(loadout);
+        double wetLoss = wetness.level() * settings.maximumWetInsulationLoss();
+        double insulation = dryInsulation * (1.0D - wetLoss);
         double multiplier = 1.0D - (
                 insulation * settings.maximumAirTransferReduction()
         );

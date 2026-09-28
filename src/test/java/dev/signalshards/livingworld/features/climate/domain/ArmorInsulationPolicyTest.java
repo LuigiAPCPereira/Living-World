@@ -42,6 +42,24 @@ class ArmorInsulationPolicyTest {
         assertTrue(leather > chainmail);
     }
 
+    @Test
+    void wetnessReduzIsolamentoMasNaoRemoveTodaProtecao() {
+        ArmorThermalLoadout full = fullSet(ArmorThermalMaterial.LEATHER);
+        double dry = policy.apply(
+                AirThermalTransferFactor.baseline(),
+                full,
+                WetnessState.dry()
+        ).value();
+        double wet = policy.apply(
+                AirThermalTransferFactor.baseline(),
+                full,
+                new WetnessState(1.0D)
+        ).value();
+
+        assertTrue(wet > dry);
+        assertTrue(wet < 1.0D);
+    }
+
     private ArmorThermalLoadout fullSet(ArmorThermalMaterial material) {
         return new ArmorThermalLoadout(List.of(
                 new EquippedArmorPiece(ArmorSlot.HEAD, material),
