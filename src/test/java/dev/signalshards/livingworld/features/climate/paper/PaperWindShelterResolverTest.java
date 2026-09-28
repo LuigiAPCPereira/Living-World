@@ -18,6 +18,7 @@ class PaperWindShelterResolverTest {
 
         assertEquals(0.0D, observation.windExposure().level());
         assertEquals(1.0D, observation.shelterFactor().level());
+        assertEquals(0.0D, observation.precipitationExposure().level());
     }
 
     @Test
@@ -40,6 +41,8 @@ class PaperWindShelterResolverTest {
                         > clearLow.windExposure().level()
         );
         assertEquals(0.0D, stormPeak.shelterFactor().level());
+        assertEquals(1.0D, stormPeak.precipitationExposure().level());
+        assertEquals(0.0D, clearLow.precipitationExposure().level());
     }
 
     @Test

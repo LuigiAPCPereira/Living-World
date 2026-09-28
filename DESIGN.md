@@ -313,6 +313,8 @@ Décimo-sétimo slice de LW-122: adapters Paper bounded agora resolvem atividade
 
 Décimo-oitavo slice de LW-122: `ThermalRuntimeReadout` e seu provider Paper formam uma superfície de diagnóstico read-only sobre snapshot corporal + ambiente atual + breakdown do compositor. O comando `/lw thermal` consome esse contrato e mantém apresentação/i18n fora do domínio. O readout não chama `advance`, não persiste mudanças e não altera gameplay.
 
+Décimo-nono slice de LW-122: `PrecipitationExposure` passou a fazer parte de `ThermalEnvironmentContext/ThermalExchangeContext`. `WetnessEnvironmentPolicy` compõe molhamento por água/precipitação e secagem por ambiente, vento e calor local antes de `ArmorWetnessPolicy`. `PaperWindShelterResolver` produz também precipitação exposta a partir de storm + skylight, sem scan adicional. O readout térmico mostra precipitação e wetness rate para tuning.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

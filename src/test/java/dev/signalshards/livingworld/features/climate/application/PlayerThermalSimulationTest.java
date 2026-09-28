@@ -5,6 +5,7 @@ import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalPolicy;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalState;
+import dev.signalshards.livingworld.features.climate.domain.PrecipitationExposure;
 import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
 import dev.signalshards.livingworld.features.climate.domain.WaterExposure;
 import dev.signalshards.livingworld.features.climate.domain.WetnessPolicy;
@@ -87,6 +88,53 @@ class PlayerThermalSimulationTest {
 
         assertTrue(result.wetnessState().level() > 0.0D);
         assertTrue(result.thermalState().thermalLoad() < 0.0D);
+    }
+
+    @Test
+    void jogadorMolhadoSecaProgressivamenteForaDaAgua() {
+        ThermalExchangeContext context = new ThermalExchangeContext(
+                PlayerThermalState.neutral(),
+                new WetnessState(1.0D),
+                new AmbientTemperature(15.0D),
+                WaterExposure.none(),
+                PrecipitationExposure.none(),
+                PlayerActivity.RESTING,
+                new WindExposure(0.50D),
+                ShelterFactor.exposed(),
+                ArmorThermalLoadout.empty(),
+                List.of()
+        );
+
+        ThermalSimulationResult result = simulation.advance(
+                context,
+                Duration.ofSeconds(5)
+        );
+
+        assertTrue(result.wetnessState().level() < 1.0D);
+        assertTrue(result.wetnessState().level() > 0.0D);
+    }
+
+    @Test
+    void chuvaExpostaMolhaJogadorSeco() {
+        ThermalExchangeContext context = new ThermalExchangeContext(
+                PlayerThermalState.neutral(),
+                WetnessState.dry(),
+                new AmbientTemperature(15.0D),
+                WaterExposure.none(),
+                new PrecipitationExposure(1.0D),
+                PlayerActivity.RESTING,
+                WindExposure.calm(),
+                ShelterFactor.exposed(),
+                ArmorThermalLoadout.empty(),
+                List.of()
+        );
+
+        ThermalSimulationResult result = simulation.advance(
+                context,
+                Duration.ofSeconds(5)
+        );
+
+        assertTrue(result.wetnessState().level() > 0.0D);
     }
 
     private PlayerThermalSimulation simulationWithCatchUp(Duration catchUp) {

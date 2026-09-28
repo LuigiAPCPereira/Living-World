@@ -6,6 +6,7 @@ import dev.signalshards.livingworld.features.climate.domain.LocalHeatExposure;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalSnapshot;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalState;
+import dev.signalshards.livingworld.features.climate.domain.PrecipitationExposure;
 import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
 import dev.signalshards.livingworld.features.climate.domain.WaterExposure;
 import dev.signalshards.livingworld.features.climate.domain.WetnessState;
@@ -25,6 +26,7 @@ public record ThermalExchangeContext(
         WetnessState wetness,
         AmbientTemperature ambientTemperature,
         WaterExposure waterExposure,
+        PrecipitationExposure precipitationExposure,
         PlayerActivity activity,
         WindExposure windExposure,
         ShelterFactor shelterFactor,
@@ -36,12 +38,38 @@ public record ThermalExchangeContext(
         Objects.requireNonNull(wetness, "wetness");
         Objects.requireNonNull(ambientTemperature, "temperatura ambiente");
         Objects.requireNonNull(waterExposure, "exposição à água");
+        Objects.requireNonNull(precipitationExposure, "exposição à precipitação");
         Objects.requireNonNull(activity, "atividade");
         Objects.requireNonNull(windExposure, "vento");
         Objects.requireNonNull(shelterFactor, "abrigo");
         Objects.requireNonNull(armorLoadout, "armadura");
         localHeatExposures = List.copyOf(
                 Objects.requireNonNull(localHeatExposures, "fontes locais de calor")
+        );
+    }
+
+    public ThermalExchangeContext(
+            PlayerThermalState thermalState,
+            WetnessState wetness,
+            AmbientTemperature ambientTemperature,
+            WaterExposure waterExposure,
+            PlayerActivity activity,
+            WindExposure windExposure,
+            ShelterFactor shelterFactor,
+            ArmorThermalLoadout armorLoadout,
+            List<LocalHeatExposure> localHeatExposures
+    ) {
+        this(
+                thermalState,
+                wetness,
+                ambientTemperature,
+                waterExposure,
+                PrecipitationExposure.none(),
+                activity,
+                windExposure,
+                shelterFactor,
+                armorLoadout,
+                localHeatExposures
         );
     }
 
@@ -54,6 +82,7 @@ public record ThermalExchangeContext(
                 newWetness,
                 ambientTemperature,
                 waterExposure,
+                precipitationExposure,
                 activity,
                 windExposure,
                 shelterFactor,
@@ -73,6 +102,7 @@ public record ThermalExchangeContext(
                 snapshot.wetnessState(),
                 environment.ambientTemperature(),
                 environment.waterExposure(),
+                environment.precipitationExposure(),
                 environment.activity(),
                 environment.windExposure(),
                 environment.shelterFactor(),

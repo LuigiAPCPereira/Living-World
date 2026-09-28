@@ -247,6 +247,7 @@ public final class PaperWaystoneCommand implements BasicCommand {
         player.sendMessage(messages.component(
                 NamedTextColor.GRAY,
                 "thermal.readout-exposure",
+                (int) Math.round(snapshot.precipitationExposure() * 100.0D),
                 (int) Math.round(snapshot.windExposure() * 100.0D),
                 (int) Math.round(snapshot.shelterFactor() * 100.0D),
                 snapshot.armorPieces(),
@@ -259,7 +260,8 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 formatSigned(snapshot.waterRatePerSecond()),
                 formatSigned(snapshot.activityRatePerSecond()),
                 formatSigned(snapshot.localHeatRatePerSecond()),
-                formatSigned(snapshot.netRatePerSecond())
+                formatSigned(snapshot.netRatePerSecond()),
+                formatSigned(snapshot.wetnessRatePerSecond())
         ));
     }
 

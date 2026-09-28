@@ -534,6 +534,18 @@ A profundidade da água é bounded em 32 blocos e usa probing exponencial + refi
 
 O comando é **observacional**: não salva novo snapshot, não altera relógio, não aplica dano/efeitos e não duplica matemática. Ele existe para smoke/tuning antes de qualquer feedback corporal player-facing.
 
+**Smoke conectado do slice 18:** com o jogador real `zVaporius` conectado no Paper 26.3, `/lw thermal` mostrou estado acumulado e breakdown coerente. Em superfície/outono: 13 °C, parado, seco, sem armadura/fontes, vento ~52%, taxa líquida negativa pequena e carga corporal já em `COOL`. Em imersão total a ~5 blocos: wetness chegou a 100%, a parcela de ar zerou e a água passou a dominar a troca. Em movimento dentro d'água, o resolver mudou para `SWIMMING` e a contribuição metabólica apareceu separadamente. Quatro peças de couro foram detectadas e reduziram a magnitude da troca com o ar, inclusive durante recuperação de um corpo frio. Uma fixture temporária de `MAGMA_BLOCK` em bloco previamente confirmado como `AIR` foi detectada como fonte local e depois restaurada para `AIR`.
+
+O smoke também revelou que o runtime não estava secando wetness fora da água: `WaterExposureEffect.none()` fornecia taxa neutra e nenhuma policy ambiental de secagem estava conectada.
+
+### 5.29 Wetness ambiental, chuva e secagem
+
+**Checkpoint de implementação LW-122 / décimo-nono slice:** `PrecipitationExposure` entrou no contexto ambiental e `WetnessEnvironmentPolicy` passou a compor água + precipitação − secagem. Fora de água/chuva, wetness seca gradualmente; vento, temperatura ambiente mais alta e calor local aceleram a secagem. Precipitação exposta adiciona wetness, e precipitação em ambiente ≤ 0 °C molha mais devagar pelos defaults iniciais.
+
+O Paper deriva precipitação como `world.hasStorm() × skyExposure`, reutilizando a mesma observação O(1) de skylight usada por vento/abrigo. Jogador completamente abrigado recebe exposição de precipitação 0. O diagnóstico `/lw thermal` agora também mostra exposição à precipitação e a taxa líquida de wetness por segundo.
+
+Armadura continua reduzindo apenas taxas positivas de wetness; secagem negativa não é alterada por `ArmorWetnessPolicy`. Isso preserva a separação entre resistência à entrada de água e futura retenção/secagem específica por material, que segue adiada até playtest justificar.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

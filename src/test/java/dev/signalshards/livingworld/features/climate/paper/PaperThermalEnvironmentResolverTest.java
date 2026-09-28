@@ -4,6 +4,7 @@ import dev.signalshards.livingworld.features.climate.application.ThermalEnvironm
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
+import dev.signalshards.livingworld.features.climate.domain.PrecipitationExposure;
 import dev.signalshards.livingworld.features.climate.domain.LocalHeatExposure;
 import dev.signalshards.livingworld.features.climate.domain.LocalHeatSourceType;
 import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
@@ -20,6 +21,7 @@ class PaperThermalEnvironmentResolverTest {
         ThermalEnvironmentContext context = PaperThermalEnvironmentResolver.compose(
                 new AmbientTemperature(12.0D),
                 new WaterExposure(0.50D, 0.0D),
+                PrecipitationExposure.none(),
                 PlayerActivity.SWIMMING,
                 ArmorThermalLoadout.empty(),
                 new WindExposure(0.40D),

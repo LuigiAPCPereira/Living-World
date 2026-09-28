@@ -14,6 +14,7 @@ import dev.signalshards.livingworld.features.climate.domain.WaterTemperature;
 import dev.signalshards.livingworld.features.climate.domain.WaterTemperaturePolicy;
 import dev.signalshards.livingworld.features.climate.domain.WaterThermalExchangePolicy;
 import dev.signalshards.livingworld.features.climate.domain.WetnessRate;
+import dev.signalshards.livingworld.features.climate.domain.WetnessEnvironmentPolicy;
 
 import java.util.Optional;
 
@@ -31,17 +32,14 @@ public final class ThermalExchangeComposer {
     private final AirTransferPolicy airTransferPolicy = new AirTransferPolicy();
     private final ArmorInsulationPolicy armorInsulationPolicy = new ArmorInsulationPolicy();
     private final ArmorWetnessPolicy armorWetnessPolicy = new ArmorWetnessPolicy();
+    private final WetnessEnvironmentPolicy wetnessEnvironmentPolicy =
+            new WetnessEnvironmentPolicy();
     private final AirThermalExchangePolicy airExchangePolicy = new AirThermalExchangePolicy();
     private final ActivityThermalPolicy activityPolicy = new ActivityThermalPolicy();
     private final LocalHeatSourcePolicy localHeatPolicy = new LocalHeatSourcePolicy();
 
     public ThermalExchangeResolution resolve(ThermalExchangeContext context) {
         WaterExposureEffect waterEffect = waterExposurePolicy.evaluate(context.waterExposure());
-        WetnessRate wetnessRate = armorWetnessPolicy.apply(
-                waterEffect.wetnessRate(),
-                context.armorLoadout()
-        );
-
         AirThermalTransferFactor environmentalAir = airTransferPolicy.factorFor(
                 context.windExposure(),
                 context.shelterFactor()
@@ -73,6 +71,18 @@ public final class ThermalExchangeComposer {
         ThermalExchangeRate activityRate = activityPolicy.exchangeRate(context.activity());
         ThermalExchangeRate localHeatRate = localHeatPolicy.exchangeRate(
                 context.localHeatExposures()
+        );
+        WetnessRate environmentalWetness = wetnessEnvironmentPolicy.exchangeRate(
+                waterEffect.wetnessRate(),
+                context.precipitationExposure(),
+                context.ambientTemperature(),
+                context.windExposure(),
+                localHeatRate,
+                context.wetness()
+        );
+        WetnessRate wetnessRate = armorWetnessPolicy.apply(
+                environmentalWetness,
+                context.armorLoadout()
         );
         ThermalExchangeRate netRate = airRate
                 .plus(waterRate)

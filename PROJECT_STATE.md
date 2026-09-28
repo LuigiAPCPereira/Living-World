@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, read-only thermal runtime diagnostics slice
-- **Current acceptance:** `/lw thermal` exposes accumulated body state + current bounded environment/exchange breakdown without advancing or mutating runtime state
-- **Current validation:** diagnostic slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 323 tests / 116 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; live `/lw thermal` smoke pending
+- **Current task:** LW-122 — Environmental & Thermal Foundation, environmental wetness/drying + precipitation slice
+- **Current acceptance:** wetness now dries outside water/precipitation, rain exposure wets, wind/warmth/local heat accelerate drying, armor still only reduces positive ingress, and diagnostics expose precipitation + wetness rate
+- **Current validation:** connected `/lw thermal` smoke validated body accumulation, full submersion/depth, swimming activity, 4-piece leather insulation and a restored temporary magma heat source; drying gap found and fixed. Full gates: 330 tests / 117 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; live drying/rain smoke pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** restart Paper on the diagnostic build and complete connected-player `/lw thermal` smoke for ambient/activity/water/armor/local heat before any player-facing feedback/damage
+- **Next action:** checkpoint wetness/precipitation slice, restart Paper, validate wetness rate/state falling while dry and rising/holding under exposed rain, then decide tuning before player-facing thermal feedback
 
 ## M12.4 — checkpoint local
 

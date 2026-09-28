@@ -16,6 +16,7 @@ public record ThermalRuntimeReadout(
         PlayerActivity activity,
         double submergedFraction,
         double waterDepthBlocks,
+        double precipitationExposure,
         double windExposure,
         double shelterFactor,
         int armorPieces,
@@ -24,7 +25,8 @@ public record ThermalRuntimeReadout(
         double waterRatePerSecond,
         double activityRatePerSecond,
         double localHeatRatePerSecond,
-        double netRatePerSecond
+        double netRatePerSecond,
+        double wetnessRatePerSecond
 ) {
     public ThermalRuntimeReadout {
         Objects.requireNonNull(thermalBand, "faixa térmica");

@@ -1,5 +1,6 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
+import dev.signalshards.livingworld.features.climate.domain.PrecipitationExposure;
 import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
 import dev.signalshards.livingworld.features.climate.domain.WindExposure;
 import org.bukkit.World;
@@ -49,7 +50,36 @@ public final class PaperWindShelterResolver {
                 skyExposure,
                 weatherStrength,
                 altitudeStrength,
-                movementStrength
+                movementStrength,
+                world.hasStorm() ? 1.0D : 0.0D
+        );
+    }
+
+    static Observation resolve(
+            double skyExposure,
+            double weatherStrength,
+            double altitudeStrength,
+            double movementStrength,
+            double precipitationStrength
+    ) {
+        validateUnit(skyExposure, "exposição ao céu");
+        validateUnit(weatherStrength, "força do weather");
+        validateUnit(altitudeStrength, "exposição de altitude");
+        validateUnit(movementStrength, "exposição por movimento");
+        validateUnit(precipitationStrength, "força da precipitação");
+
+        double environmentalWind = Math.clamp(
+                0.10D + (weatherStrength * 0.55D) + (altitudeStrength * 0.35D),
+                0.0D,
+                1.0D
+        );
+        double wind = skyExposure * Math.max(environmentalWind, movementStrength);
+        double shelter = 1.0D - skyExposure;
+        double precipitation = skyExposure * precipitationStrength;
+        return new Observation(
+                new WindExposure(Math.clamp(wind, 0.0D, 1.0D)),
+                new ShelterFactor(Math.clamp(shelter, 0.0D, 1.0D)),
+                new PrecipitationExposure(Math.clamp(precipitation, 0.0D, 1.0D))
         );
     }
 
@@ -59,21 +89,12 @@ public final class PaperWindShelterResolver {
             double altitudeStrength,
             double movementStrength
     ) {
-        validateUnit(skyExposure, "exposição ao céu");
-        validateUnit(weatherStrength, "força do weather");
-        validateUnit(altitudeStrength, "exposição de altitude");
-        validateUnit(movementStrength, "exposição por movimento");
-
-        double environmentalWind = Math.clamp(
-                0.10D + (weatherStrength * 0.55D) + (altitudeStrength * 0.35D),
-                0.0D,
-                1.0D
-        );
-        double wind = skyExposure * Math.max(environmentalWind, movementStrength);
-        double shelter = 1.0D - skyExposure;
-        return new Observation(
-                new WindExposure(Math.clamp(wind, 0.0D, 1.0D)),
-                new ShelterFactor(Math.clamp(shelter, 0.0D, 1.0D))
+        return resolve(
+                skyExposure,
+                weatherStrength,
+                altitudeStrength,
+                movementStrength,
+                weatherStrength > 0.0D ? 1.0D : 0.0D
         );
     }
 
@@ -85,11 +106,13 @@ public final class PaperWindShelterResolver {
 
     public record Observation(
             WindExposure windExposure,
-            ShelterFactor shelterFactor
+            ShelterFactor shelterFactor,
+            PrecipitationExposure precipitationExposure
     ) {
         public Observation {
             Objects.requireNonNull(windExposure, "vento");
             Objects.requireNonNull(shelterFactor, "abrigo");
+            Objects.requireNonNull(precipitationExposure, "precipitação");
         }
     }
 }

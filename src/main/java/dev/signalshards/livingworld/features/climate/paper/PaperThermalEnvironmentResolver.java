@@ -4,6 +4,7 @@ import dev.signalshards.livingworld.features.climate.application.ThermalEnvironm
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
+import dev.signalshards.livingworld.features.climate.domain.PrecipitationExposure;
 import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
 import dev.signalshards.livingworld.features.climate.domain.WaterExposure;
 import dev.signalshards.livingworld.features.climate.domain.WindExposure;
@@ -36,6 +37,7 @@ public final class PaperThermalEnvironmentResolver implements PaperThermalEnviro
         return compose(
                 ambient,
                 PaperWaterExposureResolver.forPlayer(player),
+                windShelter.precipitationExposure(),
                 PaperPlayerActivityResolver.forPlayer(player),
                 PaperArmorThermalResolver.forPlayer(player),
                 windShelter.windExposure(),
@@ -47,6 +49,7 @@ public final class PaperThermalEnvironmentResolver implements PaperThermalEnviro
     static ThermalEnvironmentContext compose(
             AmbientTemperature ambientTemperature,
             WaterExposure waterExposure,
+            PrecipitationExposure precipitationExposure,
             PlayerActivity activity,
             ArmorThermalLoadout armorLoadout,
             WindExposure windExposure,
@@ -57,6 +60,7 @@ public final class PaperThermalEnvironmentResolver implements PaperThermalEnviro
         return new ThermalEnvironmentContext(
                 ambientTemperature,
                 waterExposure,
+                precipitationExposure,
                 activity,
                 windExposure,
                 shelterFactor,
@@ -64,4 +68,5 @@ public final class PaperThermalEnvironmentResolver implements PaperThermalEnviro
                 localHeatExposures
         );
     }
+
 }
