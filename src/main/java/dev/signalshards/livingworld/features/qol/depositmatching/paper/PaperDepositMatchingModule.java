@@ -52,10 +52,17 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
     private final Map<UUID, SuppressedOffhandInteraction> suppressedOffhand =
             new HashMap<>();
 
-    public PaperDepositMatchingModule(JavaPlugin plugin, boolean enabled) {
+    public PaperDepositMatchingModule(
+            JavaPlugin plugin,
+            boolean enabled,
+            boolean presentationEnabled
+    ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.enabled = enabled;
-        this.presentation = new PaperDepositMatchingPresentation(plugin);
+        this.presentation = new PaperDepositMatchingPresentation(
+                plugin,
+                presentationEnabled
+        );
     }
 
     @Override
