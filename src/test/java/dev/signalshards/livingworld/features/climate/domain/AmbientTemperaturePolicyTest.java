@@ -146,4 +146,35 @@ class AmbientTemperaturePolicyTest {
                 1.0E-9D
         );
     }
+
+    @Test
+    void dimensaoNaoTerrestreIgnoraSeasonDiaEWeatherMasPreservaTemperaturaCoordenada() {
+        EnvironmentalDimensionProfile nether =
+                new EnvironmentalDimensionPolicy().profileFor(
+                        EnvironmentalDimension.NETHER
+                );
+        AmbientTemperatureFactors exposedStorm = new AmbientTemperatureFactors(
+                1.0D,
+                18_000,
+                AmbientWeather.THUNDER
+        );
+
+        double summer = policy.temperature(
+                2.0D,
+                Season.VERAO,
+                0.5D,
+                exposedStorm,
+                nether
+        ).degreesCelsius();
+        double winter = policy.temperature(
+                2.0D,
+                Season.INVERNO,
+                0.5D,
+                exposedStorm,
+                nether
+        ).degreesCelsius();
+
+        assertEquals(39.0D, summer, 1.0E-9D);
+        assertEquals(summer, winter, 1.0E-9D);
+    }
 }

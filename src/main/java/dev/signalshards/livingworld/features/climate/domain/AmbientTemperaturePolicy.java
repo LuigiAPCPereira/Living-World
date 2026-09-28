@@ -53,6 +53,24 @@ public final class AmbientTemperaturePolicy {
             double seasonProgress,
             AmbientTemperatureFactors factors
     ) {
+        return temperature(
+                paperTemperature,
+                season,
+                seasonProgress,
+                factors,
+                new EnvironmentalDimensionPolicy().profileFor(
+                        EnvironmentalDimension.OVERWORLD
+                )
+        );
+    }
+
+    public AmbientTemperature temperature(
+            double paperTemperature,
+            Season season,
+            double seasonProgress,
+            AmbientTemperatureFactors factors,
+            EnvironmentalDimensionProfile dimensionProfile
+    ) {
         if (!Double.isFinite(paperTemperature)) {
             throw new IllegalArgumentException("A temperatura do Paper deve ser finita");
         }
@@ -65,11 +83,17 @@ public final class AmbientTemperaturePolicy {
             );
         }
         Objects.requireNonNull(factors, "fatores ambientais");
+        Objects.requireNonNull(dimensionProfile, "perfil de dimensão");
 
         double base = baseTemperatureWithoutSeason(paperTemperature)
-                + seasonalAdjustment(season, seasonProgress);
-        double temporal = temporalAdjustment(factors) * factors.skyExposure();
-        double weather = weatherAdjustment(factors.weather()) * factors.skyExposure();
+                + (seasonalAdjustment(season, seasonProgress)
+                * dimensionProfile.seasonalityFactor());
+        double temporal = temporalAdjustment(factors)
+                * factors.skyExposure()
+                * dimensionProfile.dayNightFactor();
+        double weather = weatherAdjustment(factors.weather())
+                * factors.skyExposure()
+                * dimensionProfile.weatherFactor();
         return new AmbientTemperature(base + temporal + weather);
     }
 

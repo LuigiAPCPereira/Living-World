@@ -339,6 +339,8 @@ LW-124 / terceiro slice: `ResourcePackSessionStore` + `PaperResourcePackStatusMo
 
 LW-124 / quarto slice: manifests vêm de caminhos fixos sob `plugins/LivingWorld/companions/{datapack|resourcepack}`. Datapack opt-in apenas verifica um pack pré-instalado e pode falhar cedo quando required; nunca recarrega/ativa automaticamente. Resourcepack opt-in usa um único Adventure `ResourcePackRequest`, request UUID próprio, SHA-1 de protocolo separado do SHA-256 do manifest e fallback vanilla quando opcional. Ambos permanecem disabled por default até artifacts reais existirem.
 
+LW-125 / primeiro slice: `EnvironmentalDimensionPolicy` + `PaperEnvironmentalDimensionMapper` separam dimensão de namespace de worldgen. NORMAL usa profile terrestre completo; NETHER/THE_END/CUSTOM zeram season/day/weather terrestres e desabilitam ecology/frozen-surface flags, mantendo coordinate temperature como propriedade observável. O caminho OVERWORLD existente permanece compatível.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

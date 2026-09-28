@@ -236,6 +236,12 @@ O calendário pode existir globalmente, mas o efeito ambiental da season é depe
 - custom biomes devem continuar classificáveis por fallback;
 - nenhuma neve terrestre automática apenas porque o calendário está no inverno.
 
+**Checkpoint de implementação LW-125 / primeiro slice:** `EnvironmentalDimensionPolicy` formaliza esse contrato sem nomes de mods. `World.Environment.NORMAL` mapeia para OVERWORLD com fatores 1.0 de season/day-night/weather e permite ecologia/superfícies congeladas terrestres. NETHER, THE_END e CUSTOM usam profile conservador com esses fatores em 0 e flags terrestres desabilitadas.
+
+`AmbientTemperaturePolicy` aceita esse profile como modulação. Em dimensões não terrestres, a temperatura coordenada do Paper continua sendo a base — inclusive propriedades de biomas customizados — mas o calendário não injeta `+6/-6 °C`, a hora não cria ciclo térmico terrestre e storm não produz resfriamento terrestre. Overloads legados continuam equivalentes ao profile OVERWORLD.
+
+`PaperEnvironmentalDimensionMapper` mapeia exclusivamente `World.Environment`; ele não lê nome do mundo, namespace do biome nem detecta Terralith/Tectonic/Incendium/Nullscape.
+
 ## 5. Separar temperatura ambiente de estado térmico do jogador
 
 O modelo futuro deve separar dois conceitos que hoje estão parcialmente combinados no `ApparentTemperaturePolicy`.

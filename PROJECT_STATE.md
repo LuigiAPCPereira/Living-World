@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-125 — custom-worldgen compatibility gate, after LW-124 implementation closure
-- **Current acceptance:** LW-124 now has schema/manifest contracts, explicit runtime states, Paper status observation, opt-in single-pack delivery and startup datapack verification; default config sends/installs nothing and no runtime reload exists
-- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 implementation gates pass at 426 tests / 140 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; actual datapack/resourcepack artifacts are intentionally absent, so artifact-level runtime validation remains pending
+- **Current task:** LW-125 — custom-worldgen compatibility gate, dimension-profile foundation
+- **Current acceptance:** dimension behavior derives from Paper Environment, not Terralith/Incendium/Nullscape names; Overworld keeps terrestrial season/day/weather while Nether/End/CUSTOM suppress those terrestrial modifiers and retain coordinate temperature
+- **Current validation:** LW-124 remains implemented-not-validated for real artifacts; LW-125 slice 1 passes full gates at 430 tests / 142 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-124 opt-in bootstrap/delivery and begin LW-125 by formalizing dimension/custom-biome fallback behavior for Overworld/Nether/End before any external worldgen smoke
+- **Next action:** checkpoint LW-125 dimension profiles, then make the thermal ambient resolver multi-world so players entering Nether/End use the new profile without enabling terrestrial ecology there
 
 ## M12.4 — checkpoint local
 
