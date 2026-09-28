@@ -330,6 +330,208 @@ During the smoke:
 
 ---
 
+### LW-201 — Deposit Matching real-player smoke
+
+**Branch implementation:** `qol/deposit-matching`.
+
+**Automated status:** tracked separately as LW-200; this matrix is runtime-only and stays pending until a real Paper player session exercises it.
+
+**Goal:** prove that Deposit Matching speeds up returns to an already-organized base without sorting for the player, touching deliberate loadout slots, duplicating items or hijacking unrelated inventory interactions.
+
+#### A. Basic matching deposit
+
+**Prepare**
+
+- Open a normal chest with at least one Cobblestone stack already inside and at least one empty chest slot.
+- Put Cobblestone and one unrelated item in player main-inventory slots 9..35.
+- Keep hotbar layout unchanged and cursor empty.
+
+**Action**
+
+- Shift + right-click an empty slot in the chest's top inventory.
+
+**Expected**
+
+- Main-inventory Cobblestone moves into the chest.
+- The unrelated item stays with the player.
+- Total Cobblestone count is conserved.
+- No hotbar item moves.
+
+#### B. Exact metadata/component matching
+
+**Prepare**
+
+- Put a normal item in the target storage.
+- In the player's main inventory, hold both an exact match and another same-material item with different metadata/components, such as a custom name where convenient.
+
+**Expected**
+
+- Only the exact `ItemStack.isSimilar` match is eligible.
+- Different metadata is preserved in the player inventory.
+
+#### C. Partial-capacity conservation
+
+**Prepare**
+
+- Leave only limited capacity for one already-present matching item type.
+- Give the player more of that exact item than the target can accept.
+
+**Expected**
+
+- Only the amount actually accepted by the container moves.
+- Remainder stays in the same player source slot.
+- Container + player total is unchanged.
+
+#### D. Main-inventory-only boundary
+
+**Prepare**
+
+- Put a matching stack in hotbar and another matching stack in slots 9..35.
+
+**Expected**
+
+- Main-inventory source deposits.
+- Hotbar source stays untouched.
+
+Repeat with a matching offhand item.
+
+**Expected**
+
+- Offhand stays untouched.
+
+#### E. Supported vanilla storage
+
+Repeat the basic scenario for:
+
+- single chest;
+- double chest;
+- barrel;
+- placed shulker box.
+
+**Expected**
+
+- Same matching behavior in each supported target.
+
+#### F. Unsupported storage stays vanilla
+
+Try the gesture in representative unsupported inventories where practical, such as a hopper, dispenser/dropper or furnace-like machine.
+
+**Expected**
+
+- Deposit Matching does not run.
+- Vanilla interaction behavior remains authoritative.
+
+If another plugin with a chest-style custom GUI is available during future testing, verify it is not treated as a physical vanilla chest.
+
+#### G. Occupied-slot Shift + right-click stays vanilla
+
+**Prepare**
+
+- Open a supported storage with matching player items.
+- Shift + right-click an **occupied** container slot.
+
+**Expected**
+
+- Deposit Matching does not trigger.
+- The ordinary vanilla shift-click result for that occupied slot remains authoritative.
+
+#### H. Non-empty cursor does not trigger
+
+**Prepare**
+
+- Pick up an item onto the cursor.
+- Shift + right-click an empty top-inventory slot.
+
+**Expected**
+
+- Deposit Matching does not run.
+
+#### I. Empty container does not classify player inventory
+
+**Prepare**
+
+- Open an empty supported container.
+
+**Action**
+
+- Use the Deposit Matching gesture.
+
+**Expected**
+
+- Nothing from the player inventory is moved.
+- Living World does not invent a first category or automatically organize the empty storage.
+
+#### J. Fully occupied container limitation
+
+**Prepare**
+
+- Fill every target slot, but leave spare room inside at least one existing stack.
+
+**Expected**
+
+- There is no empty-slot Deposit Matching gesture in M20.
+- Shift + right-clicking an occupied stack remains vanilla.
+- This is an intentional first-slice limitation, not an implicit sorter behavior.
+
+#### K. Target removed or switched before deferred execution
+
+If reproducible with a second player or rapid interaction:
+
+- trigger Deposit Matching and close/switch the container before the deferred mutation;
+- optionally have another player remove the last target template category before execution.
+
+**Expected**
+
+- Living World does not transfer into a different/closed target.
+- A source category whose live target match disappeared remains with the player.
+- No item duplication/loss occurs.
+
+#### L. Creative and Spectator exclusion
+
+**Expected**
+
+- Deposit Matching does not operate in Creative or Spectator.
+
+#### M. Configuration off
+
+Set:
+
+```yaml
+qol:
+  deposit-matching:
+    enabled: false
+```
+
+Restart using the project's normal safe procedure.
+
+**Expected**
+
+- The gesture produces only vanilla inventory behavior; no bulk matching transfer occurs.
+
+#### N. Log/lifecycle sanity
+
+During the smoke:
+
+- use Deposit Matching repeatedly across supported storages;
+- disconnect/reconnect;
+- stop the server normally.
+
+**Expected**
+
+- No Living World error/warning related to Deposit Matching.
+- No pending-task or shutdown exception.
+
+**Evidence to record**
+
+- Before/after item counts for at least basic and partial-capacity scenarios.
+- Supported target types tested.
+- Exact-metadata negative case.
+- Hotbar/offhand preservation.
+- Any console warnings/errors.
+- Branch + exact commit SHA and Paper build tested.
+
+---
+
 ## Completed runtime validations
 
 Move entries here only after the exact runtime evidence exists. Preserve the original task ID and add the evidence format fields above.
