@@ -43,4 +43,21 @@ public record ThermalExchangeContext(
                 Objects.requireNonNull(localHeatExposures, "fontes locais de calor")
         );
     }
+
+    public ThermalExchangeContext withPlayerState(
+            PlayerThermalState newThermalState,
+            WetnessState newWetness
+    ) {
+        return new ThermalExchangeContext(
+                newThermalState,
+                newWetness,
+                ambientTemperature,
+                waterExposure,
+                activity,
+                windExposure,
+                shelterFactor,
+                armorLoadout,
+                localHeatExposures
+        );
+    }
 }

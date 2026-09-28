@@ -494,6 +494,12 @@ O desenho final deve medir se um índice de fontes é realmente mais barato que 
 
 O compositor **não mantém estado, não avança relógio, não acessa Paper e não procura blocos**. Em submersão total, a parcela de troca com o ar vai a zero; em submersão parcial, apenas a fração corporal ainda exposta ao ar contribui. Isso preserva ownership e evita transformar a composição em um `EnvironmentManager` global.
 
+### 5.24 Integração temporal bounded
+
+**Checkpoint de implementação LW-122 / décimo-quarto slice:** `PlayerThermalSimulation` integra `ThermalExchangeComposer` + `PlayerThermalPolicy` + `WetnessPolicy` em subpassos internos bounded. O default usa passo máximo de 1 segundo e catch-up máximo de 5 segundos por chamada; tempo excedente é explicitamente reportado como descartado em `ThermalSimulationResult`.
+
+O contexto ambiental permanece constante durante uma chamada, mas `PlayerThermalState` e `WetnessState` são realimentados a cada subpasso. Testes provam equivalência entre uma janela de 10 s e dez janelas de 1 s quando o catch-up permite todo o intervalo. Isso evita acoplar a simulação à frequência exata de um futuro scheduler e evita trabalho proporcional a pausas longas do servidor.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.
