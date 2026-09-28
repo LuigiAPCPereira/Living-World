@@ -2,6 +2,7 @@ package dev.signalshards.livingworld.features.qol.depositmatching.paper;
 
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 public final class PaperDepositMatchingModule implements LivingWorldModule, Listener {
     private final JavaPlugin plugin;
@@ -59,20 +61,22 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!enabled || !(event.getWhoClicked() instanceof Player player)) {
             return;
         }
 
         Inventory target = event.getView().getTopInventory();
+        boolean clickedTopInventory = event.getRawSlot() >= 0
+                && event.getRawSlot() < target.getSize();
         boolean excludedGameMode = player.getGameMode() == GameMode.CREATIVE
                 || player.getGameMode() == GameMode.SPECTATOR;
         ItemStack clicked = event.getCurrentItem();
 
         if (!policy.shouldTrigger(
                 isSupportedVanillaStorage(target),
-                event.getClickedInventory() == target,
+                clickedTopInventory,
                 event.getClick() == ClickType.SHIFT_RIGHT,
                 clicked == null || clicked.isEmpty(),
                 event.getCursor().isEmpty(),
@@ -81,19 +85,22 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
             return;
         }
 
-        event.setCancelled(true);
+        StorageTargetKey targetKey = StorageTargetKey.from(target);
+        if (targetKey == null) {
+            return;
+        }
 
         List<ItemStack> templates = snapshotTemplates(target);
         if (templates.isEmpty()) {
             return;
         }
 
-        scheduleDeposit(player, target, templates);
+        scheduleDeposit(player, targetKey, templates);
     }
 
     private void scheduleDeposit(
             Player player,
-            Inventory target,
+            StorageTargetKey targetKey,
             List<ItemStack> templates
     ) {
         BukkitTask[] holder = new BukkitTask[1];
@@ -101,7 +108,7 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
                 plugin,
                 () -> {
                     pendingTasks.remove(holder[0]);
-                    tryDeposit(player, target, templates);
+                    tryDeposit(player, targetKey, templates);
                 }
         );
         pendingTasks.add(holder[0]);
@@ -109,7 +116,7 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
 
     private void tryDeposit(
             Player player,
-            Inventory target,
+            StorageTargetKey targetKey,
             List<ItemStack> templates
     ) {
         if (!player.isOnline()) {
@@ -117,7 +124,8 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
         }
 
         Inventory liveTarget = player.getOpenInventory().getTopInventory();
-        if (liveTarget != target || !isSupportedVanillaStorage(liveTarget)) {
+        if (!isSupportedVanillaStorage(liveTarget)
+                || !targetKey.matches(liveTarget)) {
             return;
         }
 
@@ -134,7 +142,6 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
                 }
         );
 
-        int movedItems = 0;
         for (int sourceSlot : sourceSlots) {
             ItemStack source = playerInventory.getItem(sourceSlot);
             if (source == null
@@ -162,11 +169,6 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
                 remainder.setAmount(remainingAmount);
                 playerInventory.setItem(sourceSlot, remainder);
             }
-            movedItems += transferredAmount;
-        }
-
-        if (movedItems > 0) {
-            player.updateInventory();
         }
     }
 
@@ -206,5 +208,31 @@ public final class PaperDepositMatchingModule implements LivingWorldModule, List
             case SHULKER_BOX -> holder instanceof ShulkerBox;
             default -> false;
         };
+    }
+
+    private record StorageTargetKey(
+            InventoryType type,
+            UUID worldId,
+            double x,
+            double y,
+            double z
+    ) {
+        private static StorageTargetKey from(Inventory inventory) {
+            Location location = inventory.getLocation();
+            if (location == null || location.getWorld() == null) {
+                return null;
+            }
+            return new StorageTargetKey(
+                    inventory.getType(),
+                    location.getWorld().getUID(),
+                    location.getX(),
+                    location.getY(),
+                    location.getZ()
+            );
+        }
+
+        private boolean matches(Inventory inventory) {
+            return equals(from(inventory));
+        }
     }
 }
