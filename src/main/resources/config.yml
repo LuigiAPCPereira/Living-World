@@ -25,6 +25,10 @@ desire-lines:
 qol:
   double-doors:
     enabled: true
+  container-sort:
+    # Shift + clique esquerdo em um slot vazio do storage aberto.
+    # Organiza somente o storage; inventário/hotbar do jogador não são tocados.
+    enabled: true
 
 waystones:
   enabled: true
