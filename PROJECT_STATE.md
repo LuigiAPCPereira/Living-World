@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, signed water thermal-exchange domain slice
-- **Current acceptance:** water temperature + contact intensity produce a bounded signed `ThermalExchangeRate` that converges the body toward a water-specific equilibrium instead of applying fixed Celsius offsets
-- **Current validation:** signed water-exchange slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 234 tests / 77 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-122 — Environmental & Thermal Foundation, ambient-air exchange + wetness amplification slice
+- **Current acceptance:** ambient air produces bounded equilibrium-based thermal exchange; wetness amplifies transfer while an external air factor remains available for future wind/shelter
+- **Current validation:** ambient-air exchange slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 244 tests / 81 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint signed water exchange; next LW-122 slice should model ambient-air/microclimate exchange and wetness amplification before armor/heat-source integration
+- **Next action:** checkpoint ambient-air exchange; next LW-122 slice should model wind/shelter transfer factors before armor/activity/local heat sources
 
 ## M12.4 — checkpoint local
 

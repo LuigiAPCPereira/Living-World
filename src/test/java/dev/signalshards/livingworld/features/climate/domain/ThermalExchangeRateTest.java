@@ -19,4 +19,12 @@ class ThermalExchangeRateTest {
                 () -> new ThermalExchangeRate(Double.NEGATIVE_INFINITY)
         );
     }
+
+    @Test
+    void somaContribuicoesIndependentes() {
+        ThermalExchangeRate air = new ThermalExchangeRate(-0.02D);
+        ThermalExchangeRate activity = new ThermalExchangeRate(0.01D);
+
+        assertEquals(-0.01D, air.plus(activity).loadPerSecond(), 1.0E-9D);
+    }
 }

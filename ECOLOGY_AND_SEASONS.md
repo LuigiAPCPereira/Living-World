@@ -356,6 +356,10 @@ Fontes candidatas: chuva, contato parcial com água, natação/submersão e outr
 
 Wetness aumenta troca térmica com ambiente frio; não significa automaticamente `-X °C`. Uma tempestade quente de verão não deve causar hipotermia só porque o jogador está molhado.
 
+**Checkpoint de implementação LW-122 / sétimo slice:** `AirThermalExchangePolicy` agora converte `AmbientTemperature` + `WetnessState` + `AirThermalTransferFactor` em `ThermalExchangeRate`. O ar possui um equilíbrio térmico-alvo próprio; wetness multiplica a velocidade da troca, não altera a temperatura ambiente. `AirThermalTransferFactor` tem baseline explícito e será o ponto de entrada futuro para vento/abrigo sem acoplar a policy a Paper ou geometria.
+
+Um cenário integrado cobre o caso “saiu da água no frio”: dois jogadores em `0 °C`, um seco e um saturado, partem do mesmo estado; após o mesmo intervalo, o molhado possui déficit térmico maior. Isso valida a persistência da consequência da água fora da submersão sem recorrer ao antigo `inWater = -4 °C`.
+
 Armadura pode modificar velocidade de molhamento/secagem ou eficiência de isolamento quando molhada, mas a primeira implementação deve permanecer simples. Exemplo de direção: `dry + leather -> bom isolamento`; `wet + leather -> ainda ajuda, mas menos`.
 
 ### 5.8 Água e profundidade

@@ -1,5 +1,7 @@
 package dev.signalshards.livingworld.features.climate.domain;
 
+import java.util.Objects;
+
 /**
  * Taxa líquida de troca térmica corporal por segundo.
  *
@@ -16,5 +18,10 @@ public record ThermalExchangeRate(double loadPerSecond) {
 
     public static ThermalExchangeRate neutral() {
         return new ThermalExchangeRate(0.0D);
+    }
+
+    public ThermalExchangeRate plus(ThermalExchangeRate other) {
+        Objects.requireNonNull(other, "outra taxa térmica");
+        return new ThermalExchangeRate(loadPerSecond + other.loadPerSecond);
     }
 }
