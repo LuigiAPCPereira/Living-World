@@ -52,3 +52,9 @@ Antes de ampliar flora/efeitos, consolidar:
 7. performance gate medido antes de alegar vantagem comparativa.
 
 Detalhes e limites: `ECOLOGY_AND_SEASONS.md`.
+
+## Checkpoints M11/M13/M14
+
+- **M11 Weather readability — in progress:** LW-110 validated including live `/lw climate` tendency; LW-111 is implemented/tested but still lacks direct live applied-weather announcement; LW-112 remains pending.
+- **M13 Waystone navigation clarity — in progress:** LW-130 code/gates validated; LW-131 still requires a real menu-order/lore/click smoke. Existing travel success does not substitute for the menu-specific acceptance.
+- **M14 Discovery foundation — in progress:** LW-140 foundation validated by automated contracts; LW-141 is integrated with partial live evidence; LW-142 remains incomplete despite the user-confirmed `Descoberto` moment and runtime create/re-interaction/travel/destruction/climate coexistence.

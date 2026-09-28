@@ -13,7 +13,7 @@
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
-- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability validated; M12.3 concluído; M12.4 implementado/validado; M13 LW-130 validated by integrated-main gates; M14 LW-140/LW-141 implemented with runtime smoke pending
+- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 in progress (LW-110 validated, LW-111/LW-112 runtime closure pending); M12.3 concluído; M12.4 implementado/validado; M13 in progress (LW-130 validated, LW-131 pending); M14 in progress (LW-140 validated, LW-141 integrated, LW-142 partial)
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
@@ -54,3 +54,5 @@
 - Runtime parcial confirmado pelo usuário em 2026-09-27: uma interação física de Waystone exibiu o título `Descoberto`. Isso comprova o caminho de apresentação inicial, mas não encerra sozinho os checks de repetição, rename/travel, clima e destruição/memória.
 - Runtime ainda pendente: completar LW-131/LW-142 com jogador real. Validar menu/lore/travel, silêncio na repetição, backfill idempotente, rename/travel intactos, `/lw climate` coexistente e destruição do anchor sem apagar memória de Discovery.
 - GitHub sync confirmed: local `main` pushed to `LuigiAPCPereira/Living-World`, upstream set to `origin/main`, and follow-up `git pull --ff-only origin main` reported `Already up to date`. No deploy was executed.
+- Reconciliation 2026-09-27: the earlier summary claiming all of M11 validated was too broad. Live MCPFabric confirms LW-110 (`/lw climate` -> `Tendência local: Precipitação`), but no conclusive NIGHT_SKIP/applied-weather message was observed, so LW-111/LW-112 remain open.
+- MCPFabric also confirms the integrated runtime sequence around Discovery/Waystones: create, re-interaction, successful travel, destruction and climate readout all occurred in one client history. The user separately confirmed seeing `Descoberto`. The current client bridge did not produce a conclusive synthetic RIGHT_CLICK_BLOCK for additional fixtures, so LW-131/LW-142 are not over-claimed as complete.
