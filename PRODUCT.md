@@ -30,6 +30,7 @@ These are product directions, not promises that all are implemented in the curre
 - small ecological/evolutionary behaviors;
 - waystones and travel QoL;
 - double doors and other focused convenience mechanics;
+- deposit matching for already-organized vanilla storage without automatic sorting;
 - environmental reactions and long-term world memory.
 - optional player HUD surfaces for calendar/season, navigation and environmental feedback.
 
@@ -70,6 +71,19 @@ These are product directions, not promises that all are implemented in the curre
 - Main-hand filtering prevents duplicate processing from the interaction event firing per hand.
 - Iron/redstone-powered doors are not overridden.
 - Triple rows or ambiguous neighboring doors are intentionally left untouched.
+
+## Deposit Matching direction
+
+- Deposit Matching reduces repetitive storage clicks without deciding storage categories for the player.
+- Open-storage trigger: Shift + right-click an empty top-inventory slot with an empty cursor.
+- Closed-storage trigger: sneak + right-click a supported physical storage block with an empty main hand; a valid gesture deposits without opening the GUI.
+- Sources are limited to player main-inventory slots 9..35. Hotbar, offhand, armor and cursor are never sources.
+- Only exact `ItemStack.isSimilar` categories already present in the target are eligible; free slots alone never create a new category.
+- Closed interaction is fail-closed around denied interactions, locks, active loot tables, viewers and obvious physical obstruction.
+- Supported storage remains chest/double chest, barrel and shulker box. Machines, Ender Chest, entity storage, plugin GUIs, nearby-container scans and storage networks remain outside M20.
+- Successful closed deposits may have optional bounded server-side presentation: up to three real-item displays travel briefly toward the container and the lid may react only when the presentation layer can own/clean that state safely.
+- Presentation is cosmetic and independently disableable. A future resource pack may enrich assets/sounds/trails but must not become a gameplay dependency.
+- No item is created, dropped as overflow or persisted by Deposit Matching.
 
 ## Waystones direction
 
