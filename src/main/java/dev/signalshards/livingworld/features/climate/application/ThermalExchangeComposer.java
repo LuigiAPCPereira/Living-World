@@ -6,6 +6,7 @@ import dev.signalshards.livingworld.features.climate.domain.AirThermalTransferFa
 import dev.signalshards.livingworld.features.climate.domain.AirTransferPolicy;
 import dev.signalshards.livingworld.features.climate.domain.ArmorInsulationPolicy;
 import dev.signalshards.livingworld.features.climate.domain.ArmorWetnessPolicy;
+import dev.signalshards.livingworld.features.climate.domain.DirectThermalExposurePolicy;
 import dev.signalshards.livingworld.features.climate.domain.LocalHeatSourcePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ThermalExchangeRate;
 import dev.signalshards.livingworld.features.climate.domain.WaterExposureEffect;
@@ -37,6 +38,8 @@ public final class ThermalExchangeComposer {
     private final AirThermalExchangePolicy airExchangePolicy = new AirThermalExchangePolicy();
     private final ActivityThermalPolicy activityPolicy = new ActivityThermalPolicy();
     private final LocalHeatSourcePolicy localHeatPolicy = new LocalHeatSourcePolicy();
+    private final DirectThermalExposurePolicy directExposurePolicy =
+            new DirectThermalExposurePolicy();
 
     public ThermalExchangeResolution resolve(ThermalExchangeContext context) {
         WaterExposureEffect waterEffect = waterExposurePolicy.evaluate(context.waterExposure());
@@ -72,6 +75,9 @@ public final class ThermalExchangeComposer {
         ThermalExchangeRate localHeatRate = localHeatPolicy.exchangeRate(
                 context.localHeatExposures()
         );
+        ThermalExchangeRate directExposureRate = directExposurePolicy.exchangeRate(
+                context.directExposure()
+        );
         WetnessRate environmentalWetness = wetnessEnvironmentPolicy.exchangeRate(
                 waterEffect.wetnessRate(),
                 context.precipitationExposure(),
@@ -87,13 +93,15 @@ public final class ThermalExchangeComposer {
         ThermalExchangeRate netRate = airRate
                 .plus(waterRate)
                 .plus(activityRate)
-                .plus(localHeatRate);
+                .plus(localHeatRate)
+                .plus(directExposureRate);
 
         return new ThermalExchangeResolution(
                 airRate,
                 waterRate,
                 activityRate,
                 localHeatRate,
+                directExposureRate,
                 netRate,
                 wetnessRate,
                 exposedAir,

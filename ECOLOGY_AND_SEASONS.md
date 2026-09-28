@@ -546,6 +546,16 @@ O Paper deriva precipitação como `world.hasStorm() × skyExposure`, reutilizan
 
 Armadura continua reduzindo apenas taxas positivas de wetness; secagem negativa não é alterada por `ArmorWetnessPolicy`. Isso preserva a separação entre resistência à entrada de água e futura retenção/secagem específica por material, que segue adiada até playtest justificar.
 
+### 5.30 Precipitação por propriedades + contato térmico direto
+
+**Checkpoint de implementação LW-122 / vigésimo slice:** precipitação Paper continua derivada sem tabela de nomes. Uma tempestade global só produz `PrecipitationExposure` quando o bloco local possui `humidity > 0`; a umidade funciona como gate binário, não como intensidade. Isso evita molhar deserto/savana seca por simples `world.hasStorm()` e mantém fallback para biomas customizados baseado em propriedade observável.
+
+`DirectThermalExposure` adiciona um canal separado para `NONE / FIRE / LAVA / POWDER_SNOW`. `PaperDirectThermalExposureResolver` usa apenas flags O(1) do próprio Player. Prioridade: lava > powder snow > água suprimindo fogo residual > fogo. Água continua pertencendo ao modelo próprio de submersão/profundidade.
+
+`DirectThermalExposurePolicy` transforma contato direto em `ThermalExchangeRate`: fogo aquece, lava aquece mais severamente e powder snow esfria. O canal entra separadamente no `ThermalExchangeResolution` e no `/lw thermal`, portanto não é confundido com fontes locais por distância.
+
+Importante: esse canal **não aplica dano, potion effects nem freeze ticks**. Powder snow continua sob a mecânica vanilla para overlay/dano de congelamento; Living World apenas incorpora a exposição ao estado corporal. Assim `visualFreeze != thermalDamage` continua preservado.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

@@ -4,11 +4,13 @@ import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.ArmorSlot;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalMaterial;
+import dev.signalshards.livingworld.features.climate.domain.DirectThermalExposure;
 import dev.signalshards.livingworld.features.climate.domain.EquippedArmorPiece;
 import dev.signalshards.livingworld.features.climate.domain.LocalHeatExposure;
 import dev.signalshards.livingworld.features.climate.domain.LocalHeatSourceType;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalState;
+import dev.signalshards.livingworld.features.climate.domain.PrecipitationExposure;
 import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
 import dev.signalshards.livingworld.features.climate.domain.WaterExposure;
 import dev.signalshards.livingworld.features.climate.domain.WetnessState;
@@ -114,6 +116,50 @@ class ThermalExchangeComposerTest {
         assertEquals(
                 result.activityRate().loadPerSecond() + result.localHeatRate().loadPerSecond(),
                 result.netRate().loadPerSecond(),
+                1.0E-9D
+        );
+    }
+
+    @Test
+    void exposicaoDiretaEntraNoBreakdownSemSerConfundidaComCalorLocal() {
+        ThermalExchangeResolution lava = composer.resolve(new ThermalExchangeContext(
+                PlayerThermalState.neutral(),
+                WetnessState.dry(),
+                new AmbientTemperature(20.0D),
+                WaterExposure.none(),
+                PrecipitationExposure.none(),
+                DirectThermalExposure.LAVA,
+                PlayerActivity.RESTING,
+                WindExposure.calm(),
+                ShelterFactor.exposed(),
+                ArmorThermalLoadout.empty(),
+                List.of()
+        ));
+        ThermalExchangeResolution powder = composer.resolve(new ThermalExchangeContext(
+                PlayerThermalState.neutral(),
+                WetnessState.dry(),
+                new AmbientTemperature(20.0D),
+                WaterExposure.none(),
+                PrecipitationExposure.none(),
+                DirectThermalExposure.POWDER_SNOW,
+                PlayerActivity.RESTING,
+                WindExposure.calm(),
+                ShelterFactor.exposed(),
+                ArmorThermalLoadout.empty(),
+                List.of()
+        ));
+
+        assertTrue(lava.directExposureRate().loadPerSecond() > 0.0D);
+        assertEquals(0.0D, lava.localHeatRate().loadPerSecond(), 1.0E-9D);
+        assertEquals(
+                lava.directExposureRate().loadPerSecond(),
+                lava.netRate().loadPerSecond(),
+                1.0E-9D
+        );
+        assertTrue(powder.directExposureRate().loadPerSecond() < 0.0D);
+        assertEquals(
+                powder.directExposureRate().loadPerSecond(),
+                powder.netRate().loadPerSecond(),
                 1.0E-9D
         );
     }

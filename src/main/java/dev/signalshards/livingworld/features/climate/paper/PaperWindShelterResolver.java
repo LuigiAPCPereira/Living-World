@@ -27,6 +27,7 @@ public final class PaperWindShelterResolver {
                 0.0D,
                 1.0D
         );
+        double localHumidity = player.getLocation().getBlock().getHumidity();
         double weatherStrength = world.isThundering()
                 ? 1.0D
                 : world.hasStorm() ? 0.70D : 0.0D;
@@ -51,8 +52,17 @@ public final class PaperWindShelterResolver {
                 weatherStrength,
                 altitudeStrength,
                 movementStrength,
-                world.hasStorm() ? 1.0D : 0.0D
+                precipitationStrength(world.hasStorm(), localHumidity)
         );
+    }
+
+    static double precipitationStrength(boolean storm, double localHumidity) {
+        if (!Double.isFinite(localHumidity) || localHumidity < 0.0D) {
+            throw new IllegalArgumentException(
+                    "A umidade local deve ser finita e não negativa"
+            );
+        }
+        return storm && localHumidity > 0.0D ? 1.0D : 0.0D;
     }
 
     static Observation resolve(

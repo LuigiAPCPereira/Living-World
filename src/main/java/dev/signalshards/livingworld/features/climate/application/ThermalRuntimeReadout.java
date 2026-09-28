@@ -2,6 +2,7 @@ package dev.signalshards.livingworld.features.climate.application;
 
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalBand;
+import dev.signalshards.livingworld.features.climate.domain.DirectThermalExposure;
 
 import java.util.Objects;
 
@@ -17,6 +18,7 @@ public record ThermalRuntimeReadout(
         double submergedFraction,
         double waterDepthBlocks,
         double precipitationExposure,
+        DirectThermalExposure directExposure,
         double windExposure,
         double shelterFactor,
         int armorPieces,
@@ -25,11 +27,13 @@ public record ThermalRuntimeReadout(
         double waterRatePerSecond,
         double activityRatePerSecond,
         double localHeatRatePerSecond,
+        double directExposureRatePerSecond,
         double netRatePerSecond,
         double wetnessRatePerSecond
 ) {
     public ThermalRuntimeReadout {
         Objects.requireNonNull(thermalBand, "faixa térmica");
         Objects.requireNonNull(activity, "atividade");
+        Objects.requireNonNull(directExposure, "exposição direta");
     }
 }

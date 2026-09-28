@@ -8,6 +8,7 @@ import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeR
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalBand;
+import dev.signalshards.livingworld.features.climate.domain.DirectThermalExposure;
 import dev.signalshards.livingworld.features.climate.domain.ThermalBand;
 import dev.signalshards.livingworld.features.climate.domain.WeatherTendency;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
@@ -187,10 +188,12 @@ class PaperWaystoneCommandTest {
                         0.0D,
                         0.0D,
                         0.0D,
+                        DirectThermalExposure.NONE,
                         0.0D,
                         0.0D,
                         0,
                         0,
+                        0.0D,
                         0.0D,
                         0.0D,
                         0.0D,

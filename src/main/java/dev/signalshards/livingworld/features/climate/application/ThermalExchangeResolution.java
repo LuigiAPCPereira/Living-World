@@ -16,6 +16,7 @@ public record ThermalExchangeResolution(
         ThermalExchangeRate waterRate,
         ThermalExchangeRate activityRate,
         ThermalExchangeRate localHeatRate,
+        ThermalExchangeRate directExposureRate,
         ThermalExchangeRate netRate,
         WetnessRate wetnessRate,
         AirThermalTransferFactor airTransferFactor,
@@ -26,6 +27,7 @@ public record ThermalExchangeResolution(
         Objects.requireNonNull(waterRate, "taxa da água");
         Objects.requireNonNull(activityRate, "taxa de atividade");
         Objects.requireNonNull(localHeatRate, "taxa de calor local");
+        Objects.requireNonNull(directExposureRate, "taxa de exposição direta");
         Objects.requireNonNull(netRate, "taxa líquida");
         Objects.requireNonNull(wetnessRate, "taxa de wetness");
         Objects.requireNonNull(airTransferFactor, "fator de transferência do ar");

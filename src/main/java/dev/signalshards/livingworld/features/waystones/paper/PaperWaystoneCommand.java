@@ -7,6 +7,7 @@ import dev.signalshards.livingworld.features.climate.application.LocalClimateRea
 import dev.signalshards.livingworld.features.climate.application.LocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadout;
 import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadoutProvider;
+import dev.signalshards.livingworld.features.climate.domain.DirectThermalExposure;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalBand;
 import dev.signalshards.livingworld.features.climate.domain.MoistureBand;
@@ -251,7 +252,8 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 (int) Math.round(snapshot.windExposure() * 100.0D),
                 (int) Math.round(snapshot.shelterFactor() * 100.0D),
                 snapshot.armorPieces(),
-                snapshot.localHeatSources()
+                snapshot.localHeatSources(),
+                directExposureText(snapshot.directExposure())
         ));
         player.sendMessage(messages.component(
                 NamedTextColor.DARK_AQUA,
@@ -260,9 +262,19 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 formatSigned(snapshot.waterRatePerSecond()),
                 formatSigned(snapshot.activityRatePerSecond()),
                 formatSigned(snapshot.localHeatRatePerSecond()),
+                formatSigned(snapshot.directExposureRatePerSecond()),
                 formatSigned(snapshot.netRatePerSecond()),
                 formatSigned(snapshot.wetnessRatePerSecond())
         ));
+    }
+
+    private String directExposureText(DirectThermalExposure exposure) {
+        return messages.text(switch (exposure) {
+            case NONE -> "thermal.direct.none";
+            case FIRE -> "thermal.direct.fire";
+            case LAVA -> "thermal.direct.lava";
+            case POWDER_SNOW -> "thermal.direct.powder-snow";
+        });
     }
 
     private String thermalBandText(PlayerThermalBand band) {

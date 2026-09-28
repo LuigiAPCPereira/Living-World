@@ -72,4 +72,20 @@ class PaperWindShelterResolverTest {
                 )
         );
     }
+
+    @Test
+    void stormNaoProduzPrecipitacaoEmBiomaComUmidadeZero() {
+        assertEquals(
+                0.0D,
+                PaperWindShelterResolver.precipitationStrength(true, 0.0D)
+        );
+        assertEquals(
+                1.0D,
+                PaperWindShelterResolver.precipitationStrength(true, 0.01D)
+        );
+        assertEquals(
+                0.0D,
+                PaperWindShelterResolver.precipitationStrength(false, 1.0D)
+        );
+    }
 }

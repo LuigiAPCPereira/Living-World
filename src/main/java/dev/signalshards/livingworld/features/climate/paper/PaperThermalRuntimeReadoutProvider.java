@@ -65,6 +65,7 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
                 environment.waterExposure().submergedFraction(),
                 environment.waterExposure().depthBlocks(),
                 environment.precipitationExposure().level(),
+                environment.directExposure(),
                 environment.windExposure().level(),
                 environment.shelterFactor().level(),
                 environment.armorLoadout().pieces().size(),
@@ -73,6 +74,7 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
                 resolution.waterRate().loadPerSecond(),
                 resolution.activityRate().loadPerSecond(),
                 resolution.localHeatRate().loadPerSecond(),
+                resolution.directExposureRate().loadPerSecond(),
                 resolution.netRate().loadPerSecond(),
                 resolution.wetnessRate().levelPerSecond()
         );

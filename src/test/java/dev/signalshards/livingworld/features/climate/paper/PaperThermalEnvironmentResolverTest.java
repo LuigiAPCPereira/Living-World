@@ -3,6 +3,7 @@ package dev.signalshards.livingworld.features.climate.paper;
 import dev.signalshards.livingworld.features.climate.application.ThermalEnvironmentContext;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
+import dev.signalshards.livingworld.features.climate.domain.DirectThermalExposure;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
 import dev.signalshards.livingworld.features.climate.domain.PrecipitationExposure;
 import dev.signalshards.livingworld.features.climate.domain.LocalHeatExposure;
@@ -22,6 +23,7 @@ class PaperThermalEnvironmentResolverTest {
                 new AmbientTemperature(12.0D),
                 new WaterExposure(0.50D, 0.0D),
                 PrecipitationExposure.none(),
+                DirectThermalExposure.NONE,
                 PlayerActivity.SWIMMING,
                 ArmorThermalLoadout.empty(),
                 new WindExposure(0.40D),
@@ -36,6 +38,7 @@ class PaperThermalEnvironmentResolverTest {
 
         assertEquals(12.0D, context.ambientTemperature().degreesCelsius());
         assertEquals(0.50D, context.waterExposure().submergedFraction());
+        assertEquals(DirectThermalExposure.NONE, context.directExposure());
         assertEquals(PlayerActivity.SWIMMING, context.activity());
         assertEquals(0.40D, context.windExposure().level());
         assertEquals(0.25D, context.shelterFactor().level());
