@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-124 — companion pack runtime contracts, manifest/schema foundation
-- **Current acceptance:** plugin owns a dependency-free DATAPACK/RESOURCE_PACK manifest contract; compatibility uses kind + schema rather than textual version equality, missing optional packs fall back safely and declared SHA-256 can be checked when bytes are observed
-- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 slice 1 passes full gates at 390 tests / 129 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-124 — companion pack runtime contracts, lifecycle-state foundation
+- **Current acceptance:** datapack bootstrap state distinguishes missing/incompatible/disabled/enabled; resourcepack lifecycle is isolated by request UUID and explicitly models accepted/downloaded/loaded/declined/failure/discard states plus optional vanilla fallback vs required no-fallback
+- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 slices 1-2 pass full gates at 399 tests / 131 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-124 manifest/schema foundation, then define explicit datapack bootstrap and resourcepack client-status/fallback state machines without shipping seasonal assets yet
+- **Next action:** checkpoint LW-124 lifecycle states, then add Paper adapters that inspect datapack enabled state and map resourcepack status events/request IDs; actual pack installation/hosting remains opt-in and absent by default
 
 ## M12.4 — checkpoint local
 

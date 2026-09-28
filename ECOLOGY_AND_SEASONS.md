@@ -142,6 +142,12 @@ Manifests devem permitir diagnóstico de versão, schema, hash e compatibilidade
 
 `LivingWorldCompanionContracts` centraliza os schemas esperados atuais: datapack schema 1 e resourcepack schema 1. Isso é contrato do plugin, não evidência de que packs físicos já existam ou estejam instalados.
 
+**Segundo slice:** `DatapackRuntimePolicy` separa `OPTIONAL_MISSING`, `REQUIRED_MISSING`, `INCOMPATIBLE`, `COMPATIBLE_DISABLED` e `COMPATIBLE_ENABLED`. Assim manifest compatível não é confundido com datapack realmente ativo no Paper.
+
+Resourcepack usa state machine própria por UUID de requisição. `ResourcePackClientSession` começa em `REQUESTED` e pode refletir `ACCEPTED`, `DOWNLOADED`, `LOADED`, `DECLINED`, `FAILED_DOWNLOAD`, `INVALID_URL`, `FAILED_RELOAD` e `DISCARDED`. Eventos com request ID diferente são ignorados e um estado terminal não é reaberto por evento atrasado.
+
+Para pack opcional, um estado terminal sem `LOADED` ativa fallback vanilla e mantém o contrato de gameplay coerente. Para pack configurado como obrigatório, decline/failure não é considerado contrato satisfeito; o adapter Paper/servidor decidirá a ação operacional, sem inventar essa decisão na policy de domínio.
+
 ## 4. Compatibilidade de worldgen como requisito de arquitetura
 
 Ambiente-alvo oficial para desenvolvimento e smoke:
