@@ -362,6 +362,10 @@ Armadura pode modificar velocidade de molhamento/secagem ou eficiência de isola
 
 Água deve ser uma exposição térmica de alta transferência, não apenas um modificador fixo. Estados úteis: contato leve/pés, submersão parcial, natação e submersão completa. Quanto maior a fração corporal submersa, maior a troca térmica.
 
+**Checkpoint de implementação LW-122 / quarto slice:** `WaterExposure` representa `submergedFraction` em `[0,1]` e profundidade abaixo da superfície em blocos. `WaterExposurePolicy` converte isso em duas saídas independentes: `WetnessRate` e `WaterThermalTransferFactor`. Submersão maior aumenta os dois; profundidade aumenta somente a intensidade da transferência e possui bônus bounded/saturado. Isso evita o erro de fazer um jogador já totalmente submerso “molhar mais rápido” só por estar mais fundo.
+
+`WaterThermalTransferFactor` é adimensional e não possui sinal. O sistema **ainda não assume que toda água é fria**: a direção de ganho/perda térmica depende do futuro `WaterTemperature`. Os valores atuais de `WaterExposureSettings` são tuning inicial de gameplay, não constantes físicas.
+
 Também deve existir um conceito de `WaterTemperature` derivado do ambiente, dimensão, season e profundidade quando necessário. Não precisa reproduzir oceanografia real; precisa ser coerente e previsível.
 
 Profundidade deve importar gradualmente: perto da superfície há pouca penalidade extra; em água profunda o ambiente pode ficar mais severo; em grande profundidade entram frio, baixa luz e isolamento do clima superficial. Não adicionar dano de pressão automaticamente.

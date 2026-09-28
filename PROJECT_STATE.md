@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, accumulated wetness domain slice
-- **Current acceptance:** wetness is independent temporal state in `[0,1]`, integrated from a finite wet/dry rate and not represented as an artificial Celsius modifier
-- **Current validation:** wetness slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 209 tests / 67 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-122 — Environmental & Thermal Foundation, water exposure/submersion/depth domain slice
+- **Current acceptance:** water contact is represented by submerged fraction + bounded depth influence; it produces wetness rate and unsigned transfer intensity without assuming all water is cold
+- **Current validation:** water-exposure slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 218 tests / 71 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint wetness; then model water contact/submersion/depth as producers of wetness and thermal exchange without Paper scans
+- **Next action:** checkpoint water exposure; next define `WaterTemperature`/signed water exchange without Paper scans or hard-coded biome-name tables
 
 ## M12.4 — checkpoint local
 

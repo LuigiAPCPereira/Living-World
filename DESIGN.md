@@ -283,6 +283,8 @@ Segundo slice de LW-122: `PlayerThermalState` é um índice corporal interno nor
 
 Terceiro slice de LW-122: wetness também é estado temporal próprio. `WetnessState` guarda `[0,1]`, `WetnessRate` define a variação líquida por segundo e `WetnessPolicy` integra/satura. Molhamento não altera `AmbientTemperature`; ele será um dos fatores que modificam a troca térmica corporal.
 
+Quarto slice de LW-122: `WaterExposure` modela fração submersa + profundidade, enquanto `WaterExposurePolicy` produz `WetnessRate` e `WaterThermalTransferFactor`. A fração submersa controla contato; profundidade adiciona apenas um bônus bounded de transferência. O fator térmico é sem sinal e não gera `ThermalExchangeRate` diretamente enquanto `WaterTemperature` não existir, evitando codificar a hipótese incorreta de que toda água sempre resfria.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.
