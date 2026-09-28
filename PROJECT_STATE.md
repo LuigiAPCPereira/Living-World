@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-126 — seasonal client visual projection technical spike, after LW-125 implementation closure
-- **Current acceptance:** public Paper API is insufficient for per-player biome/tint projection, but the local Paper 26.3 NMS path is structurally mapped: copy biome paletted containers per section, substitute visual biome holders, serialize only biome data and send ClientboundChunksBiomesPacket to the target player
-- **Current validation:** LW-125 remains implemented-not-validated for real worldgen smoke; LW-126 slices 1-2 are runtime/API bytecode inspection only. No NMS production code, build dependency, biome mutation or packet send has been introduced
+- **Current task:** LW-127 — bounded physical winter, ownership/hysteresis foundation; LW-126 remains open awaiting client packet proof
+- **Current acceptance:** plugin-created winter surfaces have a persistent per-chunk ownership model and freeze/thaw hysteresis is expressed in AmbientTemperature °C before any block mutation is allowed
+- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 slice 1 passes full gates at 444 tests / 146 suites / 0 failures/errors/skips plus IntelliJ build and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** keep LW-126 open until a client is available for an opt-in packet proof. If pursued, implement only a version-gated adapter behind a disabled-by-default experimental setting and project an existing biome first; helper seasonal biomes/resourcepack integration come only after packet proof
+- **Next action:** implement the LW-127 Paper owner with explicit mutation/probe budgets, loaded-chunk-only activity and ownership-safe freeze/thaw; snow accumulation policy remains separate from ice until the bounded owner is proven. Keep LW-126 open until client access returns
 
 ## M12.4 — checkpoint local
 

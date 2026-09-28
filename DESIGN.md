@@ -359,6 +359,8 @@ LW-126 / spike slice 1: Paper 26.3 não possui API pública per-player para biom
 
 LW-126 / spike slice 2: `ClientboundChunksBiomesPacket` serializa somente os biome paletted containers de cada chunk section. A rota candidata é copiar `LevelChunkSection#getBiomes()`, substituir 4×4×4 entries por um visual `Holder<Biome>`, serializar para `ChunkBiomeData` e enviar via `ServerGamePacketListenerImpl#send` apenas ao jogador. O chunk real permanece intocado. O adapter continua não implementado até prova visual/version-gated.
 
+LW-127 / primeiro slice: `PhysicalWinterSettings` + `WinterThermalPhasePolicy` definem histerese em AmbientTemperature antes de qualquer mutation. `WinterSurfaceOwnershipLedger` + `PaperWinterSurfaceOwnershipStore` persistem ownership ICE/SNOW bounded por chunk em PDC com posições compactas e IDs estáveis. Degelo futuro só pode operar sobre ownership comprovado do plugin; nenhuma block mutation existe ainda.
+
 Performance permanece bounded: nenhum scan recorrente global; trabalho por jogador/região possui budget; mudanças são preferencialmente event/delta-driven com cache/invalidação; acesso Bukkit permanece thread-safe; async é reservado a trabalho puro quando medição justificar.
 
 O desenho completo, benchmarks de referência, transições sazonais e critérios de M12.5 estão em `ECOLOGY_AND_SEASONS.md`.

@@ -852,6 +852,14 @@ winter started
   -> repaint/freeze whole world
 ```
 
+**LW-127 / slice 1:** o domínio físico agora possui `PhysicalWinterSettings` e `WinterThermalPhasePolicy`. A histerese inicial usa `FREEZING` em <= -1 °C, `THAWING` em >= +2 °C e `HOLDING` entre os thresholds. Esses números são tuning inicial de código, não constantes físicas finais.
+
+`WinterSurfaceOwnershipLedger` registra apenas blocos criados pelo Living World, com limite bounded por chunk. `WinterSurfacePosition` compacta X/Z locais e Y absoluto em um `int`, preservando Y negativo; `WinterSurfaceKind` usa IDs persistentes explícitos (`ICE=1`, `SNOW=2`) em vez de ordinal.
+
+`PaperWinterSurfaceOwnershipStore` persiste pares `packedPosition, kindId` no PDC do próprio chunk. Dados ímpares ou kind desconhecido falham fechado. Esse ownership é requisito para degelo: futuros mutations só poderão remover/reverter superfícies que o Living World comprovar que criou.
+
+Nenhum bloco é alterado neste slice. O próximo owner Paper deve usar apenas chunks já carregados, budget explícito e atividade local; ownership persistente vem antes da primeira mutação.
+
 Congelamento/degelo deve considerar histerese para impedir oscillation próxima de 0 °C. Valores como congelar abaixo de -2 °C e derreter acima de +2 °C são exemplos de tuning, não decisão final.
 
 O custo deve escalar principalmente com jogadores/áreas ativas e mudanças relevantes, não com tamanho total do mapa.
