@@ -79,14 +79,14 @@ Ender Chest is intentionally deferred because it is player-owned remote storage 
 
 ## Transfer semantics
 
-The click event is cancelled only when the complete Deposit Matching gesture is recognized.
+The click is observed at `MONITOR` with cancelled events ignored. Living World does not cancel or rewrite the vanilla click; the chosen empty-slot/empty-cursor gesture is already a no-op for vanilla inventory movement.
 
 The actual inventory mutation is scheduled for the next server tick, following Paper guidance for inventory changes originating from `InventoryClickEvent`.
 
 Before mutation:
 
 - player must still be online;
-- the same supported target inventory must still be open;
+- the same supported physical target must still be open, identified by inventory type plus world/location rather than wrapper-object identity;
 - the source stack must still exist and still match an initial template;
 - the live target must still contain a similar item.
 
