@@ -276,7 +276,11 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 ),
                 new PaperDepositMatchingModule(
                         this,
-                        getConfig().getBoolean("qol.deposit-matching.enabled", true)
+                        getConfig().getBoolean("qol.deposit-matching.enabled", true),
+                        getConfig().getBoolean(
+                                "qol.deposit-matching.presentation.enabled",
+                                true
+                        )
                 ),
                 new PaperDiscoveryModule(
                         discoveryEvents,
