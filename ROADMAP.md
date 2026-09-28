@@ -19,7 +19,7 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M12 — Seasonal ecology & environmental foundation | evolve validated seasonal ecology into a shared thermal/environmental foundation before broader visual/physical simulation | M10, M11 | LW-120..LW-128 | in progress |
 | M13 — Waystone navigation clarity | make the existing Waystone network easier to scan by surfacing nearest-first same-world ordering plus world/coordinate/distance context without changing access or travel safety | M8 | LW-130..LW-131 | in progress |
 | M14 — Discovery foundation | add durable personal/world discovery memory and prove it through additive Waystone integration without coupling presentation or changing Waystone rules | M3, M13 | LW-140..LW-142 | in progress |
-| M20 — Deposit Matching QoL | quick-stack already-organized main-inventory items into one open vanilla storage container without sorting, nearby scans or hidden classification | M0 | LW-200..LW-201 | in progress |
+| M20 — Deposit Matching QoL | quick-stack already-organized main-inventory items into one explicitly targeted vanilla storage container without sorting, nearby scans or hidden classification | M0 | LW-200..LW-201 | in progress |
 
 ## Sequencing principles
 
@@ -28,6 +28,11 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 - Independent QoL/world-memory features may evolve after M0 without forcing climate/calendar coupling.
 - Features that change balance must expose that impact rather than hiding it under "QoL" or "optimization."
 - External worldgen remains a compatibility surface, not a dependency we recreate.
+
+## Deferred product directions — not active milestones
+
+- **Restock Matching** is reserved as a future generic QoL slice. It is intentionally separate from M20 Deposit Matching and should receive its own behavior contract/task only when explicitly promoted.
+- **Waystone Favorites** and **Waystone Recent** are reserved for a future Waystone navigation update. They are owned by the Waystone system, not by generic QoL, and should reuse stable Waystone identity/access/travel semantics. No milestone/task is assigned yet.
 
 ## Known risks
 

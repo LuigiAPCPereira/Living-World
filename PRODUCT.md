@@ -31,6 +31,7 @@ These are product directions, not promises that all are implemented in the curre
 - waystones and travel QoL;
 - double doors and other focused convenience mechanics;
 - deposit matching for already-organized vanilla storage without automatic sorting;
+- future restock matching as a separate explicit storage QoL, not part of M20;
 - environmental reactions and long-term world memory.
 - optional player HUD surfaces for calendar/season, navigation and environmental feedback.
 
@@ -84,6 +85,7 @@ These are product directions, not promises that all are implemented in the curre
 - Successful closed deposits may have optional bounded server-side presentation: up to three real-item displays travel briefly toward the container and the lid may react only when the presentation layer can own/clean that state safely.
 - Presentation is cosmetic and independently disableable. A future resource pack may enrich assets/sounds/trails but must not become a gameplay dependency.
 - No item is created, dropped as overflow or persisted by Deposit Matching.
+- **Restock Matching** is an accepted future QoL direction, but is not part of M20 and has no active implementation task yet. It should be specified later as the inverse convenience flow for one explicitly targeted storage context, preserving the same Vanilla+ principles: explicit player intent, no nearby-container scan, no hidden classification and no hotbar/loadout takeover unless a future contract explicitly says otherwise.
 
 ## Waystones direction
 
@@ -99,6 +101,9 @@ These are product directions, not promises that all are implemented in the curre
 - `/lw menu` provides a visual inventory-based travel surface over the same activated Waystone set; command travel remains available as fallback.
 - The visual menu prioritizes destinations in the player's current world by straight-line distance to the physical anchor, then keeps cross-world destinations grouped after them. Each entry shows target world and coordinates; same-world entries also show rounded distance. This is presentation-only and does not change access or travel safety rules.
 - The first menu intentionally supports up to 54 activated destinations without silent truncation; pagination remains deferred until gameplay evidence requires it.
+- **Favorites** and **Recent** are accepted future Waystone navigation features and belong to the Waystone system itself, not to generic `features.qol`.
+- They should be specified and implemented only when Waystone navigation is revisited. Until then they remain documented product direction, not active tasks.
+- Any future Favorites/Recent design must build on Waystone stable identity/access/travel rules rather than duplicating destination state in a QoL module.
 - Recipe, cost/cooldown and richer presentation remain deferred.
 
 ## Discovery direction
