@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, first AmbientTemperature separation slice
-- **Current acceptance:** ambient environment temperature exists as a domain concept independent from player exposure; existing HUD/climate readout remains behavior-compatible while body-state math stays deferred to later LW-122 slices
-- **Current validation:** first AmbientTemperature slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 190 tests / 60 suites / 0 failures/errors/skips, IntelliJ build and `git diff --check`; no runtime behavior change is claimed beyond preserved tested readout semantics
+- **Current task:** LW-122 — Environmental & Thermal Foundation, body-inertia domain slice
+- **Current acceptance:** ambient temperature remains independent from player state; body state accumulates a finite thermal exchange rate over elapsed time, saturates safely, and exposes qualitative bands without Paper/runtime coupling
+- **Current validation:** body-inertia slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 201 tests / 64 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** finish full gates for the AmbientTemperature slice, checkpoint it, then design the next LW-122 body/microclimate contract without prematurely fixing wetness/armor/heat-source tuning
+- **Next action:** checkpoint the body-inertia slice, then define the first microclimate exchange inputs while keeping wetness/armor/source tuning isolated and configurable
 
 ## M12.4 — checkpoint local
 

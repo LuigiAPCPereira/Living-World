@@ -308,6 +308,10 @@ BodyThermalLoad += delta * elapsedTime
 
 O nome final/tipo matemático ainda será decidido no LW-122. A propriedade obrigatória é **inércia**:
 
+**Checkpoint de implementação LW-122 / segundo slice:** o estado corporal agora usa `PlayerThermalState`, um índice interno normalizado de `-1` (déficit térmico máximo) a `+1` (excesso térmico máximo), com `0` como equilíbrio. Esse índice não é Celsius nem diagnóstico fisiológico. `ThermalExchangeRate` representa a taxa líquida de alteração por segundo e `PlayerThermalPolicy` integra essa taxa pelo tempo decorrido, saturando nos limites. As faixas `EXTREME_COLD` até `EXTREME_HEAT` são derivadas por `PlayerThermalThresholds`, cujos defaults são tuning inicial e podem evoluir sem mudar a unidade ambiental.
+
+A integração é independente da frequência de atualização: dividir o mesmo intervalo em passos menores produz o mesmo resultado para uma taxa constante. Nenhum scheduler Paper, dano, efeito visual, wetness, armadura ou fonte térmica local foi ligado neste slice.
+
 - entrar numa casa quente não recupera o jogador instantaneamente;
 - teleportar para um pico congelado muda o ambiente imediatamente, mas o corpo esfria ao longo do tempo;
 - teleportar de uma região congelante para o Nether não causa sobreaquecimento instantâneo;
