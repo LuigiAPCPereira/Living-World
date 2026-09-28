@@ -87,16 +87,47 @@ class PaperWorldgenAmbientTemperatureResolverTest {
         );
     }
 
+    @Test
+    void overworldCustomizadoContinuaPropertyBasedSemBiomeKey() {
+        Block block = block(
+                world(
+                        World.Environment.NORMAL,
+                        0.25D,
+                        0.85D,
+                        false
+                ),
+                120,
+                140,
+                -75,
+                15
+        );
+
+        assertEquals(
+                12.5D,
+                resolver.ambientTemperatureAt(block).degreesCelsius(),
+                1.0E-9D
+        );
+    }
+
     private World world(World.Environment environment) {
+        return world(environment, 0.8D, 0.5D, true);
+    }
+
+    private World world(
+            World.Environment environment,
+            double temperature,
+            double humidity,
+            boolean storm
+    ) {
         return (World) Proxy.newProxyInstance(
                 World.class.getClassLoader(),
                 new Class<?>[]{World.class},
                 (proxy, method, args) -> switch (method.getName()) {
                     case "getEnvironment" -> environment;
-                    case "getTemperature" -> 0.8D;
-                    case "getHumidity" -> 0.5D;
+                    case "getTemperature" -> temperature;
+                    case "getHumidity" -> humidity;
                     case "getTime" -> 6_000L;
-                    case "hasStorm" -> true;
+                    case "hasStorm" -> storm;
                     case "isThundering" -> false;
                     case "toString" -> "FakeWorld";
                     case "hashCode" -> System.identityHashCode(proxy);

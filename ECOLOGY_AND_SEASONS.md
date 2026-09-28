@@ -202,6 +202,8 @@ Perfis conhecidos de Terralith/Incendium/Nullscape podem refinar o resultado, ma
 
 `PaperAmbientTemperatureProvider` desacopla o consumidor térmico da implementação de clima local. O resolver legado do Overworld continua implementando essa interface, enquanto o novo resolver multiworld usa `World#getTemperature(x,y,z)`, ambiente Paper, skylight, hora/weather quando permitidos pelo profile e o mesmo calendário global. Nenhum namespace de biome/mod é consultado neste slice.
 
+**Slice 3:** regressões dedicadas fixam o fallback property-based como contrato. `PaperClimateSamplerTest` classifica um cenário de worldgen customizado somente por temperatura/umidade coordenadas, e `PaperWorldgenAmbientTemperatureResolverTest` resolve um Overworld customizado sem consultar biome ou namespaced key. Os proxies falham em qualquer método não explicitamente permitido, então uma futura introdução silenciosa de tabela por biome quebra o teste.
+
 ### 4.2 Tectonic
 
 Tectonic deve ser tratado principalmente como geometria real do mundo, não como uma integração especial.

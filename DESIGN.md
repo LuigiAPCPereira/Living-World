@@ -343,6 +343,8 @@ LW-125 / primeiro slice: `EnvironmentalDimensionPolicy` + `PaperEnvironmentalDim
 
 LW-125 / segundo slice: `PaperAmbientTemperatureProvider` desacopla o runtime térmico de um único `PaperLocalClimateResolver`. `PaperWorldgenAmbientTemperatureResolver` resolve cada bloco pelo `World.Environment` atual; runtime e feedback percorrem jogadores online de todas as dimensões. Não há tabela de nomes de Terralith/Tectonic/Incendium/Nullscape e o readout climático legado do Overworld permanece separado.
 
+LW-125 / terceiro slice: testes-regressão tornam a ausência de dependência de biome/key parte do gate. Climate sampling e ambient temperature operam apenas por propriedades coordenadas + dimensão; proxies de teste rejeitam qualquer chamada extra, incluindo futuras tentativas de depender de biome namespace.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

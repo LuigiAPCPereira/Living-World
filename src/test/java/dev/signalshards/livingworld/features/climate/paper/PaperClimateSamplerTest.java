@@ -55,6 +55,28 @@ class PaperClimateSamplerTest {
         assertEquals(PaperClimateSampler.MAX_PLAYER_SAMPLES, temperatureCalls.get());
     }
 
+    @Test
+    void worldgenCustomizadoEhClassificadoSoPorTemperaturaEUmidade() {
+        AtomicInteger temperatureCalls = new AtomicInteger();
+        World world = fakeWorld(
+                List.of(),
+                temperatureCalls,
+                0.15D,
+                0.90D
+        );
+
+        ClimateProfile profile = sampler.sample(world);
+
+        assertEquals(
+                new ClimateProfile(
+                        ThermalBand.FRIO,
+                        MoistureBand.ENCHARCADO
+                ),
+                profile
+        );
+        assertEquals(1, temperatureCalls.get());
+    }
+
     private World fakeWorld(
             List<Player> players,
             AtomicInteger temperatureCalls,
