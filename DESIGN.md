@@ -307,6 +307,8 @@ Décimo-quarto slice de LW-122: `PlayerThermalSimulation` adiciona integração 
 
 Décimo-quinto slice de LW-122: `PlayerThermalSnapshot` + `PlayerThermalStateStore` separam memória corporal runtime da simulação e do mundo. A implementação inicial é in-memory/efêmera e keyed por UUID; não usa PDC e pode ser removida em lifecycle de quit/respawn. Resolver contexto Paper, scheduler e efeitos continuam fora do store.
 
+Décimo-sexto slice de LW-122: `ThermalEnvironmentContext` remove estado corporal da fronteira ambiental e `PlayerThermalRuntimeService` orquestra load/simulate/save por UUID. Adapters Paper futuros devem resolver somente ambiente/contexto; a matemática e persistência efêmera permanecem na camada application. Chamadas para o mesmo jogador devem ser serializadas pelo owner runtime.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

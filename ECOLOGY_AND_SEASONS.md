@@ -506,6 +506,12 @@ O contexto ambiental permanece constante durante uma chamada, mas `PlayerThermal
 
 O estado é **efêmero por design** neste estágio: não usa PDC, não sobrevive restart e pode ser removido explicitamente em quit/respawn. Isso combina com a decisão de que morte/respawn limpam estado corporal de curto prazo e evita confundir memória ambiental persistente com a condição física de um corpo anterior.
 
+### 5.26 Orquestração runtime sem Paper
+
+**Checkpoint de implementação LW-122 / décimo-sexto slice:** `ThermalEnvironmentContext` separa observações ambientais do snapshot corporal. `PlayerThermalRuntimeService` executa o fluxo `load snapshot -> combinar com ambiente -> simulate -> save snapshot` por UUID, usando o store efêmero e a simulação bounded.
+
+Essa fronteira é propositalmente independente de Bukkit/Paper. Futuros resolvers Paper devem apenas produzir `ThermalEnvironmentContext`; não podem recalcular matemática térmica nem manipular diretamente o estado corporal. `reset(UUID)` fornece o contrato necessário para quit/respawn sem persistir hipotermia/wetness de um corpo anterior.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

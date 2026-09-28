@@ -4,6 +4,7 @@ import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
 import dev.signalshards.livingworld.features.climate.domain.LocalHeatExposure;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
+import dev.signalshards.livingworld.features.climate.domain.PlayerThermalSnapshot;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalState;
 import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
 import dev.signalshards.livingworld.features.climate.domain.WaterExposure;
@@ -58,6 +59,25 @@ public record ThermalExchangeContext(
                 shelterFactor,
                 armorLoadout,
                 localHeatExposures
+        );
+    }
+
+    public static ThermalExchangeContext from(
+            PlayerThermalSnapshot snapshot,
+            ThermalEnvironmentContext environment
+    ) {
+        Objects.requireNonNull(snapshot, "snapshot térmico");
+        Objects.requireNonNull(environment, "contexto ambiental");
+        return new ThermalExchangeContext(
+                snapshot.thermalState(),
+                snapshot.wetnessState(),
+                environment.ambientTemperature(),
+                environment.waterExposure(),
+                environment.activity(),
+                environment.windExposure(),
+                environment.shelterFactor(),
+                environment.armorLoadout(),
+                environment.localHeatExposures()
         );
     }
 }
