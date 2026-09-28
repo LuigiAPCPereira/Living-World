@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, bounded temporal-integration slice
-- **Current acceptance:** thermal/wetness state integrates through bounded fixed substeps with explicit catch-up limits, preserving cadence stability without a Paper scheduler yet
-- **Current validation:** temporal-integration slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 293 tests / 103 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-122 — Environmental & Thermal Foundation, ephemeral per-player runtime-state slice
+- **Current acceptance:** per-player body state is stored as an ephemeral thermal+wetness snapshot keyed by UUID, separate from simulation/world resolution and explicitly removable for lifecycle reset
+- **Current validation:** runtime-state slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 296 tests / 105 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint temporal integration; then add per-player runtime state storage before Paper context resolvers/scheduling
+- **Next action:** checkpoint runtime state; then separate environment context and add load-simulate-save runtime orchestration before Paper resolvers/scheduling
 
 ## M12.4 — checkpoint local
 

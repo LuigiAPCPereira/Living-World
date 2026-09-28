@@ -500,6 +500,12 @@ O compositor **não mantém estado, não avança relógio, não acessa Paper e n
 
 O contexto ambiental permanece constante durante uma chamada, mas `PlayerThermalState` e `WetnessState` são realimentados a cada subpasso. Testes provam equivalência entre uma janela de 10 s e dez janelas de 1 s quando o catch-up permite todo o intervalo. Isso evita acoplar a simulação à frequência exata de um futuro scheduler e evita trabalho proporcional a pausas longas do servidor.
 
+### 5.25 Estado corporal runtime
+
+**Checkpoint de implementação LW-122 / décimo-quinto slice:** `PlayerThermalSnapshot` agrupa apenas `PlayerThermalState + WetnessState`. `PlayerThermalStateStore` define um contrato mínimo por UUID e `InMemoryPlayerThermalStateStore` fornece a implementação process-local thread-safe.
+
+O estado é **efêmero por design** neste estágio: não usa PDC, não sobrevive restart e pode ser removido explicitamente em quit/respawn. Isso combina com a decisão de que morte/respawn limpam estado corporal de curto prazo e evita confundir memória ambiental persistente com a condição física de um corpo anterior.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.
