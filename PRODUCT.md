@@ -30,6 +30,7 @@ These are product directions, not promises that all are implemented in the curre
 - small ecological/evolutionary behaviors;
 - waystones and travel QoL;
 - double doors and other focused convenience mechanics;
+- conservative hotbar auto-refill for depleted stackable items;
 - environmental reactions and long-term world memory.
 - optional player HUD surfaces for calendar/season, navigation and environmental feedback.
 
@@ -70,6 +71,16 @@ These are product directions, not promises that all are implemented in the curre
 - Main-hand filtering prevents duplicate processing from the interaction event firing per hand.
 - Iron/redstone-powered doors are not overridden.
 - Triple rows or ambiguous neighboring doors are intentionally left untouched.
+
+## Hotbar Auto-Refill direction
+
+- When the currently selected hotbar stack of a stackable item is depleted by ordinary use, Living World may move one matching stack from the player's main inventory into that same hotbar slot.
+- Refill searches only main-inventory slots 9..35. It does not pull from armor, offhand, containers or other hotbar slots, preserving the player's deliberate hotbar layout.
+- Matching uses Paper/Bukkit `ItemStack.isSimilar`: item type and metadata must match while stack amount is ignored. Custom names, enchants and other item data therefore cannot be silently substituted by a merely similar material.
+- Items whose effective maximum stack size is 1 are excluded. Tool replacement, armor replacement, totem replacement and repair automation are outside this QoL slice.
+- The adapter reacts only to a selected-slot transition from one item to empty and executes the transfer on the next server tick after the vanilla action settles.
+- Explicit inventory manipulation, drag, drop and main/offhand swap suppress auto-refill for that interaction. If the target slot is no longer empty or no exact source stack exists, Living World does nothing.
+- The feature creates no items, changes no drop/consumption amount and has no persistence. It is configurable and defaults to enabled.
 
 ## Waystones direction
 
