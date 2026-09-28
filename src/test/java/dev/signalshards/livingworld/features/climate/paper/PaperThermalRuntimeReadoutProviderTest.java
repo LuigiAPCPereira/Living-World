@@ -60,6 +60,12 @@ class PaperThermalRuntimeReadoutProviderTest {
         assertEquals(PlayerActivity.SPRINTING, readout.activity());
         assertEquals(0.50D, readout.submergedFraction(), 1.0E-9D);
         assertTrue(readout.netRatePerSecond() < 0.0D);
+        assertTrue(readout.feedbackProfile().breath().enabled());
+        assertEquals(
+                0.0D,
+                readout.feedbackProfile().frostIntensity(),
+                1.0E-9D
+        );
         assertEquals(body, runtime.snapshot(playerId).orElseThrow());
     }
 

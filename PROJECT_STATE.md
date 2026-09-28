@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-123 — bounded thermal feedback, progressive frost presentation slice
-- **Current acceptance:** cold breath remains jittered/visibility-safe and frost now presents progressive self-only snowflake feedback from accumulated body load; neither path manipulates freeze ticks, damage or HUD surfaces
-- **Current validation:** LW-122 implementation foundation remains implemented-not-validated for recent runtime refinements; LW-123 policy/cadence/breath/frost path passes full gates at 379 tests / 127 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; live visual smoke is deferred while user has no client access
+- **Current task:** LW-124 — plugin/datapack/resourcepack runtime contracts, after closing LW-123 implementation
+- **Current acceptance:** LW-123 code is complete: bounded/jittered breath, progressive frost, independent toggles and read-only diagnostics are implemented without freeze ticks/damage; runtime visual quality remains explicitly unvalidated
+- **Current validation:** LW-122 remains implemented-not-validated for recent runtime refinements; LW-123 automated implementation gates pass at 381 tests / 127 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; combined thermal/visual smoke is queued for the next player-access window
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-123 frost presentation; add read-only feedback diagnostics/tuning visibility so the next player-access window can validate breath eligibility/intensity/cadence and frost intensity directly before final visual acceptance
+- **Next action:** checkpoint LW-123 diagnostics/toggles and begin LW-124 with explicit plugin/datapack/resourcepack manifest/schema contracts; do not require actual seasonal assets yet
 
 ## M12.4 — checkpoint local
 

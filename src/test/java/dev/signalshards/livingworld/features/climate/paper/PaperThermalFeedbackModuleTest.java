@@ -140,6 +140,46 @@ class PaperThermalFeedbackModuleTest {
     }
 
     @Test
+    void breathPodeSerDesligadoSemPerderFrost() {
+        Fixture f = new Fixture(
+                new PaperThermalFeedbackSettings(true, 10L, false, true),
+                GameMode.SURVIVAL
+        );
+        f.feedback.observe(
+                f.playerId,
+                new PlayerThermalState(-0.90D),
+                coldEnvironment()
+        );
+        f.module.enable();
+        f.module.pulse();
+        f.now = 10_000_000_000L;
+        f.module.pulse();
+
+        assertEquals(0, f.emissions);
+        assertEquals(2, f.frostPresentations);
+    }
+
+    @Test
+    void frostPodeSerDesligadoSemPerderBreath() {
+        Fixture f = new Fixture(
+                new PaperThermalFeedbackSettings(true, 10L, true, false),
+                GameMode.SURVIVAL
+        );
+        f.feedback.observe(
+                f.playerId,
+                new PlayerThermalState(-0.90D),
+                coldEnvironment()
+        );
+        f.module.enable();
+        f.module.pulse();
+        f.now = 5_000_000_000L;
+        f.module.pulse();
+
+        assertEquals(1, f.emissions);
+        assertEquals(0, f.frostPresentations);
+    }
+
+    @Test
     void disableCancelaTarefaELimpaRelogioLocal() {
         Fixture f = new Fixture(true);
         f.module.enable();
@@ -223,6 +263,16 @@ class PaperThermalFeedbackModuleTest {
         }
 
         Fixture(boolean enabled, GameMode gameMode) {
+            this(
+                    new PaperThermalFeedbackSettings(enabled, 10L),
+                    gameMode
+            );
+        }
+
+        Fixture(
+                PaperThermalFeedbackSettings settings,
+                GameMode gameMode
+        ) {
             this.gameMode = gameMode;
             player = stub(Player.class, (proxy, method, args) -> switch (method.getName()) {
                 case "getUniqueId" -> playerId;
@@ -238,7 +288,7 @@ class PaperThermalFeedbackModuleTest {
             module = new PaperThermalFeedbackModule(
                     plugin,
                     world,
-                    new PaperThermalFeedbackSettings(enabled, 10L),
+                    settings,
                     feedback,
                     (ignored, intensity) -> emissions++,
                     (ignored, intensity) -> frostPresentations++,

@@ -8,6 +8,7 @@ import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeR
 import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadoutProvider;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalPolicy;
 import dev.signalshards.livingworld.features.climate.domain.PlayerThermalSnapshot;
+import dev.signalshards.livingworld.features.climate.domain.ThermalFeedbackPolicy;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -20,6 +21,7 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
     private final PlayerThermalRuntimeService runtime;
     private final ThermalExchangeComposer composer;
     private final PlayerThermalPolicy thermalPolicy;
+    private final ThermalFeedbackPolicy feedbackPolicy;
 
     public PaperThermalRuntimeReadoutProvider(
             PaperThermalEnvironmentProvider environmentProvider,
@@ -29,7 +31,8 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
                 environmentProvider,
                 runtime,
                 new ThermalExchangeComposer(),
-                new PlayerThermalPolicy()
+                new PlayerThermalPolicy(),
+                new ThermalFeedbackPolicy()
         );
     }
 
@@ -37,7 +40,8 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
             PaperThermalEnvironmentProvider environmentProvider,
             PlayerThermalRuntimeService runtime,
             ThermalExchangeComposer composer,
-            PlayerThermalPolicy thermalPolicy
+            PlayerThermalPolicy thermalPolicy,
+            ThermalFeedbackPolicy feedbackPolicy
     ) {
         this.environmentProvider = Objects.requireNonNull(
                 environmentProvider,
@@ -46,6 +50,10 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
         this.runtime = Objects.requireNonNull(runtime, "runtime térmico");
         this.composer = Objects.requireNonNull(composer, "compositor térmico");
         this.thermalPolicy = Objects.requireNonNull(thermalPolicy, "política térmica");
+        this.feedbackPolicy = Objects.requireNonNull(
+                feedbackPolicy,
+                "política de feedback"
+        );
     }
 
     @Override
@@ -55,6 +63,12 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
         PlayerThermalSnapshot body = runtime.snapshot(player.getUniqueId())
                 .orElseGet(PlayerThermalSnapshot::neutral);
         var resolution = composer.resolve(ThermalExchangeContext.from(body, environment));
+        var feedback = feedbackPolicy.profileFor(
+                body.thermalState(),
+                environment.ambientTemperature(),
+                environment.activity(),
+                environment.waterExposure()
+        );
 
         return new ThermalRuntimeReadout(
                 thermalPolicy.bandFor(body.thermalState()),
@@ -76,7 +90,8 @@ public final class PaperThermalRuntimeReadoutProvider implements ThermalRuntimeR
                 resolution.localHeatRate().loadPerSecond(),
                 resolution.directExposureRate().loadPerSecond(),
                 resolution.netRate().loadPerSecond(),
-                resolution.wetnessRate().levelPerSecond()
+                resolution.wetnessRate().levelPerSecond(),
+                feedback
         );
     }
 }

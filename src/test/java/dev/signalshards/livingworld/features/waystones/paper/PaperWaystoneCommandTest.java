@@ -87,7 +87,7 @@ class PaperWaystoneCommandTest {
         PaperWaystoneCommand command = command();
         command.execute(source, new String[]{"thermal"});
 
-        assertEquals(5, messagesSent.get());
+        assertEquals(6, messagesSent.get());
         assertTrue(command.suggest(source, new String[]{""}).contains("thermal"));
     }
 
@@ -199,7 +199,11 @@ class PaperWaystoneCommandTest {
                         0.0D,
                         0.0D,
                         0.0D,
-                        0.0D
+                        0.0D,
+                        new dev.signalshards.livingworld.features.climate.domain.ThermalFeedbackProfile(
+                                dev.signalshards.livingworld.features.climate.domain.BreathFeedback.none(),
+                                0.0D
+                        )
                 )
         );
     }

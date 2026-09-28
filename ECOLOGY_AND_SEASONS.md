@@ -617,6 +617,16 @@ Esse fallback não usa `setFreezeTicks`, não altera `maxFreezeTicks`, não apli
 
 **Refinamento do terceiro slice:** o fallback seguro de frost foi implementado como `PaperSnowflakeFrostPresenter`, self-only, usando `Particle.SNOWFLAKE` com **1..3 partículas** por pulse conforme intensidade. Ele não altera freeze ticks, não envia frost para terceiros e não aplica dano. Um corpo ainda muito frio pode continuar vendo frost ao entrar em ar quente mesmo quando cold breath já foi desabilitado; isso preserva a independência entre ambiente imediato e estado corporal acumulado.
 
+### 5.37 LW-123 — diagnóstico e tuning
+
+**Quinto slice:** `PaperThermalFeedbackSettings` permite desligar cold breath e frost de forma independente sem desligar o runtime corporal. O toggle global de feedback e o período visual continuam separados do `thermal-runtime`.
+
+`ThermalRuntimeReadout` agora inclui o `ThermalFeedbackProfile` calculado de forma read-only a partir do snapshot corporal e do contexto ambiental atual. `/lw thermal` mostra intensidade prevista de breath, janela de cadência e intensidade de frost. O comando não avança countdown visual, não altera body load e não persiste nada.
+
+Isso cria uma superfície objetiva de smoke/tuning: quando houver cliente, será possível comparar o que a policy **pretende** (`/lw thermal`) com o que a apresentação realmente mostra, sem inferir thresholds visualmente.
+
+Com esse slice, LW-123 fica **implementado mas ainda não validado visualmente**. O fechamento depende de smoke real para posição do vapor, densidade/cadência, conforto do frost e ausência de efeitos durante invisibilidade/SPECTATOR/submersão. Ajustes de partículas após esse smoke são tuning, não mudança de ownership.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

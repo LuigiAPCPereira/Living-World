@@ -19,6 +19,14 @@ public final class PaperThermalFeedbackSettingsLoader {
                 config.getLong(
                         "climate.thermal-feedback.update-period-ticks",
                         defaults.updatePeriodTicks()
+                ),
+                config.getBoolean(
+                        "climate.thermal-feedback.cold-breath.enabled",
+                        defaults.coldBreathEnabled()
+                ),
+                config.getBoolean(
+                        "climate.thermal-feedback.frost.enabled",
+                        defaults.frostEnabled()
                 )
         );
     }

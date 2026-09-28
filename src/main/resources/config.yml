@@ -20,15 +20,14 @@ climate:
     # 20 ticks = 1 s. A simulação usa elapsed real e catch-up bounded.
     update-period-ticks: 20
   thermal-feedback:
-    # Cold breath vanilla fallback. Frost visual/dano continuam separados.
+    # Fallbacks visuais vanilla; nenhum deles aplica dano ou freeze ticks.
     enabled: true
     # 10 ticks = 0,5 s. Não repete probes ambientais; usa profile cacheado.
     update-period-ticks: 10
-  thermal-feedback:
-    # Feedback visual não altera estado térmico nem aplica dano.
-    enabled: true
-    # Pulse visual barato sobre profiles já calculados pelo runtime térmico.
-    update-period-ticks: 10
+    cold-breath:
+      enabled: true
+    frost:
+      enabled: true
 
 desire-lines:
   enabled: true

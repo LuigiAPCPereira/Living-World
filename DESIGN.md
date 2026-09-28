@@ -329,6 +329,8 @@ LW-123 / terceiro slice: `PaperThermalFeedbackModule` pulsa apenas jogadores com
 
 LW-123 / quarto slice: frost-only profiles permanecem elegíveis mesmo quando breath está desligado por ar quente. `PaperSnowflakeFrostPresenter` é self-only e compartilha o mesmo pulse visual, mantendo `visualFreeze != thermalDamage` sem action bar, potion effects ou manipulação de freeze ticks.
 
+LW-123 / quinto slice: cold breath e frost possuem toggles independentes sob `climate.thermal-feedback`. `ThermalRuntimeReadout` inclui o profile puro de feedback e `/lw thermal` expõe breath intensity/cadence + frost intensity sem avançar o runtime. Isso permite tuning e smoke comparando decisão e apresentação sem transformar diagnóstico em gameplay.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

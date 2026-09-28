@@ -266,6 +266,31 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 formatSigned(snapshot.netRatePerSecond()),
                 formatSigned(snapshot.wetnessRatePerSecond())
         ));
+        player.sendMessage(messages.component(
+                NamedTextColor.AQUA,
+                "thermal.readout-feedback",
+                (int) Math.round(
+                        snapshot.feedbackProfile().breath().intensity() * 100.0D
+                ),
+                breathCadenceText(snapshot.feedbackProfile()),
+                (int) Math.round(
+                        snapshot.feedbackProfile().frostIntensity() * 100.0D
+                )
+        ));
+    }
+
+    private String breathCadenceText(
+            dev.signalshards.livingworld.features.climate.domain.ThermalFeedbackProfile profile
+    ) {
+        if (!profile.breath().enabled()) {
+            return "—";
+        }
+        return String.format(
+                Locale.ROOT,
+                "%.1f–%.1f s",
+                profile.breath().minimumInterval().toMillis() / 1_000.0D,
+                profile.breath().maximumInterval().toMillis() / 1_000.0D
+        );
     }
 
     private String directExposureText(DirectThermalExposure exposure) {

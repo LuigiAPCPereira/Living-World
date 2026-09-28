@@ -119,7 +119,16 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                 continue;
             }
             UUID playerId = player.getUniqueId();
-            if (!feedback.feedbackEligible(playerId)) {
+            var profile = feedback.profile(playerId);
+            if (profile.isEmpty()) {
+                lastPulseNanos.remove(playerId);
+                continue;
+            }
+            boolean breathActive = settings.coldBreathEnabled()
+                    && profile.orElseThrow().breath().enabled();
+            boolean frostActive = settings.frostEnabled()
+                    && profile.orElseThrow().frostEnabled();
+            if (!breathActive && !frostActive) {
                 lastPulseNanos.remove(playerId);
                 continue;
             }
@@ -129,13 +138,14 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                     : Duration.ofNanos(now - previous);
             try {
                 feedback.pulse(playerId, elapsed).ifPresent(decision -> {
-                    if (decision.emitBreath()) {
+                    if (settings.coldBreathEnabled() && decision.emitBreath()) {
                         presenter.emitBreath(
                                 player,
                                 decision.profile().breath().intensity()
                         );
                     }
-                    if (decision.profile().frostEnabled()) {
+                    if (settings.frostEnabled()
+                            && decision.profile().frostEnabled()) {
                         frostPresenter.presentFrost(
                                 player,
                                 decision.profile().frostIntensity()
