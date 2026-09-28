@@ -357,6 +357,8 @@ Visual sazonal amplo pode ser projetado ao cliente; estado com colisão/gameplay
 
 LW-126 / spike slice 1: Paper 26.3 não possui API pública per-player para biome/tint/fog projection. `World#setBiome` é server truth e não deve ser usado para um efeito visual-only. BIOME é readable via RegistryAccess, mas não writable via RegistryEvents. O runtime contém `ClientboundChunksBiomesPacket` e uma rota via CraftPlayer/ServerPlayer connection, então um adapter NMS estreito é tecnicamente plausível; payload serialization/versioning ainda não foram validados e nenhum código NMS foi adicionado.
 
+LW-126 / spike slice 2: `ClientboundChunksBiomesPacket` serializa somente os biome paletted containers de cada chunk section. A rota candidata é copiar `LevelChunkSection#getBiomes()`, substituir 4×4×4 entries por um visual `Holder<Biome>`, serializar para `ChunkBiomeData` e enviar via `ServerGamePacketListenerImpl#send` apenas ao jogador. O chunk real permanece intocado. O adapter continua não implementado até prova visual/version-gated.
+
 Performance permanece bounded: nenhum scan recorrente global; trabalho por jogador/região possui budget; mudanças são preferencialmente event/delta-driven com cache/invalidação; acesso Bukkit permanece thread-safe; async é reservado a trabalho puro quando medição justificar.
 
 O desenho completo, benchmarks de referência, transições sazonais e critérios de M12.5 estão em `ECOLOGY_AND_SEASONS.md`.

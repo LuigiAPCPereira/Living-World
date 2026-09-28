@@ -799,6 +799,23 @@ No runtime local Paper 26.3 existe `ClientboundChunksBiomesPacket`, com payload 
 
 Resultado do slice: **API pública insuficiente para foliage/grass/water/sky/fog per-player via biome; NMS packet é viável como hipótese, ainda não implementado**. Até esse adapter ser comprovado, Living World mantém partículas/sons/resourcepack vanilla-safe como fallback e não promete broad seasonal tint.
 
+**LW-126 / spike slice 2:** bytecode do runtime local Paper 26.3 mostra que `ClientboundChunksBiomesPacket.ChunkBiomeData` serializa apenas `LevelChunkSection#getBiomes()` de cada seção. O tamanho é a soma de `getSerializedSize()` desses containers e a escrita é feita sequencialmente em `FriendlyByteBuf`.
+
+`PalettedContainer` expõe `copy()`, `set(x,y,z,value)` e `write(...)`, então o caminho conceitual não precisa clonar blocos, luz ou entidades. `ServerLevel.registryAccess()` + `Registries.BIOME` permitem resolver o `Holder<Biome>` alvo, e `ServerGamePacketListenerImpl#send(Packet)` fornece envio apenas ao jogador desejado.
+
+Algoritmo candidato:
+
+    loaded LevelChunk
+      -> for each LevelChunkSection
+           -> copy biome PalettedContainer
+           -> replace 4x4x4 biome cells with visual Holder<Biome>
+           -> serialize copied container
+      -> ChunkBiomeData(chunkPos, biomeBytes)
+      -> ClientboundChunksBiomesPacket
+      -> target player's NMS connection only
+
+Esse desenho preserva a verdade do servidor porque nunca chama `World#setBiome` nem modifica o container real do chunk. Ainda assim permanece **experimental**: depende de NMS version-specific, precisa ser version-gated, bounded a chunks já enviados/carregados e validado visualmente antes de entrar em produção.
+
 ### 8.2 Physical Ecology
 
 Se o efeito muda colisão/gameplay, o estado real do servidor deve ser coerente.

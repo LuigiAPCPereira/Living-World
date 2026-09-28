@@ -7,8 +7,8 @@
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-126 — seasonal client visual projection technical spike, after LW-125 implementation closure
-- **Current acceptance:** public Paper API does not provide per-player biome/tint projection; server-side biome mutation is rejected for visual-only presentation. A dedicated ClientboundChunksBiomesPacket path is technically present in the local Paper 26.3 runtime but remains experimental and unimplemented
-- **Current validation:** LW-125 remains implemented-not-validated for real worldgen smoke; LW-126 slice 1 is an API/runtime inspection only, with no production code or world mutation introduced
+- **Current acceptance:** public Paper API is insufficient for per-player biome/tint projection, but the local Paper 26.3 NMS path is structurally mapped: copy biome paletted containers per section, substitute visual biome holders, serialize only biome data and send ClientboundChunksBiomesPacket to the target player
+- **Current validation:** LW-125 remains implemented-not-validated for real worldgen smoke; LW-126 slices 1-2 are runtime/API bytecode inspection only. No NMS production code, build dependency, biome mutation or packet send has been introduced
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-126 spike findings; only proceed to a packet adapter if biome payload construction can be isolated/tested without coupling gameplay code to version-specific NMS. Otherwise preserve vanilla/resourcepack/particle fallback and leave broad tint projection deferred
+- **Next action:** keep LW-126 open until a client is available for an opt-in packet proof. If pursued, implement only a version-gated adapter behind a disabled-by-default experimental setting and project an existing biome first; helper seasonal biomes/resourcepack integration come only after packet proof
 
 ## M12.4 — checkpoint local
 
