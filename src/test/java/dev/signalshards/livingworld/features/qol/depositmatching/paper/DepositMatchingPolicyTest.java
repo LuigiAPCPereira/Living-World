@@ -13,7 +13,7 @@ class DepositMatchingPolicyTest {
     private final DepositMatchingPolicy policy = new DepositMatchingPolicy();
 
     @Test
-    void aceitaSomenteGestoExplicitoEmStorageSuportado() {
+    void aceitaSomenteGestoExplicitoEmStorageAbertoSuportado() {
         assertTrue(policy.shouldTrigger(
                 true,
                 true,
@@ -25,13 +25,51 @@ class DepositMatchingPolicyTest {
     }
 
     @Test
-    void rejeitaConflitosComVanillaOuContextoInvalido() {
+    void rejeitaConflitosComVanillaOuContextoAbertoInvalido() {
         assertFalse(policy.shouldTrigger(false, true, true, true, true, false));
         assertFalse(policy.shouldTrigger(true, false, true, true, true, false));
         assertFalse(policy.shouldTrigger(true, true, false, true, true, false));
         assertFalse(policy.shouldTrigger(true, true, true, false, true, false));
         assertFalse(policy.shouldTrigger(true, true, true, true, false, false));
         assertFalse(policy.shouldTrigger(true, true, true, true, true, true));
+    }
+
+    @Test
+    void aceitaGestoFechadoSomenteComMaoPrincipalVaziaEAcessoSeguro() {
+        assertTrue(policy.shouldTriggerClosedStorage(
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+        ));
+    }
+
+    @Test
+    void rejeitaGestoFechadoQuandoQualquerPreCondicaoFalha() {
+        assertFalse(policy.shouldTriggerClosedStorage(
+                false, true, true, true, true, true, false
+        ));
+        assertFalse(policy.shouldTriggerClosedStorage(
+                true, false, true, true, true, true, false
+        ));
+        assertFalse(policy.shouldTriggerClosedStorage(
+                true, true, false, true, true, true, false
+        ));
+        assertFalse(policy.shouldTriggerClosedStorage(
+                true, true, true, false, true, true, false
+        ));
+        assertFalse(policy.shouldTriggerClosedStorage(
+                true, true, true, true, false, true, false
+        ));
+        assertFalse(policy.shouldTriggerClosedStorage(
+                true, true, true, true, true, false, false
+        ));
+        assertFalse(policy.shouldTriggerClosedStorage(
+                true, true, true, true, true, true, true
+        ));
     }
 
     @Test
