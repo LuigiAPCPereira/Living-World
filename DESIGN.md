@@ -27,6 +27,7 @@
 | `features.desirelines.application` | bounded sparse per-chunk traffic ledger | Paper PDC or block types |
 | `features.desirelines.paper` | movement observation, block wear and Chunk PDC persistence | global world scanning or unrelated QoL rules |
 | `features.qol.doubledoors.paper` | detects an unambiguous adjacent compatible door and mirrors manual open state | redstone automation or arbitrary nearby doors |
+| `features.qol.depositmatching.paper` | owns explicit matching-deposit gestures, bounded physical-storage access checks, exact-match transfer and its optional short Paper presentation | sorting/classification, persistence, storage networks, nearby scans, machine inventories, resource-pack gameplay rules |
 | `features.waystones.domain` | stable waystone identity, display name and anchor coordinates | Paper storage, GUI or teleport APIs |
 | `features.waystones.application` | registration, activation visibility and travel result contracts | player/world PDC details |
 | `features.waystones.paper` | World/Player PDC adapters, safe destination validation and async Paper teleport | economy, GUI or physical activation presentation |
@@ -161,6 +162,18 @@ Natural dirt is not enrolled into Desire Lines merely by walking over it. A new 
 Double Doors listens only to main-hand right-click block interactions that are not denied for the interacted block. It ignores iron doors and schedules a one-tick reconciliation so the clicked door's actual post-vanilla open state is authoritative.
 
 The pair finder checks only the four horizontal neighbors at the lower half. A candidate must use the same material and facing, the opposite hinge, and neither door may be powered. Synchronization occurs only when exactly one candidate matches, preventing rows/triples of doors from being coupled accidentally. The module updates both halves through modern `org.bukkit.block.data.type.Door` data; it does not use the legacy deprecated material-data API.
+
+## Deposit Matching
+
+Deposit Matching is event-driven and operates only on one explicitly targeted storage inventory. The open-GUI gesture observes `InventoryClickEvent` and defers mutation one tick; the closed-block gesture owns a recognized `PlayerInteractEvent` only after other plugins have not denied block use and the physical target passes conservative access checks.
+
+The closed path never relies on an already-open inventory. It records a physical block key, re-resolves that block on the next tick, rechecks storage type/access/viewers and then applies the same exact-match transfer used by the GUI path. Double chests inspect at most two physical holders; shulker opening safety probes only the one block in the facing direction. There is no container-neighborhood scan or recurring task.
+
+Transfer eligibility is based on a snapshot of categories already present at trigger time and `ItemStack.isSimilar`. Before each insertion the live target must still contain a similar category. Sources are bounded to player slots 9..35. `Inventory.addItem` owns normal stacking/capacity behavior and leftovers remain in their original player slot.
+
+`PaperDepositMatchingPresentation` is presentation-only. It consumes the already-computed transferred stacks, deduplicates to at most three visual representatives, creates non-persistent `ItemDisplay` entities for fewer than ten ticks, and owns every display/task/lid cleanup. `Lidded.open()` is used only with no current viewers and only when the lid is not already open; if a viewer appears before the planned close, the presentation waits for the inventory to become viewer-free before releasing its forced lid. Disabling presentation leaves gameplay unchanged.
+
+Resource-pack polish is a future presentation adapter concern. M20 uses public Paper/Bukkit APIs only and does not introduce packets/NMS or require client assets.
 
 ## Waystones
 
