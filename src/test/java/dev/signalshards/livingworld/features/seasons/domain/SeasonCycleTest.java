@@ -52,4 +52,23 @@ class SeasonCycleTest {
                 () -> cycle.seasonFor(new CalendarDate(1, 13, 1))
         );
     }
+
+    @Test
+    void progressoSazonalVaiDeZeroAUmDentroDosTresMeses() {
+        assertEquals(
+                0.0D,
+                cycle.progressFor(new CalendarDate(1, 1, 1), 8),
+                1.0E-9D
+        );
+        assertEquals(
+                1.0D,
+                cycle.progressFor(new CalendarDate(1, 3, 8), 8),
+                1.0E-9D
+        );
+        assertEquals(
+                0.0D,
+                cycle.progressFor(new CalendarDate(1, 4, 1), 8),
+                1.0E-9D
+        );
+    }
 }

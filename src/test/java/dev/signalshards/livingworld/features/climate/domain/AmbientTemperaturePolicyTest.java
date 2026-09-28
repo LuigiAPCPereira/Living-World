@@ -91,4 +91,59 @@ class AmbientTemperaturePolicyTest {
         assertEquals(15.0D, thunder.degreesCelsius(), 1.0E-9D);
         assertEquals(15.0D, sheltered.degreesCelsius(), 1.0E-9D);
     }
+
+    @Test
+    void temperaturaSazonalTransicionaSemDegrauEntreAnchors() {
+        AmbientTemperatureFactors stable = new AmbientTemperatureFactors(
+                0.0D,
+                6_000,
+                AmbientWeather.CLEAR
+        );
+
+        assertEquals(
+                13.0D,
+                policy.temperature(
+                        0.8D,
+                        Season.PRIMAVERA,
+                        0.0D,
+                        stable
+                ).degreesCelsius(),
+                1.0E-9D
+        );
+        assertEquals(
+                17.0D,
+                policy.temperature(
+                        0.8D,
+                        Season.PRIMAVERA,
+                        0.5D,
+                        stable
+                ).degreesCelsius(),
+                1.0E-9D
+        );
+        assertEquals(
+                19.0D,
+                policy.temperature(
+                        0.8D,
+                        Season.PRIMAVERA,
+                        1.0D,
+                        stable
+                ).degreesCelsius(),
+                1.0E-9D
+        );
+        assertEquals(
+                policy.temperature(
+                        0.8D,
+                        Season.PRIMAVERA,
+                        1.0D,
+                        stable
+                ).degreesCelsius(),
+                policy.temperature(
+                        0.8D,
+                        Season.VERAO,
+                        0.0D,
+                        stable
+                ).degreesCelsius(),
+                1.0E-9D
+        );
+    }
 }

@@ -8,5 +8,9 @@ public interface CalendarView {
 
     Season currentSeason();
 
+    default double currentSeasonProgress() {
+        return 0.5D;
+    }
+
     int daysPerMonth();
 }

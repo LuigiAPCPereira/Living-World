@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, AmbientTemperature temporal/weather refinement
-- **Current acceptance:** Paper coordinate temperature remains the sole altitude-aware base; new thermal runtime adds only sky-exposed day/night and local weather, while legacy `/lw climate` retains the base contract
-- **Current validation:** Paper bytecode inspection confirms `CraftWorld#getTemperature(x,y,z) -> Biome#getTemperature(BlockPos, seaLevel)`; focused microclimate/compatibility tests plus full branch gates 342 tests / 119 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; runtime smoke deferred while user has no game access
+- **Current task:** LW-122 — Environmental & Thermal Foundation, gradual seasonal-temperature closure
+- **Current acceptance:** runtime AmbientTemperature transitions continuously through Early/Mid/Late season using the existing calendar/SeasonCycle authority; season labels and legacy climate readout remain unchanged
+- **Current validation:** SeasonCycle progress/boundary tests + full branch gates 344 tests / 119 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; previous connected thermal smoke remains valid for earlier slices, while drying/rain/direct/day-night/season runtime smoke is deferred
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint AmbientTemperature refinement, then reconcile remaining LW-122 gaps that do not require live client access before opening LW-123; runtime smoke for drying/rain/direct exposure/day-night weather remains queued for the next player-access window
+- **Next action:** checkpoint gradual season temperature and audit LW-122 acceptance against implementation. If no essential code gap remains, mark implementation complete but runtime-validation pending and begin only the non-visual foundation of LW-123
 
 ## M12.4 — checkpoint local
 

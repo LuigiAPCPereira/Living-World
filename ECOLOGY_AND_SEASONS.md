@@ -566,6 +566,16 @@ Weather local também respeita `humidity > 0`; uma tempestade global não cria r
 
 `PaperLocalClimateResolver` agora oferece dois contratos: `baseAmbientTemperatureAt` preserva a calibração histórica biome + season; `ambientTemperatureAt` adiciona hora/weather para o runtime corporal. `/lw climate` continua usando o base por compatibilidade explícita, enquanto `/lw thermal` usa o ambiente refinado. Assim a migração do readout legado não acontece silenciosamente.
 
+### 5.32 Temperatura sazonal gradual
+
+**Checkpoint de implementação LW-122 / vigésimo-segundo slice:** `SeasonCycle` agora expõe progresso normalizado da estação com base no mesmo `CalendarDate`, `monthsPerSeason` e `daysPerMonth` já usados pelo calendário. `PaperCalendarModule` fornece esse progresso via `CalendarView.currentSeasonProgress()`; nenhum segundo relógio ou calendário paralelo foi criado.
+
+Para o runtime térmico, cada estação mantém o anchor já calibrado no **meio** da estação. O início usa a média entre os anchors da estação anterior e atual; o fim usa a média entre atual e próxima. As metades são interpoladas com `smoothstep`, produzindo Early/Mid/Late contínuos e derivada suave.
+
+Exemplo com os anchors atuais: Primavera começa entre Inverno (-6 °C) e Primavera (+2 °C), atinge +2 °C no meio e termina entre Primavera (+2 °C) e Verão (+6 °C). O fim da Primavera e o início do Verão usam exatamente o mesmo boundary, portanto não existe degrau de temperatura na troca do rótulo.
+
+O overload legado de `AmbientTemperaturePolicy.temperature(paperTemperature, season)` continua usando o anchor discreto e `/lw climate` permanece compatível. Apenas o caminho runtime de `ambientTemperatureAt` consome progresso sazonal gradual.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

@@ -72,6 +72,7 @@ public final class PaperLocalClimateResolver {
         return ambientTemperaturePolicy.temperature(
                 world.getTemperature(block.getX(), block.getY(), block.getZ()),
                 calendar.currentSeason(),
+                calendar.currentSeasonProgress(),
                 new AmbientTemperatureFactors(
                         Math.clamp(block.getLightFromSky() / 15.0D, 0.0D, 1.0D),
                         (int) Math.floorMod(world.getTime(), 24_000L),

@@ -319,6 +319,8 @@ Vigésimo slice de LW-122: precipitação Paper usa storm + skylight + gate bin�
 
 Vigésimo-primeiro slice de LW-122: o sampling coordenado do Paper foi inspecionado e `World#getTemperature(x,y,z)` já incorpora `BlockPos + seaLevel`; Living World não adiciona lapse rate duplicado. `AmbientTemperatureFactors` aplica apenas ciclo diário e weather, ambos ponderados por sky exposure, sobre a temperatura base biome+season. `PaperLocalClimateResolver.baseAmbientTemperatureAt` mantém o contrato legado de `/lw climate`, enquanto `ambientTemperatureAt` alimenta o runtime térmico refinado.
 
+Vigésimo-segundo slice de LW-122: `SeasonCycle.progressFor` deriva progresso 0..1 da própria data/regras do calendário e `PaperCalendarModule` o publica em `CalendarView`. O runtime de `AmbientTemperaturePolicy` interpola boundaries Early/Mid/Late com smoothstep: início = média(previous,current), meio = anchor current, fim = média(current,next). Fronteiras adjacentes são iguais, eliminando saltos térmicos de troca de estação sem alterar a estação lógica.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

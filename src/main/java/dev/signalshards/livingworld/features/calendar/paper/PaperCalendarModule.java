@@ -95,6 +95,11 @@ public final class PaperCalendarModule implements LivingWorldModule, Listener, C
     }
 
     @Override
+    public double currentSeasonProgress() {
+        return seasons.progressFor(currentDate(), rules.daysPerMonth());
+    }
+
+    @Override
     public int daysPerMonth() {
         return rules.daysPerMonth();
     }

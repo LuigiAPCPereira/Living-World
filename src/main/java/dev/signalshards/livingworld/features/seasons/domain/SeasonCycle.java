@@ -44,6 +44,28 @@ public final class SeasonCycle {
         return order.get(seasonIndex);
     }
 
+    public double progressFor(CalendarDate date, int daysPerMonth) {
+        seasonFor(date);
+        if (daysPerMonth <= 0) {
+            throw new IllegalArgumentException(
+                    "A quantidade de dias por mês deve ser maior que zero"
+            );
+        }
+        if (date.day() > daysPerMonth) {
+            throw new IllegalArgumentException(
+                    "O dia " + date.day() + " excede o mês configurado"
+            );
+        }
+
+        int monthIndexWithinSeason = (date.month() - 1) % monthsPerSeason;
+        int totalDays = Math.multiplyExact(monthsPerSeason, daysPerMonth);
+        if (totalDays == 1) {
+            return 0.5D;
+        }
+        int dayIndex = (monthIndexWithinSeason * daysPerMonth) + (date.day() - 1);
+        return dayIndex / (double) (totalDays - 1);
+    }
+
     public Optional<SeasonTransition> transitionBetween(CalendarDate previous, CalendarDate current) {
         Season previousSeason = seasonFor(previous);
         Season currentSeason = seasonFor(current);

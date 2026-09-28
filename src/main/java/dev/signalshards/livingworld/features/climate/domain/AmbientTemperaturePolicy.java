@@ -44,30 +44,97 @@ public final class AmbientTemperaturePolicy {
             Season season,
             AmbientTemperatureFactors factors
     ) {
+        return temperature(paperTemperature, season, 0.5D, factors);
+    }
+
+    public AmbientTemperature temperature(
+            double paperTemperature,
+            Season season,
+            double seasonProgress,
+            AmbientTemperatureFactors factors
+    ) {
         if (!Double.isFinite(paperTemperature)) {
             throw new IllegalArgumentException("A temperatura do Paper deve ser finita");
         }
         Objects.requireNonNull(season, "estação");
+        if (!Double.isFinite(seasonProgress)
+                || seasonProgress < 0.0D
+                || seasonProgress > 1.0D) {
+            throw new IllegalArgumentException(
+                    "O progresso sazonal deve ficar entre 0 e 1"
+            );
+        }
         Objects.requireNonNull(factors, "fatores ambientais");
 
-        double base = baseTemperature(paperTemperature, season);
+        double base = baseTemperatureWithoutSeason(paperTemperature)
+                + seasonalAdjustment(season, seasonProgress);
         double temporal = temporalAdjustment(factors) * factors.skyExposure();
         double weather = weatherAdjustment(factors.weather()) * factors.skyExposure();
         return new AmbientTemperature(base + temporal + weather);
     }
 
     private double baseTemperature(double paperTemperature, Season season) {
-        double base = NEUTRAL_CELSIUS
+        return baseTemperatureWithoutSeason(paperTemperature)
+                + seasonalAnchor(season);
+    }
+
+    private double baseTemperatureWithoutSeason(double paperTemperature) {
+        return NEUTRAL_CELSIUS
                 + ((paperTemperature - NEUTRAL_PAPER_TEMPERATURE)
                 * CELSIUS_PER_PAPER_UNIT);
-        double seasonalAdjustment = switch (season) {
+    }
+
+    private double seasonalAnchor(Season season) {
+        return switch (season) {
             case PRIMAVERA -> 2.0D;
             case VERAO -> 6.0D;
             case OUTONO -> 0.0D;
             case INVERNO -> -6.0D;
         };
+    }
 
-        return base + seasonalAdjustment;
+    private double seasonalAdjustment(Season season, double progress) {
+        Season previous = switch (season) {
+            case PRIMAVERA -> Season.INVERNO;
+            case VERAO -> Season.PRIMAVERA;
+            case OUTONO -> Season.VERAO;
+            case INVERNO -> Season.OUTONO;
+        };
+        Season next = switch (season) {
+            case PRIMAVERA -> Season.VERAO;
+            case VERAO -> Season.OUTONO;
+            case OUTONO -> Season.INVERNO;
+            case INVERNO -> Season.PRIMAVERA;
+        };
+        double currentAnchor = seasonalAnchor(season);
+        double previousBoundary = (
+                seasonalAnchor(previous) + currentAnchor
+        ) / 2.0D;
+        double nextBoundary = (
+                currentAnchor + seasonalAnchor(next)
+        ) / 2.0D;
+
+        if (progress <= 0.5D) {
+            return interpolate(
+                    previousBoundary,
+                    currentAnchor,
+                    smoothStep(progress * 2.0D)
+            );
+        }
+        return interpolate(
+                currentAnchor,
+                nextBoundary,
+                smoothStep((progress - 0.5D) * 2.0D)
+        );
+    }
+
+    private double smoothStep(double value) {
+        double clamped = Math.clamp(value, 0.0D, 1.0D);
+        return clamped * clamped * (3.0D - (2.0D * clamped));
+    }
+
+    private double interpolate(double start, double end, double progress) {
+        return start + ((end - start) * progress);
     }
 
     private double temporalAdjustment(AmbientTemperatureFactors factors) {
