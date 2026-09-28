@@ -34,6 +34,7 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
     private final PaperThermalFeedbackSettings settings;
     private final ThermalFeedbackCoordinator feedback;
     private final PaperThermalFeedbackPresenter presenter;
+    private final PaperFrostFeedbackPresenter frostPresenter;
     private final LongSupplier clock;
     private final Map<UUID, Long> lastPulseNanos = new HashMap<>();
     private BukkitTask task;
@@ -44,7 +45,8 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
             World world,
             PaperThermalFeedbackSettings settings,
             ThermalFeedbackCoordinator feedback,
-            PaperThermalFeedbackPresenter presenter
+            PaperThermalFeedbackPresenter presenter,
+            PaperFrostFeedbackPresenter frostPresenter
     ) {
         this(
                 plugin,
@@ -52,6 +54,7 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                 settings,
                 feedback,
                 presenter,
+                frostPresenter,
                 System::nanoTime
         );
     }
@@ -62,6 +65,7 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
             PaperThermalFeedbackSettings settings,
             ThermalFeedbackCoordinator feedback,
             PaperThermalFeedbackPresenter presenter,
+            PaperFrostFeedbackPresenter frostPresenter,
             LongSupplier clock
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
@@ -69,6 +73,10 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
         this.settings = Objects.requireNonNull(settings, "configuração de feedback");
         this.feedback = Objects.requireNonNull(feedback, "coordenador de feedback");
         this.presenter = Objects.requireNonNull(presenter, "presenter térmico");
+        this.frostPresenter = Objects.requireNonNull(
+                frostPresenter,
+                "presenter de frost"
+        );
         this.clock = Objects.requireNonNull(clock, "relógio");
     }
 
@@ -111,7 +119,7 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                 continue;
             }
             UUID playerId = player.getUniqueId();
-            if (!feedback.breathEligible(playerId)) {
+            if (!feedback.feedbackEligible(playerId)) {
                 lastPulseNanos.remove(playerId);
                 continue;
             }
@@ -125,6 +133,12 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                         presenter.emitBreath(
                                 player,
                                 decision.profile().breath().intensity()
+                        );
+                    }
+                    if (decision.profile().frostEnabled()) {
+                        frostPresenter.presentFrost(
+                                player,
+                                decision.profile().frostIntensity()
                         );
                     }
                 });

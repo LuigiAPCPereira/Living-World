@@ -20,6 +20,7 @@ import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReso
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReadoutProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalEnvironmentResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperColdBreathPresenter;
+import dev.signalshards.livingworld.features.climate.paper.PaperSnowflakeFrostPresenter;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalFeedbackModule;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalFeedbackSettingsLoader;
 import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeReadoutProvider;
@@ -202,7 +203,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         calendarWorld,
                         PaperThermalFeedbackSettingsLoader.load(getConfig()),
                         thermalFeedback,
-                        new PaperColdBreathPresenter()
+                        new PaperColdBreathPresenter(),
+                        new PaperSnowflakeFrostPresenter()
                 );
         var thermalReadoutProvider = new PaperThermalRuntimeReadoutProvider(
                 thermalEnvironment,

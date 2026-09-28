@@ -595,17 +595,27 @@ Esse slice preserva o contrato central: `visualFreeze != thermalDamage`. O próx
 
 O primeiro profile elegível agenda sem emitir imediatamente, evitando uma parede sincronizada de vapor ao entrar num bioma frio. Profiles mais severos podem reduzir o restante da espera ao novo `maximumInterval`. Quando breath deixa de ser elegível, o countdown é removido imediatamente. `reset` e `clear` garantem cleanup de lifecycle.
 
-`ThermalFeedbackCoordinator` é a ponte entre o runtime térmico coarse e a apresentação. Ele calcula o profile somente quando o runtime ambiental já resolveu o contexto e o cacheia; o pulse visual não repete probes Paper. Jogadores sem breath e sem frost não permanecem observados.
+`ThermalFeedbackCoordinator` é a ponte entre o runtime térmico coarse e a apresentação. Ele calcula o profile somente quando o runtime ambiental já resolveu o contexto e o cacheia; o pulse visual não repete probes Paper. Jogadores sem breath e sem frost não permanecem observados; countdown de breath só existe enquanto breath está elegível.
 
 ### 5.35 LW-123 — cold breath Paper
 
 **Terceiro slice:** `PaperThermalFeedbackModule` roda em pulse visual configurável (default 10 ticks) sobre profiles já cacheados. Ele não lê blocos, clima, armadura ou fontes de calor; apenas avança a cadência e chama um presenter quando há emissão.
 
-`PaperColdBreathPresenter` usa fallback vanilla `Particle.CLOUD` próximo à boca/olhos, ligeiramente à frente da direção de visão. Intensidade mapeia para **1..3 partículas**. Cada emissão possui orçamento de **no máximo 16 viewers**; o próprio jogador recebe o efeito e viewers rastreando a entidade só recebem quando `canSee(subject)`. Jogador invisível não emite, evitando denunciar invisibilidade/vanish.
+`PaperColdBreathPresenter` usa, até smoke visual, o fallback vanilla **provisório** `Particle.CLOUD` próximo à boca/olhos, ligeiramente à frente da direção de visão. Intensidade mapeia para **1..3 partículas**. Cada emissão possui orçamento de **no máximo 16 viewers**; o próprio jogador recebe o efeito e viewers já retornados por `getTrackedBy()` só recebem quando `canSee(subject)`. Jogador invisível não emite, evitando denunciar invisibilidade; vanish por viewer continua respeitando `canSee`.
 
 O módulo ignora SPECTATOR, usa elapsed real por jogador e não produz burst depois de pausa longa. Nenhum efeito desse slice altera `PlayerThermalState`, aplica dano, usa freeze ticks ou adiciona novos probes de mundo.
 
 Frost continua apenas como `frostIntensity` no profile até existir uma apresentação segura que não conflite com HUD/action bar nem com o sistema vanilla de congelamento.
+
+### 5.36 LW-123 — frost visual seguro
+
+**Quarto slice:** `PaperSnowflakeFrostPresenter` transforma `frostIntensity` em feedback visual **self-only** usando `Particle.SNOWFLAKE` próximo à câmera do próprio jogador. Intensidade mapeia para 1..3 partículas por pulse visual; nenhum pacote de frost é enviado para terceiros.
+
+O frost usa o mesmo `PaperThermalFeedbackModule` de 10 ticks e pode existir mesmo quando breath está desligado — por exemplo, corpo ainda muito frio após entrar em abrigo quente. O gate do módulo considera qualquer profile com breath **ou** frost elegível.
+
+Esse fallback não usa `setFreezeTicks`, não altera `maxFreezeTicks`, não aplica dano, não escreve action bar/boss bar e não cria efeitos de potion. Portanto o overlay/dano vanilla de Powder Snow continua totalmente separado do feedback corporal do Living World.
+
+**Refinamento do terceiro slice:** o fallback seguro de frost foi implementado como `PaperSnowflakeFrostPresenter`, self-only, usando `Particle.SNOWFLAKE` com **1..3 partículas** por pulse conforme intensidade. Ele não altera freeze ticks, não envia frost para terceiros e não aplica dano. Um corpo ainda muito frio pode continuar vendo frost ao entrar em ar quente mesmo quando cold breath já foi desabilitado; isso preserva a independência entre ambiente imediato e estado corporal acumulado.
 
 ## 6. Cálculo incremental, cache e invalidação
 

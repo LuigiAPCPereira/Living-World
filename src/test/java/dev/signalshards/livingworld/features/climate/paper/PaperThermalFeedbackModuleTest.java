@@ -67,6 +67,22 @@ class PaperThermalFeedbackModuleTest {
     }
 
     @Test
+    void corpoFrioPodeMostrarFrostSemBreathEmArQuente() {
+        Fixture f = new Fixture(true);
+        f.feedback.observe(
+                f.playerId,
+                new PlayerThermalState(-0.90D),
+                warmEnvironment()
+        );
+        f.module.enable();
+
+        f.module.pulse();
+
+        assertEquals(0, f.emissions);
+        assertEquals(1, f.frostPresentations);
+    }
+
+    @Test
     void configuracaoDesabilitadaNaoAgendaNemEmite() {
         Fixture f = new Fixture(false);
         f.feedback.observe(
@@ -145,9 +161,22 @@ class PaperThermalFeedbackModuleTest {
         );
     }
 
+    private static ThermalEnvironmentContext warmEnvironment() {
+        return new ThermalEnvironmentContext(
+                new AmbientTemperature(20.0D),
+                WaterExposure.none(),
+                PlayerActivity.RESTING,
+                WindExposure.calm(),
+                ShelterFactor.exposed(),
+                ArmorThermalLoadout.empty(),
+                List.of()
+        );
+    }
+
     private static final class Fixture {
         long now;
         int emissions;
+        int frostPresentations;
         int registrations;
         int schedules;
         int cancellations;
@@ -212,6 +241,7 @@ class PaperThermalFeedbackModuleTest {
                     new PaperThermalFeedbackSettings(enabled, 10L),
                     feedback,
                     (ignored, intensity) -> emissions++,
+                    (ignored, intensity) -> frostPresentations++,
                     () -> now
             );
         }

@@ -43,6 +43,7 @@ class PaperThermalRuntimeModuleTest {
 
         var snapshot = f.runtime.snapshot(f.playerId).orElseThrow();
         assertTrue(snapshot.thermalState().thermalLoad() < 0.0D);
+        assertTrue(f.feedback.profile(f.playerId).isPresent());
         assertEquals(1, f.environmentReads);
         assertEquals(1, f.registrations);
         assertEquals(1, f.schedules);
@@ -63,6 +64,7 @@ class PaperThermalRuntimeModuleTest {
                 PlayerQuitEvent.QuitReason.DISCONNECTED
         ));
         assertFalse(f.runtime.snapshot(f.playerId).isPresent());
+        assertTrue(f.feedback.profile(f.playerId).isEmpty());
 
         f.module.disable();
         assertEquals(1, f.cancellations);

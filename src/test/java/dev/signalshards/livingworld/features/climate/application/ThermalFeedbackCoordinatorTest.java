@@ -32,6 +32,7 @@ class ThermalFeedbackCoordinatorTest {
         assertTrue(profile.breath().enabled());
         assertTrue(profile.frostEnabled());
         assertTrue(coordinator.breathEligible(playerId));
+        assertTrue(coordinator.feedbackEligible(playerId));
         assertEquals(1, coordinator.observedPlayers());
         assertTrue(coordinator.pulse(
                 playerId,
@@ -56,6 +57,7 @@ class ThermalFeedbackCoordinatorTest {
         );
 
         assertFalse(warm.breath().enabled());
+        assertTrue(coordinator.feedbackEligible(playerId));
         assertFalse(coordinator.breathEligible(playerId));
         assertFalse(coordinator.pulse(
                 playerId,

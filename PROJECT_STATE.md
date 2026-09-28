@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-123 — bounded thermal feedback, cold-breath Paper presentation slice
-- **Current acceptance:** cold breath uses cached thermal profiles, jittered bounded cadence, no catch-up bursts, visibility-safe viewer filtering and explicit particle/viewer budgets; frost remains calculated only and no freeze ticks/damage exist
-- **Current validation:** LW-122 implementation foundation remains implemented-not-validated for recent runtime refinements; LW-123 policy/cadence/Paper cold-breath path passes full gates at 373 tests / 126 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; live visual smoke is deferred while user has no client access
+- **Current task:** LW-123 — bounded thermal feedback, progressive frost presentation slice
+- **Current acceptance:** cold breath remains jittered/visibility-safe and frost now presents progressive self-only snowflake feedback from accumulated body load; neither path manipulates freeze ticks, damage or HUD surfaces
+- **Current validation:** LW-122 implementation foundation remains implemented-not-validated for recent runtime refinements; LW-123 policy/cadence/breath/frost path passes full gates at 379 tests / 127 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; live visual smoke is deferred while user has no client access
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-123 cold-breath Paper slice; design/implement a safe progressive frost presentation that does not manipulate damaging vanilla freeze ticks, then queue combined visual smoke for the next player-access window
+- **Next action:** checkpoint LW-123 frost presentation; add read-only feedback diagnostics/tuning visibility so the next player-access window can validate breath eligibility/intensity/cadence and frost intensity directly before final visual acceptance
 
 ## M12.4 — checkpoint local
 

@@ -86,6 +86,10 @@ public final class ThermalFeedbackCoordinator {
                 .orElse(false);
     }
 
+    public boolean feedbackEligible(UUID playerId) {
+        return profile(playerId).isPresent();
+    }
+
     public void reset(UUID playerId) {
         Objects.requireNonNull(playerId, "id do jogador");
         profiles.remove(playerId);
