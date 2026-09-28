@@ -870,6 +870,12 @@ Break/place/fade observados pelo módulo limpam ownership na posição afetada p
 
 **LW-127 / boundedness regressions:** testes do owner Paper fixam os budgets como contrato executável. Com `maxMutationsPerPlayer=1`, o primeiro freeze encerra os probes restantes daquele jogador; quando nenhum candidato muda, `probesPerPlayer=4` resulta em exatamente quatro consultas de superfície. Se `World#isChunkLoaded` for falso, `getHighestBlockAt` nem é chamado. Adicionar SNOW não autoriza aumentar esses limites automaticamente.
 
+**LW-127 / SNOW foundation:** `PhysicalSnowSettings` define um cap inicial configuracional de domínio de 4 layers (válido entre 1 e 8). `WinterSnowMutationPolicy` fica separado da policy de ICE: somente `FREEZING + precipitação` pode colocar/acumular snow owned; frio seco preserva sem acumular; `THAWING` ou dimensão sem frozen surfaces derrete somente snow owned.
+
+`PaperWinterSnowTargetResolver` usa regras vanilla do próprio Paper para o suporte futuro: snow existente só é tratada como `OWNED_SNOW` se o ledger confirmar ownership; snow natural/jogador falha fechado. Para nova deposição, o bloco acima precisa estar vazio e `Block#canPlace(SNOW)` deve aceitar o placement. Nenhum bloco de snow é mutado neste sub-slice.
+
+A futura integração deve reutilizar o mesmo probe do ICE e o mesmo mutation budget. Não deve existir scheduler separado para neve, nem segundo scan da área por jogador.
+
 Congelamento/degelo deve considerar histerese para impedir oscillation próxima de 0 °C. Valores como congelar abaixo de -2 °C e derreter acima de +2 °C são exemplos de tuning, não decisão final.
 
 O custo deve escalar principalmente com jogadores/áreas ativas e mudanças relevantes, não com tamanho total do mapa.

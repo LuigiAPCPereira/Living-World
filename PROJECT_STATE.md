@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-127 — bounded physical winter, ICE boundedness closed; physical SNOW is next
-- **Current acceptance:** ICE owner budgets are now executable contracts: unloaded chunks are skipped before surface lookup, no-change cycles stop at probesPerPlayer and mutation cycles stop at maxMutationsPerPlayer
-- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 ICE path passes 460 tests / 150 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-127 — bounded physical winter, SNOW policy/target foundation after ICE boundedness closure
+- **Current acceptance:** SNOW remains a separate owned path: only cold precipitation can place/accumulate, warm/non-terrestrial conditions can melt only Living World-owned snow, and natural/player snow fails closed
+- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 SNOW foundation passes 467 tests / 152 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint ICE boundedness, then design physical SNOW as a separate owned mutation path with no scan expansion; do not increase probe/mutation budgets merely to add snow. Runtime smoke remains pending because the user currently has no client access
+- **Next action:** checkpoint the SNOW policy/target foundation, then wire SNOW into the existing PaperPhysicalWinterModule without adding a second scheduler or increasing probe/mutation budgets. Runtime smoke remains pending because the user currently has no client access
 
 ## M12.4 — checkpoint local
 
