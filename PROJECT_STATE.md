@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, activity/metabolic-heat domain slice
-- **Current acceptance:** Vanilla+ player activities contribute small positive metabolic heat without changing ambient/water temperature or conflating Elytra effort with wind exposure
-- **Current validation:** activity slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 261 tests / 89 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-122 — Environmental & Thermal Foundation, armor/insulation domain slice
+- **Current acceptance:** armor contributes slot-weighted insulation that reduces air transfer in both directions without adding Celsius; material water resistance stays separate for later wetness integration
+- **Current validation:** armor/insulation slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 268 tests / 93 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint activity; next LW-122 slice should model armor/insulation without degree bonuses before local heat-source integration
+- **Next action:** checkpoint armor/insulation; next LW-122 slice should model local heat sources (torch/campfire/lava) without radius scans
 
 ## M12.4 — checkpoint local
 

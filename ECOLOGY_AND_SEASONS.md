@@ -324,6 +324,12 @@ Bandas futuras podem incluir `EXTREME_COLD`, `FREEZING`, `VERY_COLD`, `COLD`, `C
 
 Armadura não adiciona graus diretamente; ela altera troca térmica. Evitar `Leather Chestplate = +5 °C`. Preferir que isolamento/retenção modulem `heatLoss` e `heatGain` antes de atualizar o estado corporal.
 
+**Checkpoint de implementação LW-122 / décimo slice:** armadura agora possui domínio térmico próprio. `ArmorSlot` define cobertura aproximada por slot; `ArmorThermalCatalog` fornece perfis configuráveis de `insulation` e `waterResistance` por material; `ArmorThermalLoadout` combina no máximo uma peça por slot; `ArmorInsulationPolicy` calcula isolamento efetivo ponderado pela cobertura e reduz `AirThermalTransferFactor`.
+
+O isolamento atua nas duas direções: em frio reduz perda de calor, mas também reduz a dissipação quando o corpo está quente. Isso evita o erro de transformar armadura em bônus de °C. O conjunto completo tem mais efeito que uma única peça, e os defaults dão ao couro mais isolamento que chainmail enquanto Netherite retém mais que Diamond. Esses valores são identidade/tuning Vanilla+ inicial, não física real nem ranking universal de “melhor armadura”.
+
+`waterResistance` já existe no perfil do material, mas **ainda não modifica WetnessRate** neste slice; isso será ligado separadamente para evitar misturar isolamento seco com comportamento de armadura molhada.
+
 Direção de gameplay:
 
 - couro deve ganhar utilidade real de isolamento no frio;
