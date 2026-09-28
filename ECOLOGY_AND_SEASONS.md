@@ -372,6 +372,10 @@ Também deve existir um conceito de `WaterTemperature` derivado do ambiente, dim
 
 Os defaults (`8 °C` de referência estável, acoplamento superficial parcial e estabilização gradual até uma profundidade de referência) são tuning inicial Vanilla+, não afirmações de física universal. Eles devem permanecer configuráveis/testáveis e podem ser refinados quando dimensão/custom-biome profiles forem implementados.
 
+**Checkpoint de implementação LW-122 / sexto slice:** `WaterThermalExchangePolicy` transforma `WaterTemperature` + `WaterThermalTransferFactor` + estado corporal atual em `ThermalExchangeRate`. Em vez de subtrair graus, a água define um equilíbrio térmico-alvo normalizado e o corpo converge gradualmente para ele com taxa bounded. Isso permite comportamento fisicamente coerente de gameplay: água fria resfria um jogador confortável, mas pode aquecer alguém ainda mais frio que o equilíbrio daquela água; contato parcial reage mais lentamente que submersão total.
+
+Um cenário integrado de domínio cobre queda em água superficial a `0 °C`: em 10 s de submersão total o jogador satura wetness progressivamente e alcança a banda `FREEZING`, sem salto instantâneo. Esses tempos/thresholds continuam tuning inicial e não autorizam dano automático.
+
 Profundidade deve importar gradualmente: perto da superfície há pouca penalidade extra; em água profunda o ambiente pode ficar mais severo; em grande profundidade entram frio, baixa luz e isolamento do clima superficial. Não adicionar dano de pressão automaticamente.
 
 ### 5.9 Água sob gelo

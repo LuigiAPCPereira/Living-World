@@ -287,6 +287,8 @@ Quarto slice de LW-122: `WaterExposure` modela fração submersa + profundidade,
 
 Quinto slice de LW-122: `WaterTemperature` separa a temperatura da água da temperatura do ar. `WaterTemperaturePolicy` usa somente `AmbientTemperature` + profundidade e parâmetros bounded: superfície acompanha parcialmente o ambiente; água profunda tende a uma referência estável; temperatura de água líquida é clampada ao intervalo configurado. Não existe cache/persistência por corpo d'água neste estágio e nenhum nome de bioma é necessário.
 
+Sexto slice de LW-122: `WaterThermalExchangePolicy` converte `WaterTemperature` + `WaterThermalTransferFactor` + `PlayerThermalState` em `ThermalExchangeRate`. O cálculo usa um equilíbrio-alvo normalizado e converge em direção a ele com resposta/limite configuráveis. Assim a direção da troca depende da relação entre água e estado corporal, não de um modificador fixo como `water = -4 °C`.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

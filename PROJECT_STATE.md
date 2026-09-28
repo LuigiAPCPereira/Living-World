@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-122 — Environmental & Thermal Foundation, WaterTemperature domain slice
-- **Current acceptance:** water has its own bounded Celsius value derived from ambient + depth, while exposure remains a separate source of wetness and unsigned transfer intensity
-- **Current validation:** WaterTemperature slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 225 tests / 74 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-122 — Environmental & Thermal Foundation, signed water thermal-exchange domain slice
+- **Current acceptance:** water temperature + contact intensity produce a bounded signed `ThermalExchangeRate` that converges the body toward a water-specific equilibrium instead of applying fixed Celsius offsets
+- **Current validation:** signed water-exchange slice passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks`, 234 tests / 77 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint WaterTemperature; next derive signed water exchange toward a thermal equilibrium without hard-coded `-X °C` exposure modifiers
+- **Next action:** checkpoint signed water exchange; next LW-122 slice should model ambient-air/microclimate exchange and wetness amplification before armor/heat-source integration
 
 ## M12.4 — checkpoint local
 
