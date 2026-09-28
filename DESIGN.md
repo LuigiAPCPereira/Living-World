@@ -331,6 +331,8 @@ LW-123 / quarto slice: frost-only profiles permanecem elegíveis mesmo quando br
 
 LW-123 / quinto slice: cold breath e frost possuem toggles independentes sob `climate.thermal-feedback`. `ThermalRuntimeReadout` inclui o profile puro de feedback e `/lw thermal` expõe breath intensity/cadence + frost intensity sem avançar o runtime. Isso permite tuning e smoke comparando decisão e apresentação sem transformar diagnóstico em gameplay.
 
+LW-124 / primeiro slice: `core.companion` define `CompanionPackManifest`, kinds DATAPACK/RESOURCE_PACK, requirements e compatibilidade por schema. `living-world-pack.properties` é o formato de manifest dependency-free; versão textual é diagnóstica, SHA-256 é opcional/verificável quando bytes são observados e ausência distingue optional/required. Nenhum pack é instalado, servido ou exigido neste slice.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

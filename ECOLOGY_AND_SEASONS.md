@@ -136,6 +136,12 @@ plugin espera datapack schema 3 e resource schema 5
 
 Manifests devem permitir diagnóstico de versão, schema, hash e compatibilidade.
 
+**Checkpoint de implementação LW-124 / primeiro slice:** o core agora possui um contrato dependency-free para companions em `living-world-pack.properties`. O manifest contém `kind=datapack|resourcepack`, `version`, `schema` e `sha256` opcional. `CompanionPackManifestCodec` lê/escreve esse formato sem biblioteca externa.
+
+`CompanionPackContractPolicy` verifica **tipo + schema**; versões humanas diferentes continuam compatíveis quando o schema esperado coincide. Hash declarado só é comparado quando bytes/hash observado estão disponíveis. Ausência possui semântica explícita de `OPTIONAL_MISSING` ou `REQUIRED_MISSING`, e os defaults atuais mantêm datapack/resourcepack opcionais até os próximos slices de bootstrap/delivery.
+
+`LivingWorldCompanionContracts` centraliza os schemas esperados atuais: datapack schema 1 e resourcepack schema 1. Isso é contrato do plugin, não evidência de que packs físicos já existam ou estejam instalados.
+
 ## 4. Compatibilidade de worldgen como requisito de arquitetura
 
 Ambiente-alvo oficial para desenvolvimento e smoke:

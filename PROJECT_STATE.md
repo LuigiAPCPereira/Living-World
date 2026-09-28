@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-124 — plugin/datapack/resourcepack runtime contracts, after closing LW-123 implementation
-- **Current acceptance:** LW-123 code is complete: bounded/jittered breath, progressive frost, independent toggles and read-only diagnostics are implemented without freeze ticks/damage; runtime visual quality remains explicitly unvalidated
-- **Current validation:** LW-122 remains implemented-not-validated for recent runtime refinements; LW-123 automated implementation gates pass at 381 tests / 127 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`; combined thermal/visual smoke is queued for the next player-access window
+- **Current task:** LW-124 — companion pack runtime contracts, manifest/schema foundation
+- **Current acceptance:** plugin owns a dependency-free DATAPACK/RESOURCE_PACK manifest contract; compatibility uses kind + schema rather than textual version equality, missing optional packs fall back safely and declared SHA-256 can be checked when bytes are observed
+- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 slice 1 passes full gates at 390 tests / 129 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-123 diagnostics/toggles and begin LW-124 with explicit plugin/datapack/resourcepack manifest/schema contracts; do not require actual seasonal assets yet
+- **Next action:** checkpoint LW-124 manifest/schema foundation, then define explicit datapack bootstrap and resourcepack client-status/fallback state machines without shipping seasonal assets yet
 
 ## M12.4 — checkpoint local
 
