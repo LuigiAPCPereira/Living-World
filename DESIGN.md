@@ -293,6 +293,8 @@ Sétimo slice de LW-122: `AirThermalExchangePolicy` aplica a mesma ideia ao ar. 
 
 Oitavo slice de LW-122: `WindExposure` e `ShelterFactor` alimentam `AirTransferPolicy`, que produz um `AirThermalTransferFactor` bounded. O domínio só conhece intensidades normalizadas; detectar céu aberto, vento, altitude ou geometria de abrigo fica para adapters Paper bounded/cached. Nenhum algoritmo tenta classificar semanticamente uma construção como “casa”.
 
+Nono slice de LW-122: `PlayerActivity` + `ActivityThermalPolicy` adicionam calor metabólico pequeno e composável por `ThermalExchangeRate`. A atividade não altera ambiente, water temperature nem vento. `GLIDING` representa apenas esforço corporal baixo; eventual convecção de Elytra entra por `WindExposure`.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

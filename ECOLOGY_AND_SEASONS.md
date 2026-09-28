@@ -404,6 +404,10 @@ Fontes frias candidatas: powder snow, ice, packed ice, blue ice e água extremam
 
 Atividade pode gerar calor metabólico moderado: parado = baseline; walking = pequeno efeito; sprinting = maior geração; swimming = atividade + alta troca com água; climbing = pequeno/moderado; Elytra/high-speed exposure pode aumentar convecção quando aplicável.
 
+**Checkpoint de implementação LW-122 / nono slice:** `PlayerActivity` separa esforço metabólico de exposição ambiental. `ActivityThermalPolicy` gera apenas a contribuição positiva acima do baseline para `WALKING`, `SPRINTING`, `SWIMMING`, `CLIMBING` e `GLIDING`; `RESTING` adiciona zero. Elytra possui baixo calor metabólico aqui — seu resfriamento por velocidade continuará pertencendo a `WindExposure`.
+
+Cenários de domínio garantem que sprint reduz a perda líquida em frio extremo sem invertê-la, swimming não supera o resfriamento de água a `0 °C`, e sprint aumenta ganho térmico em ambiente quente. Portanto atividade ajuda, mas não substitui abrigo/equipamento.
+
 Sprint nunca deve substituir abrigo/fogueira em frio extremo. Em calor, atividade + armadura de alta retenção pode acelerar sobreaquecimento.
 
 ### 5.12 Vento, exposição e altitude
