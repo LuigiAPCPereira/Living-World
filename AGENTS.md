@@ -26,9 +26,9 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current integration/test focus: **M13 Waystone navigation clarity + M14 Discovery foundation** on local `main`. The accepted M12.5 environmental/thermal direction remains staged and must not be implemented opportunistically while this integration is being validated.
+Current integration/test focus on `main` remains **M13 Waystone navigation clarity + M14 Discovery foundation**. The user has explicitly authorized one parallel QoL slice on GitHub branch `qol/hotbar-auto-refill`: **M19 Hotbar Auto-Refill + GitHub Actions CI**. The accepted M12.5 environmental/thermal direction remains staged.
 
-Do not implement later roadmap modules opportunistically.
+On the QoL branch, do not broaden M19 into sorting, tool replacement, container automation or other convenience features without a new explicit decision. Do not implement later roadmap modules opportunistically.
 
 ## Architecture rules
 
