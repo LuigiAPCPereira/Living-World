@@ -43,6 +43,7 @@ import dev.signalshards.livingworld.features.ecology.paper.PaperFarmlandMoisture
 import dev.signalshards.livingworld.features.ecology.paper.PaperFireSpreadModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperGroundCoverSpreadModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperNaturalGrowthModule;
+import dev.signalshards.livingworld.features.qol.autorefill.paper.PaperHotbarAutoRefillModule;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudModule;
@@ -272,6 +273,10 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)
+                ),
+                new PaperHotbarAutoRefillModule(
+                        this,
+                        getConfig().getBoolean("qol.hotbar-auto-refill.enabled", true)
                 ),
                 new PaperDiscoveryModule(
                         discoveryEvents,
