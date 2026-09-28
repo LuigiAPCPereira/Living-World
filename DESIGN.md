@@ -355,6 +355,8 @@ Feedback térmico deve progredir de frio perceptível a congelamento severo, inc
 
 Visual sazonal amplo pode ser projetado ao cliente; estado com colisão/gameplay, como gelo caminhável e snow layers físicas, deve existir no servidor. Biomas auxiliares sazonais/packets são hipótese técnica a validar antes de compromisso com NMS/registry machinery.
 
+LW-126 / spike slice 1: Paper 26.3 não possui API pública per-player para biome/tint/fog projection. `World#setBiome` é server truth e não deve ser usado para um efeito visual-only. BIOME é readable via RegistryAccess, mas não writable via RegistryEvents. O runtime contém `ClientboundChunksBiomesPacket` e uma rota via CraftPlayer/ServerPlayer connection, então um adapter NMS estreito é tecnicamente plausível; payload serialization/versioning ainda não foram validados e nenhum código NMS foi adicionado.
+
 Performance permanece bounded: nenhum scan recorrente global; trabalho por jogador/região possui budget; mudanças são preferencialmente event/delta-driven com cache/invalidação; acesso Bukkit permanece thread-safe; async é reservado a trabalho puro quando medição justificar.
 
 O desenho completo, benchmarks de referência, transições sazonais e critérios de M12.5 estão em `ECOLOGY_AND_SEASONS.md`.

@@ -7,8 +7,8 @@
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-126 — seasonal client visual projection technical spike, after LW-125 implementation closure
-- **Current acceptance:** LW-125 implementation is property-based across NORMAL/NETHER/THE_END/CUSTOM, multiworld thermal runtime is active, and no biome/mod namespace table is required
-- **Current validation:** LW-124 remains implemented-not-validated for real artifacts; LW-125 automated implementation passes 437 tests / 143 suites / 0 failures/errors/skips plus IntelliJ build and `git diff --check`; real Terralith+Tectonic/Incendium/Nullscape runtime smoke remains pending
+- **Current acceptance:** public Paper API does not provide per-player biome/tint projection; server-side biome mutation is rejected for visual-only presentation. A dedicated ClientboundChunksBiomesPacket path is technically present in the local Paper 26.3 runtime but remains experimental and unimplemented
+- **Current validation:** LW-125 remains implemented-not-validated for real worldgen smoke; LW-126 slice 1 is an API/runtime inspection only, with no production code or world mutation introduced
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-125 automated compatibility closure, then begin LW-126 as a technical spike: prefer public Paper/resourcepack capabilities and isolate any packet/NMS fallback before committing to seasonal biome projection
+- **Next action:** checkpoint LW-126 spike findings; only proceed to a packet adapter if biome payload construction can be isolated/tested without coupling gameplay code to version-specific NMS. Otherwise preserve vanilla/resourcepack/particle fallback and leave broad tint projection deferred
 
 ## M12.4 — checkpoint local
 

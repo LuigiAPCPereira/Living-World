@@ -791,6 +791,14 @@ Uma direção técnica a investigar é usar biomas auxiliares sazonais definidos
 
 Evitar NMS/packets se API pública suficiente existir; se packet-level for necessário, isolar em adapter estreito e documentar razão.
 
+**LW-126 / spike slice 1:** a inspeção da API pública Paper 26.3 não encontrou qualquer equivalente a `Player#sendBiomeChange`. Existem `Player#sendBlockChange(s)` e player weather, mas biome/tint permanece apenas em APIs de mundo/region; `World#setBiome` altera o biome real do servidor e portanto foi rejeitado como solução de apresentação.
+
+`RegistryAccess` expõe `RegistryKey.BIOME` para leitura, porém `RegistryEvents` não oferece BIOME entre os registries graváveis. Portanto criar biomes auxiliares dinamicamente apenas pela API pública do plugin não está comprovado; datapack continua sendo o caminho declarativo candidato para esses entries.
+
+No runtime local Paper 26.3 existe `ClientboundChunksBiomesPacket`, com payload por `ChunkPos + byte[]`, e `CraftPlayer#getHandle().connection` oferece uma rota NMS tecnicamente possível para envio per-player. Isso **não** significa implementação aprovada: o buffer de biome precisa ser construído corretamente, version-specific NMS deve ficar confinado a adapter estreito e nenhuma mutação de biome real pode ser usada como atalho.
+
+Resultado do slice: **API pública insuficiente para foliage/grass/water/sky/fog per-player via biome; NMS packet é viável como hipótese, ainda não implementado**. Até esse adapter ser comprovado, Living World mantém partículas/sons/resourcepack vanilla-safe como fallback e não promete broad seasonal tint.
+
 ### 8.2 Physical Ecology
 
 Se o efeito muda colisão/gameplay, o estado real do servidor deve ser coerente.
