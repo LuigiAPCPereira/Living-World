@@ -512,6 +512,18 @@ O estado é **efêmero por design** neste estágio: não usa PDC, não sobrevive
 
 Essa fronteira é propositalmente independente de Bukkit/Paper. Futuros resolvers Paper devem apenas produzir `ThermalEnvironmentContext`; não podem recalcular matemática térmica nem manipular diretamente o estado corporal. `reset(UUID)` fornece o contrato necessário para quit/respawn sem persistir hipotermia/wetness de um corpo anterior.
 
+### 5.27 Primeiros resolvers Paper + runtime coarse
+
+**Checkpoint de implementação LW-122 / décimo-sétimo slice:** a fronteira Paper agora produz `ThermalEnvironmentContext` real sem duplicar matemática térmica. `PaperPlayerActivityResolver` usa flags/velocidade do próprio jogador; `PaperArmorThermalResolver` lê apenas os quatro slots e cobre os materiais vanilla atuais, incluindo **copper armor** no Paper 26.3; `PaperWaterExposureResolver` usa quatro sondas corporais e só busca superfície quando totalmente submerso.
+
+A profundidade da água é bounded em 32 blocos e usa probing exponencial + refinamento binário, evitando scan linear de coluna. Waterlogged blocks e bubble columns contam como água; lava não.
+
+`PaperWindShelterResolver` usa skylight bruto, weather, altitude relativa ao sea level e velocidade horizontal. Abrigo é derivado de exposição ao céu; nenhuma construção é classificada semanticamente como “casa”.
+
+`PaperLocalHeatSourceResolver` usa **raios fixos bounded**, nunca cubo/volume: no máximo 96 block probes e 8 fontes por avaliação, somente em chunks já carregados, interrompendo raios em blocos oclusivos. Torch/lantern/furnace/smoker/blast furnace/fire/campfire/lava/magma entram quando aplicável; furnace/campfire apagados não aquecem.
+
+`PaperThermalRuntimeModule` é owner do pulse runtime. Default: habilitado, 20 ticks (1 s), trabalho proporcional aos jogadores do mundo climático. O primeiro pulse apenas inicializa relógio; pulsos seguintes usam elapsed real + simulação bounded. Quit/respawn limpam snapshot; mudança de mundo reinicia somente o relógio para não fabricar catch-up quando o jogador retornar. Ainda não existem dano, HUD corporal ou efeitos visuais.
+
 ## 6. Cálculo incremental, cache e invalidação
 
 Não adotar por padrão um loop que recalcula tudo para todos os jogadores a cada segundo.

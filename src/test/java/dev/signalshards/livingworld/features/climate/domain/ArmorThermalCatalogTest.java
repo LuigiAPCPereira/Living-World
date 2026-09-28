@@ -14,6 +14,10 @@ class ArmorThermalCatalogTest {
                         > catalog.profileFor(ArmorThermalMaterial.CHAINMAIL).insulation()
         );
         assertTrue(
+                catalog.profileFor(ArmorThermalMaterial.COPPER).insulation()
+                        < catalog.profileFor(ArmorThermalMaterial.IRON).insulation()
+        );
+        assertTrue(
                 catalog.profileFor(ArmorThermalMaterial.NETHERITE).insulation()
                         > catalog.profileFor(ArmorThermalMaterial.DIAMOND).insulation()
         );

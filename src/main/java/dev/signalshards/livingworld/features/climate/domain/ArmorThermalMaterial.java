@@ -6,6 +6,7 @@ package dev.signalshards.livingworld.features.climate.domain;
 public enum ArmorThermalMaterial {
     LEATHER,
     CHAINMAIL,
+    COPPER,
     IRON,
     GOLD,
     DIAMOND,

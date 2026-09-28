@@ -34,6 +34,7 @@ public final class ArmorThermalCatalog {
                 new EnumMap<>(ArmorThermalMaterial.class);
         profiles.put(ArmorThermalMaterial.LEATHER, new ArmorMaterialThermalProfile(0.70D, 0.25D));
         profiles.put(ArmorThermalMaterial.CHAINMAIL, new ArmorMaterialThermalProfile(0.10D, 0.00D));
+        profiles.put(ArmorThermalMaterial.COPPER, new ArmorMaterialThermalProfile(0.16D, 0.05D));
         profiles.put(ArmorThermalMaterial.IRON, new ArmorMaterialThermalProfile(0.20D, 0.05D));
         profiles.put(ArmorThermalMaterial.GOLD, new ArmorMaterialThermalProfile(0.18D, 0.05D));
         profiles.put(ArmorThermalMaterial.DIAMOND, new ArmorMaterialThermalProfile(0.35D, 0.10D));

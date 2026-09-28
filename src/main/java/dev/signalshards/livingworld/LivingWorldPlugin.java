@@ -9,6 +9,7 @@ import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarWorldRe
 import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
 import dev.signalshards.livingworld.features.climate.domain.ApparentTemperaturePolicy;
 import dev.signalshards.livingworld.features.climate.application.WeatherEventPlanner;
+import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
 import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileThresholds;
@@ -16,6 +17,9 @@ import dev.signalshards.livingworld.features.climate.paper.PaperClimateCoordinat
 import dev.signalshards.livingworld.features.climate.paper.PaperClimateSampler;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateResolver;
 import dev.signalshards.livingworld.features.climate.paper.PaperLocalClimateReadoutProvider;
+import dev.signalshards.livingworld.features.climate.paper.PaperThermalEnvironmentResolver;
+import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeModule;
+import dev.signalshards.livingworld.features.climate.paper.PaperThermalRuntimeSettingsLoader;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherController;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventAnnouncement;
 import dev.signalshards.livingworld.features.climate.paper.PaperWeatherEventSettingsLoader;
@@ -176,6 +180,13 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 climateClassifier,
                 climatePolicy
         );
+        PaperThermalRuntimeModule thermalRuntime = new PaperThermalRuntimeModule(
+                this,
+                calendarWorld,
+                PaperThermalRuntimeSettingsLoader.load(getConfig()),
+                new PaperThermalEnvironmentResolver(localClimate),
+                new PlayerThermalRuntimeService()
+        );
         PaperNaturalGrowthModule naturalGrowth = new PaperNaturalGrowthModule(
                 this,
                 calendarWorld,
@@ -269,6 +280,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 farmlandMoisture,
                 fireSpread,
                 seasonalLeaves,
+                thermalRuntime,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

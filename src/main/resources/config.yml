@@ -14,6 +14,11 @@ climate:
     clear-duration-seconds: 600
     precipitation-duration-seconds: 300
     storm-duration-seconds: 180
+  thermal-runtime:
+    # Mantém apenas estado corporal interno; feedback/dano são módulos posteriores.
+    enabled: true
+    # 20 ticks = 1 s. A simulação usa elapsed real e catch-up bounded.
+    update-period-ticks: 20
 
 desire-lines:
   enabled: true
