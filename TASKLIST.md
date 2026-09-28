@@ -48,7 +48,7 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**M12.4 accepted/validated. LW-121 documents the accepted M12.5 foundation; next executable implementation task is LW-122 when requested.**
+**M20 Deposit Matching is the active authorized QoL slice on `qol/deposit-matching`. Mainline M12.5 remains staged; pending runtime validations are tracked separately and do not imply success.**
 
 | LW-060 | M6 | Establish Paper/spark runtime baseline | validated | M5 | measure representative runtime before optimizing hot paths | spark baseline: TPS 20.0; 10s MSPT min/med/p95/max 2.8/4.4/5.9/13.7 ms; 1m 2.8/4.3/6.2/24.1 ms; no evidence justifying speculative optimization | local master |
 | LW-061 | M6 | Add /lw status operator diagnostics | validated | LW-060 | player/console can inspect runtime state and performance without files or unsafe reloads | clean gates + console-path unit test + live MCPFabric player smoke; output confirmed calendar/runtime counters/TPS/MSPT and latest.log stayed clean | local master |
@@ -119,5 +119,5 @@ M20 is explicitly authorized on the dedicated branch `qol/deposit-matching`. Its
 
 | Task | Milestone | Outcome / Task | State | Dependencies | Acceptance / REQ | Validation evidence | Branch / PR |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LW-200 | M20 | Implement conservative Deposit Matching | implemented not validated | M0 | Shift + right-click an empty slot with empty cursor in a real vanilla chest/double-chest, barrel or shulker; source only slots 9..35; deposit only exact `ItemStack.isSimilar` categories already present at trigger time; partial capacity preserves remainder; hotbar/offhand/armor, machines, plugin GUIs and nearby storage remain untouched | policy regression tests added; GitHub CI + final review pending | `qol/deposit-matching` |
+| LW-200 | M20 | Implement conservative Deposit Matching | validated | M0 | Shift + right-click an empty slot with empty cursor in a real vanilla chest/double-chest, barrel or shulker; source only slots 9..35; deposit only exact `ItemStack.isSimilar` categories already present at trigger time; partial capacity preserves remainder; hotbar/offhand/armor, machines, plugin GUIs and nearby storage remain untouched | GitHub Actions CI #16 passed `./gradlew clean test build` on candidate `d78a100`; two-axis code/spec review completed; runtime inventory behavior remains isolated in LW-201 | `qol/deposit-matching` |
 | LW-201 | M20 | Runtime Deposit Matching smoke | pending | LW-200 | real player proves trigger, exact matching, main-inventory-only source boundary, partial transfer conservation, supported/unsupported storage, vanilla occupied-slot behavior, container-switch safety and config-off behavior | pending real-player Paper smoke; scenarios in `RUNTIME_VALIDATION_BACKLOG.md` | `qol/deposit-matching` |

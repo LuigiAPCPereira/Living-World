@@ -7,19 +7,19 @@
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md` + feature-local contracts
 - **Current task:** M20 Deposit Matching QoL on GitHub branch `qol/deposit-matching`; pending M13/M14 runtime validation on `main` remains untouched
-- **Current acceptance:** LW-200 must pass the exact-HEAD GitHub Actions `./gradlew clean test build` gate plus scope/code review; LW-201 real-player inventory smoke is tracked in `RUNTIME_VALIDATION_BACKLOG.md` and may remain deferred while independent work continues
-- **Current validation:** previous `main` evidence remains 183 tests / 57 suites with partial Discovery runtime smoke; M20 branch evidence is still being collected and must not be inferred until the branch CI/review complete
+- **Current acceptance:** LW-200 automated implementation gate is satisfied; LW-201 real-player inventory smoke remains tracked in `RUNTIME_VALIDATION_BACKLOG.md` and may stay deferred while independent work continues
+- **Current validation:** M20 code candidate `d78a100` passed GitHub Actions CI #16 with `./gradlew clean test build`; two-axis code/spec review is complete. This validates LW-200's automated slice only. LW-201 remains runtime-pending. Previous `main` evidence remains historical for M13/M14.
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed base branch:** `main`
 - **Observed M20 branch base:** `cb8803e` — includes the deferred-runtime validation policy
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
-- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability has runtime debt; M12.3/M12.4 concluded; M13/M14 have runtime debt; M20 implementation is in progress on its isolated QoL branch
+- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability has runtime debt; M12.3/M12.4 concluded; M13/M14 have runtime debt; M20 LW-200 is automated-validated on its isolated QoL branch and LW-201 is runtime-pending
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** M20 is not merged; no merge to `main` is authorized by the current slice
 - **Deploy:** not applicable; no runtime deploy executed for M20
 - **Blockers:** no implementation blocker confirmed; user is currently unavailable for local real-player runtime validation
-- **Next action:** finish exact-HEAD CI and two-axis code/spec review for LW-200, persist the resulting evidence, then leave LW-201 queued for later real-player smoke and continue only with separately authorized work
+- **Next action:** keep LW-201 queued for later real-player smoke; M20 needs no further implementation work unless runtime evidence finds a defect. Continue only with separately authorized work.
 
 ## M12.4 — checkpoint local
 
@@ -68,5 +68,5 @@
 - Transfer: deferred from `InventoryClickEvent` to the next server tick; `Inventory.addItem` provides normal partial-stack/empty-slot insertion; unaccepted remainder stays in the original player slot.
 - Conservative UX limitation: the gesture requires an empty top-inventory slot. Fully occupied containers keep vanilla behavior even when an existing stack has spare capacity.
 - Performance boundary: event-driven only; no polling and no surrounding-container scan.
-- Automated validation: pending exact-HEAD CI and final review at this checkpoint.
+- Automated validation: LW-200 code candidate `d78a100` passed GitHub Actions CI #16 (`./gradlew clean test build`) after the final behavior refactor; code/spec review found no remaining blocker.
 - Runtime validation: LW-201 deferred into `RUNTIME_VALIDATION_BACKLOG.md`; no runtime success is inferred from CI.
