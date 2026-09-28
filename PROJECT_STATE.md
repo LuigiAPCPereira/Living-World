@@ -2,23 +2,24 @@
 
 - **Protocol:** Agent Development Protocol v2.2 snapshot in repository
 - **Product scope:** `PRODUCT.md` — Foundation v0.1
-- **Requirements:** `PRODUCT.md`
+- **Requirements:** `PRODUCT.md` + active feature contract `DEPOSIT_MATCHING_SPEC.md`
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
-- **Architecture:** `DESIGN.md`
-- **Current task:** M13/M14 integration — Waystone navigation clarity + Discovery foundation on `main`
-- **Current acceptance:** integrated code must pass main gates, then a real player confirms nearest-first menu/lore/travel and one-time Discovery behavior without regressions in climate/Waystones
-- **Current validation:** merged tree passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks` (183 tests, 57 suites, 0 failures/errors/skips), IntelliJ build and cached diff whitespace gate; user confirmed the first live Discovery title (`Descoberto`), while the remaining LW-131/LW-142 scenarios are still pending
+- **Architecture:** `DESIGN.md` + feature-local contracts
+- **Current task:** M20 Deposit Matching QoL on GitHub branch `qol/deposit-matching`; pending M13/M14 runtime validation on `main` remains untouched
+- **Current acceptance:** LW-200 must pass the exact-HEAD GitHub Actions `./gradlew clean test build` gate plus scope/code review; LW-201 real-player inventory smoke is tracked in `RUNTIME_VALIDATION_BACKLOG.md` and may remain deferred while independent work continues
+- **Current validation:** previous `main` evidence remains 183 tests / 57 suites with partial Discovery runtime smoke; M20 branch evidence is still being collected and must not be inferred until the branch CI/review complete
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
-- **Observed branch:** `main`
+- **Observed base branch:** `main`
+- **Observed M20 branch base:** `cb8803e` — includes the deferred-runtime validation policy
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
-- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability validated; M12.3 concluído; M12.4 implementado/validado; M13 LW-130 validated by integrated-main gates; M14 LW-140/LW-141 implemented with runtime smoke pending
+- **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability has runtime debt; M12.3/M12.4 concluded; M13/M14 have runtime debt; M20 implementation is in progress on its isolated QoL branch
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
-- **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
-- **Deploy:** not applicable
-- **Blockers:** none confirmed
-- **Next action:** complete the remaining LW-131/LW-142 real-player scenarios, then return to LW-122 environmental/thermal specification
+- **Merge:** M20 is not merged; no merge to `main` is authorized by the current slice
+- **Deploy:** not applicable; no runtime deploy executed for M20
+- **Blockers:** no implementation blocker confirmed; user is currently unavailable for local real-player runtime validation
+- **Next action:** finish exact-HEAD CI and two-axis code/spec review for LW-200, persist the resulting evidence, then leave LW-201 queued for later real-player smoke and continue only with separately authorized work
 
 ## M12.4 — checkpoint local
 
@@ -54,3 +55,18 @@
 - Runtime parcial confirmado pelo usuário em 2026-09-27: uma interação física de Waystone exibiu o título `Descoberto`. Isso comprova o caminho de apresentação inicial, mas não encerra sozinho os checks de repetição, rename/travel, clima e destruição/memória.
 - Runtime ainda pendente: completar LW-131/LW-142 com jogador real. Validar menu/lore/travel, silêncio na repetição, backfill idempotente, rename/travel intactos, `/lw climate` coexistente e destruição do anchor sem apagar memória de Discovery.
 - GitHub sync confirmed: local `main` pushed to `LuigiAPCPereira/Living-World`, upstream set to `origin/main`, and follow-up `git pull --ff-only origin main` reported `Already up to date`. No deploy was executed.
+
+## M20 — Deposit Matching branch checkpoint
+
+- Explicit user authorization: implement Deposit Matching as the second QoL slice, using Agent Protocol plus current Minecraft/Paper/Java guidance.
+- Branch: `qol/deposit-matching`, based on `main` commit `cb8803e`.
+- Product/interaction contract: `DEPOSIT_MATCHING_SPEC.md`.
+- Trigger: Shift + right-click an empty slot of an open supported vanilla storage inventory while cursor is empty.
+- Supported first slice: real chest/double chest, barrel and shulker box. Ender Chest, machines, entity storage, plugin GUIs and nearby-container scanning remain out of scope.
+- Source boundary: player main-inventory slots 9..35 only; hotbar/offhand/armor stay untouched.
+- Matching: only `ItemStack.isSimilar` categories present in the initial target snapshot; each source is revalidated against live target state before insertion.
+- Transfer: deferred from `InventoryClickEvent` to the next server tick; `Inventory.addItem` provides normal partial-stack/empty-slot insertion; unaccepted remainder stays in the original player slot.
+- Conservative UX limitation: the gesture requires an empty top-inventory slot. Fully occupied containers keep vanilla behavior even when an existing stack has spare capacity.
+- Performance boundary: event-driven only; no polling and no surrounding-container scan.
+- Automated validation: pending exact-HEAD CI and final review at this checkpoint.
+- Runtime validation: LW-201 deferred into `RUNTIME_VALIDATION_BACKLOG.md`; no runtime success is inferred from CI.
