@@ -335,6 +335,8 @@ LW-124 / primeiro slice: `core.companion` define `CompanionPackManifest`, kinds 
 
 LW-124 / segundo slice: `DatapackRuntimePolicy` diferencia compatibilidade do manifest do estado enabled real. `ResourcePackClientPolicy` modela lifecycle por request UUID e espelha os estados públicos relevantes do Paper, com terminal-state protection e semântica explícita de fallback opcional. O domínio não chama Paper nem decide kick/reload.
 
+LW-124 / terceiro slice: `ResourcePackSessionStore` + `PaperResourcePackStatusModule` observam apenas request UUIDs registrados pelo Living World e ignoram eventos externos. `PaperDatapackRuntimeResolver` lê `DatapackManager#getPack/isEnabled` sem refresh/reload ou mutation. Os adapters já são testados, mas nenhum artifact é enviado/instalado por default.
+
 Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin controla comportamento; datapack fornece dados Minecraft-native declarativos; resourcepack fornece apresentação. Nenhum deles mantém season/climate paralelo. Schemas/manifests devem permitir verificar compatibilidade sem exigir versões textuais idênticas.
 
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.

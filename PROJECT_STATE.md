@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-124 — companion pack runtime contracts, lifecycle-state foundation
-- **Current acceptance:** datapack bootstrap state distinguishes missing/incompatible/disabled/enabled; resourcepack lifecycle is isolated by request UUID and explicitly models accepted/downloaded/loaded/declined/failure/discard states plus optional vanilla fallback vs required no-fallback
-- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 slices 1-2 pass full gates at 399 tests / 131 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
+- **Current task:** LW-124 — companion pack runtime contracts, Paper observation adapter
+- **Current acceptance:** Paper resourcepack events are mapped into Living World sessions only for known request UUIDs; unknown/server-owned requests are ignored, lifecycle cleanup is explicit, and datapack enabled state is read without refresh/reload
+- **Current validation:** LW-122/LW-123 remain implemented-not-validated where live smoke is pending; LW-124 slices 1-3 pass full gates at 408 tests / 135 suites / 0 failures/errors/skips, IntelliJ build/inspections and `git diff --check`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint LW-124 lifecycle states, then add Paper adapters that inspect datapack enabled state and map resourcepack status events/request IDs; actual pack installation/hosting remains opt-in and absent by default
+- **Next action:** checkpoint LW-124 Paper observation adapters, then add opt-in config/loading for manifests and resourcepack delivery; defaults must send/install nothing when artifacts are not configured
 
 ## M12.4 — checkpoint local
 

@@ -1,6 +1,8 @@
 package dev.signalshards.livingworld;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
+import dev.signalshards.livingworld.core.companion.ResourcePackSessionStore;
+import dev.signalshards.livingworld.core.companion.paper.PaperResourcePackStatusModule;
 import dev.signalshards.livingworld.core.module.ModuleManager;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
@@ -189,6 +191,11 @@ public final class LivingWorldPlugin extends JavaPlugin {
         var thermalEnvironment = new PaperThermalEnvironmentResolver(localClimate);
         var thermalRuntimeService = new PlayerThermalRuntimeService();
         var thermalFeedback = new ThermalFeedbackCoordinator();
+        var resourcePackSessions = new ResourcePackSessionStore();
+        var resourcePackStatus = new PaperResourcePackStatusModule(
+                this,
+                resourcePackSessions
+        );
         PaperThermalRuntimeModule thermalRuntime = new PaperThermalRuntimeModule(
                 this,
                 calendarWorld,
@@ -305,6 +312,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 seasonalLeaves,
                 thermalRuntime,
                 thermalFeedbackModule,
+                resourcePackStatus,
                 new PaperDoubleDoorsModule(
                         this,
                         getConfig().getBoolean("qol.double-doors.enabled", true)

@@ -148,6 +148,12 @@ Resourcepack usa state machine própria por UUID de requisição. `ResourcePackC
 
 Para pack opcional, um estado terminal sem `LOADED` ativa fallback vanilla e mantém o contrato de gameplay coerente. Para pack configurado como obrigatório, decline/failure não é considerado contrato satisfeito; o adapter Paper/servidor decidirá a ação operacional, sem inventar essa decisão na policy de domínio.
 
+**Terceiro slice:** `PaperResourcePackStatusMapper` espelha todos os estados públicos atuais de `PlayerResourcePackStatusEvent` para o domínio, e `PaperResourcePackStatusModule` só aplica eventos a uma sessão previamente registrada por `ResourcePackSessionStore`. Isso impede que um resourcepack do `server.properties` ou de outro plugin seja confundido com a requisição do Living World.
+
+O store é efêmero por UUID do jogador, substitui sessão anterior quando uma nova requisição Living World é registrada e limpa em quit/disable. O módulo já participa do lifecycle, mas permanece dormente enquanto delivery não registrar requests.
+
+`PaperDatapackRuntimeResolver` recebe uma compatibilidade já validada e apenas consulta `DatapackManager#getPack(name)` + `isEnabled()`. Ele **não chama `refreshPacks()`**, não habilita/desabilita pack e não executa reload. Bootstrap ativo continua para o próximo slice.
+
 ## 4. Compatibilidade de worldgen como requisito de arquitetura
 
 Ambiente-alvo oficial para desenvolvimento e smoke:
