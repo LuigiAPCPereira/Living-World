@@ -72,11 +72,15 @@ public final class PaperHotbarAutoRefillModule implements LivingWorldModule, Lis
         }
 
         PlayerInventory inventory = player.getInventory();
+        ItemStack oldItem = event.getOldItemStack();
+        ItemStack newItem = event.getNewItemStack();
         if (!policy.shouldRefill(
                 event.getSlot(),
                 inventory.getHeldItemSlot(),
-                event.getOldItemStack(),
-                event.getNewItemStack()
+                oldItem.getAmount(),
+                oldItem.getMaxStackSize(),
+                oldItem.isEmpty(),
+                newItem.isEmpty()
         )) {
             return;
         }
@@ -84,7 +88,7 @@ public final class PaperHotbarAutoRefillModule implements LivingWorldModule, Lis
         scheduleRefill(
                 player,
                 event.getSlot(),
-                event.getOldItemStack().clone()
+                oldItem.clone()
         );
     }
 
@@ -136,9 +140,15 @@ public final class PaperHotbarAutoRefillModule implements LivingWorldModule, Lis
             return;
         }
 
+        ItemStack[] storageContents = inventory.getStorageContents();
         int sourceSlot = policy.findReplacementSlot(
-                inventory.getStorageContents(),
-                depletedItem
+                storageContents.length,
+                slot -> {
+                    ItemStack candidate = storageContents[slot];
+                    return candidate != null
+                            && !candidate.isEmpty()
+                            && candidate.isSimilar(depletedItem);
+                }
         );
         if (sourceSlot < 0) {
             return;
