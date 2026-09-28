@@ -38,22 +38,30 @@ final class PaperDepositMatchingPresentation implements LivingWorldModule, Liste
     private static final long LID_DURATION_TICKS = 10L;
 
     private final JavaPlugin plugin;
+    private final boolean enabled;
     private final Set<BukkitTask> pendingTasks = new HashSet<>();
     private final Set<ItemDisplay> displays = new HashSet<>();
     private final Map<StorageVisualKey, ForcedLid> forcedLids = new HashMap<>();
     private int lidGeneration;
 
-    PaperDepositMatchingPresentation(JavaPlugin plugin) {
+    PaperDepositMatchingPresentation(JavaPlugin plugin, boolean enabled) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
+        this.enabled = enabled;
     }
 
     @Override
     public void enable() {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        if (enabled) {
+            plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        }
     }
 
     @Override
     public void disable() {
+        if (!enabled) {
+            return;
+        }
+
         for (BukkitTask task : Set.copyOf(pendingTasks)) {
             task.cancel();
         }
@@ -79,7 +87,7 @@ final class PaperDepositMatchingPresentation implements LivingWorldModule, Liste
             Location targetCenter,
             List<ItemStack> transferred
     ) {
-        if (transferred.isEmpty()) {
+        if (!enabled || transferred.isEmpty()) {
             return;
         }
 
