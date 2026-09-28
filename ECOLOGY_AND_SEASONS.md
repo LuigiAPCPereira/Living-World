@@ -368,6 +368,10 @@ Armadura pode modificar velocidade de molhamento/secagem ou eficiência de isola
 
 Também deve existir um conceito de `WaterTemperature` derivado do ambiente, dimensão, season e profundidade quando necessário. Não precisa reproduzir oceanografia real; precisa ser coerente e previsível.
 
+**Checkpoint de implementação LW-122 / quinto slice:** `WaterTemperature` agora existe como valor próprio em °C e `WaterTemperaturePolicy` deriva uma aproximação bounded a partir de `AmbientTemperature` + profundidade. A superfície acompanha apenas parte do ambiente; profundidade reduz essa influência e aproxima a água de uma temperatura estável configurável. O intervalo líquido também é bounded, evitando água líquida arbitrariamente abaixo do mínimo configurado. Não há estado persistente por lago/oceano nem tabela de nomes de bioma.
+
+Os defaults (`8 °C` de referência estável, acoplamento superficial parcial e estabilização gradual até uma profundidade de referência) são tuning inicial Vanilla+, não afirmações de física universal. Eles devem permanecer configuráveis/testáveis e podem ser refinados quando dimensão/custom-biome profiles forem implementados.
+
 Profundidade deve importar gradualmente: perto da superfície há pouca penalidade extra; em água profunda o ambiente pode ficar mais severo; em grande profundidade entram frio, baixa luz e isolamento do clima superficial. Não adicionar dano de pressão automaticamente.
 
 ### 5.9 Água sob gelo
