@@ -17,8 +17,8 @@
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
-- **Blockers:** none confirmed
-- **Next action:** continue LW-128 from instrumentation commit `383e5a1`: define a reproducible representative workload/baseline before optimization, then measure the smallest feasible profile first (1 player) with TPS/MSPT plus environmental counter deltas; expand toward 10/25/50+ only where tooling actually permits. Compare equivalent feature-disabled/enabled windows before any performance claim
+- **Blockers:** LW-128 measurement is currently blocked by runtime availability: MCPFabric is on the client side but reports `serverPresent=false` / 0 players; the existing Paper 26.3 build 133 dev server predates instrumentation commit `383e5a1` and holds `run/world/session.lock`, while a fresh build 135 `runServer` attempt aborts on that lock. No benchmark data from the stale/empty runtime is accepted
+- **Next action:** unblock LW-128 by connecting a real client to a server that has actually loaded the current instrumented jar (safely replacing the stale dev runtime first if needed). Then define one fixed measurement window/workload and capture the 1-player baseline with TPS/MSPT plus environmental counter deltas; compare equivalent feature-disabled/enabled windows before any claim and expand to 10/25/50+ only where tooling permits
 
 ## M12.4 — checkpoint local
 

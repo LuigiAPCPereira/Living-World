@@ -75,14 +75,23 @@ commit, preservando uma única instância compartilhada de métricas no composit
 - `./gradlew clean test build` passou; como a suíte completa veio do cache, `./gradlew test --rerun-tasks` foi executado depois e passou com 479 testes / 155 suítes / 0 falhas/erros/skips.
 - Isso valida a **instrumentação**, não o gate de performance final. Nenhum workload representativo/baseline comparativo foi medido ainda.
 
+## Tentativa de medição — 2026-09-28
+
+- MCPFabric foi consultado primeiro, conforme protocolo, e respondeu no lado client com `serverPresent=false`, `playerCount=0`; portanto não existe perfil real de 1 jogador disponível nesta sessão.
+- A run configuration `Run` do IntelliJ é `runServer`. Ela tentou iniciar Paper 26.3 build 135 com o jar atual, mas abortou porque `run/world/session.lock` já estava ocupado.
+- A porta 25565 pertence a um Paper 26.3 build 133 iniciado muitas horas antes do checkpoint `383e5a1`; esse processo carregou o plugin antes da instrumentação atual e não é evidência válida para o gate LW-128.
+- O servidor antigo foi preservado: não houve kill/restart destrutivo, justamente porque o cliente não estava conectado e reiniciar sozinho não desbloquearia a medição.
+- Nenhum TPS/MSPT/counter delta foi registrado como benchmark. Servidor vazio ou runtime pré-instrumentação não substituem o workload aceito.
+
 ## Próxima ação executável
 
 1. Confirmar branch/HEAD/upstream e que `383e5a1` está presente; não repetir o trabalho de instrumentação.
-2. Para o gate de performance propriamente dito, seguir `agent-protocol/investigating-performance`: definir primeiro workload, ambiente, janela de medição e baseline reproduzível.
-3. Medir o menor perfil realmente disponível (1 jogador) antes de escalar; registrar TPS/MSPT e deltas das métricas ambientais no mesmo intervalo.
-4. Comparar janelas equivalentes com as features ambientais relevantes desabilitadas/habilitadas, sem alterar gameplay como otimização escondida.
-5. Só expandir para 10/25/50+ jogadores onde o tooling puder produzir carga representativa; registrar explicitamente limitações de simulação/carga.
-6. Se surgir custo real, identificar hot path e formar uma única hipótese antes de mudar código; caso contrário, registrar o baseline e não otimizar por intuição.
+2. Conectar um cliente real a um runtime que tenha carregado o jar instrumentado atual. Se for necessário substituir o servidor dev build 133, fazê-lo de forma segura/graciosa antes de iniciar o novo `runServer`.
+3. Para o gate de performance propriamente dito, seguir `agent-protocol/investigating-performance`: fixar workload, ambiente, janela de medição e baseline reproduzível antes de otimizar.
+4. Medir primeiro 1 jogador; registrar TPS/MSPT e deltas das métricas ambientais no mesmo intervalo.
+5. Comparar janelas equivalentes com as features ambientais relevantes desabilitadas/habilitadas, sem alterar gameplay como otimização escondida.
+6. Só expandir para 10/25/50+ jogadores onde o tooling puder produzir carga representativa; registrar explicitamente limitações de simulação/carga.
+7. Se surgir custo real, identificar hot path e formar uma única hipótese antes de mudar código; caso contrário, registrar o baseline e não otimizar por intuição.
 
 ## Restrições importantes
 
