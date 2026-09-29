@@ -528,3 +528,47 @@ Before implementation, the highest-value questions are now:
 6. Is amethyst consumed directly to recharge Bound Resonance, refined first, or used through a resonant station?
 7. Should the first tool rune require the player to be Attuned, or can anyone use a charged runic artifact while only knowledgeable players can create it?
 8. If Inner Resonance/Mana arrives later, can it power artifacts at all, or should artifact and personal reservoirs remain deliberately separate for balance?
+
+
+## Future-proofing for The Sift (official 2027 dimension)
+
+Minecraft Live 2026 officially announced **The Sift** as the next Minecraft dimension, coming to Java and Bedrock in 2027. Mojang currently describes it as vibrant, strange, and **teeming with souls**; Dungeons II shows areas such as the Meadow and Carapace and uses rifts as the travel mechanism there.
+
+This materially changes the lore-design constraint for Living World:
+
+- Do **not** make Ancient Cities the origin of Resonance or the sole authoritative magical civilization.
+- Ancient Cities may still represent one culture, research tradition, failed experiment, archive or interface with Resonance.
+- Do **not** assume that the reinforced-deepslate frame is the Sift portal until Mojang explicitly confirms the base-game access mechanism.
+- Do **not** make sculk, amethyst or any one Overworld material the ultimate source of all magic.
+- Keep Resonance cosmology broad enough that a future dimension can reveal a deeper layer without retconning established Living World mechanics.
+
+A safer narrative model is:
+
+> Resonance predates every known civilization and is observable in many places. Different cultures/materials learned to interact with different expressions of it.
+
+Under that model:
+
+- Geodes can still be the player's **first school of resonance** because amethyst is an accessible natural resonator.
+- Ancient Cities can still preserve advanced knowledge about vibration, echoes, souls or dimensional phenomena.
+- The Nether and End can later express their own branches without being subordinated to Overworld magic.
+- The Sift can later become a major source of evidence about souls, rifts, dimensional resonance or other phenomena **only after Mojang publishes enough canonical detail**.
+
+The official "teeming with souls" description is especially relevant to future Living World magic, but no mechanic or lore claim should currently equate:
+- souls = Resonance,
+- The Sift = source of Resonance,
+- sculk = Sift matter,
+- Ancient City frame = Sift portal.
+
+Those remain hypotheses until official Minecraft material supports them.
+
+### Lore architecture rule
+
+Living World should prefer **layered interpretations** over a single-civilization origin story:
+
+1. **Natural phenomenon:** Resonance exists in the world independently of people.
+2. **Material expressions:** amethyst, sculk/echo phenomena, and future dimensional materials may interact with it differently.
+3. **Civilizations/traditions:** different peoples discover partial techniques and encode them as runes, rituals, artifacts or other practices.
+4. **Player discovery:** the player reconstructs this fragmented knowledge rather than learning one complete "true magic system" from a single ruin.
+5. **Future dimensions:** new Mojang dimensions can deepen or contradict in-world theories without requiring Living World to rewrite its core mechanics.
+
+This makes the lore intentionally compatible with Minecraft's evolving canon and keeps The Sift available as a future expansion surface rather than prematurely consuming it as an explanation.
