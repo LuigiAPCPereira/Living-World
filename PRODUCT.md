@@ -7,6 +7,7 @@
 - **Requirements authority:** this document + explicit user decisions captured in `TASKLIST.md` / `DESIGN.md`.
 - **Protocol:** Agent Development Protocol v2.2 snapshot in this repository.
 - **Specialized environmental design:** `ECOLOGY_AND_SEASONS.md` records the accepted direction for ecology, seasons, temperature, worldgen compatibility and plugin/datapack/resourcepack orchestration.
+- **Future ideation:** `FUTURE_VISION.md` consolidates non-binding product ideas. Its contents do not promote scope, milestones, tasks or delivery commitments.
 
 ## Product principles
 
