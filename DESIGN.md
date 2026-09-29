@@ -367,6 +367,8 @@ LW-127 / boundedness gate: regressões verificam early-stop no mutation budget, 
 
 LW-127 / SNOW integration: `WinterSnowMutationPolicy`, `PaperWinterSnowTargetResolver` e `PaperWinterSnowMutator` mantêm snow separado de ICE em policy/ownership, mas compartilham o mesmo scheduler/probe/mutation budget de `PaperPhysicalWinterModule`. Cold precipitation pode place/accumulate owned snow até cap de layers; thaw/non-terrestrial só afetam ownership do plugin; snow não-owned falha fechado. WATER/LAVA não são suportes válidos para placement.
 
+LW-127 / automated closure: ICE e SNOW agora compartilham um único owner opt-in e bounded, com ownership persistente por chunk, histerese térmica, loaded-chunk-only probes e early-stop por mutation budget comprovado em testes para ambos os caminhos. O status permanece implemented-not-validated até smoke runtime/tuning.
+
 Performance permanece bounded: nenhum scan recorrente global; trabalho por jogador/região possui budget; mudanças são preferencialmente event/delta-driven com cache/invalidação; acesso Bukkit permanece thread-safe; async é reservado a trabalho puro quando medição justificar.
 
 O desenho completo, benchmarks de referência, transições sazonais e critérios de M12.5 estão em `ECOLOGY_AND_SEASONS.md`.

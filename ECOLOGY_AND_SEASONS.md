@@ -878,6 +878,8 @@ Break/place/fade observados pelo módulo limpam ownership na posição afetada p
 
 Regression dedicado confirma que, com `maxMutationsPerPlayer=1`, uma mutação de SNOW encerra imediatamente os probes restantes daquele jogador, exatamente como no caminho de ICE.
 
+Com esses contratos, LW-127 fica **implementado, mas ainda não validado em runtime real**. A lacuna restante é smoke/tuning em mundo real: observar formação de ICE, deposição/acúmulo de SNOW e thaw gradual sem tocar superfícies naturais/de jogador, confirmando também que os budgets escolhidos são visualmente suficientes.
+
 Congelamento/degelo deve considerar histerese para impedir oscillation próxima de 0 °C. Valores como congelar abaixo de -2 °C e derreter acima de +2 °C são exemplos de tuning, não decisão final.
 
 O custo deve escalar principalmente com jogadores/áreas ativas e mudanças relevantes, não com tamanho total do mapa.
