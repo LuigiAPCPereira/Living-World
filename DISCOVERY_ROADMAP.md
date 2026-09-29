@@ -42,11 +42,26 @@ Outcome: entering a biome for the first time is a personal discovery.
 
 ## M16 — World landmarks
 
-Outcome: significant places become part of the world's memory.
+Outcome: significant generated places become part of the world's memory.
 
-- New `DiscoveryType("landmark")` with `DiscoveryScope.WORLD`, exercising `WorldDiscoveryStore` for the first time.
-- Producing feature stays separate from Discovery; the landmark rule owns detection, Discovery owns recording.
-- Open question: how landmarks are identified without hard-coding a structure list.
+Initial policy decision:
+
+- Landmark eligibility is declarative through the Paper/Minecraft structure-registry tag `#livingworld:landmarks`. M16 does not hard-code vanilla structure names and accepts entries from any namespace supplied by the server/datapacks.
+- If `#livingworld:landmarks` is absent or empty, the feature is safely inert. The plugin checks `Registry#hasTag` before resolving it.
+- A placed landmark instance receives one plugin-owned UUID in the `GeneratedStructure` PDC on first eligible encounter. Paper exposes that PDC from the underlying `StructureStart` and persists it in structure NBT, so Discovery identity does not depend on coordinates or visible names.
+- The Discovery owner is the world UUID because `landmark` uses `DiscoveryScope.WORLD`. Durable `DiscoveryId` is the instance UUID; the structure registry key is only non-persistent label/context.
+- Detection is bounded and event-driven: on real block movement/teleport, inspect only the destination chunk's `Chunk#getStructures()`, filter structures by `#livingworld:landmarks`, and accept only generated structures whose bounding box contains the destination position.
+- M16 never calls `locateNearestStructure`, never performs a radius search, never scans unloaded chunks and never force-loads chunks.
+
+Slices:
+
+- **LW-160 — landmark discovery contract:** declare `DiscoveryType("landmark")`, WORLD scope, UUID→`DiscoveryId` mapping and readable structure-key fallback label; document `#livingworld:landmarks` as the eligibility contract.
+- **LW-161 — Paper landmark identity/resolver:** resolve the structure tag dynamically, treat missing/empty tag as no-op, read-or-create one UUID in eligible `GeneratedStructure` PDC and expose a small resolved-landmark value without leaking Paper into Discovery core.
+- **LW-162 — bounded landmark-entry detector:** observe only real block movement/teleport, inspect the destination chunk only, bounding-box test eligible generated structures, suppress repeated work while the player remains inside the same instance set and delegate first-world-discovery semantics to `DiscoveryService`.
+- **LW-163 — runtime smoke:** prove first world-scope landmark discovery, silence while remaining/re-entering the same landmark, distinct discovery for another eligible instance, persistence across restart/reconnect, safe behavior with missing tag and clean logs. This smoke may remain deferred under `RUNTIME_VALIDATION_BACKLOG.md` while independent automated work continues.
+
+- Producing feature stays separate from Discovery; the landmark rule owns detection/identity, Discovery owns recording/event semantics.
+- Depends on: M14.
 
 ## M17 — Collective discovery & broadcast
 

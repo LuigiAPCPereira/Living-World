@@ -19,6 +19,8 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M12 — Seasonal ecology & environmental foundation | evolve validated seasonal ecology into a shared thermal/environmental foundation before broader visual/physical simulation | M10, M11 | LW-120..LW-128 | in progress |
 | M13 — Waystone navigation clarity | make the existing Waystone network easier to scan by surfacing nearest-first same-world ordering plus world/coordinate/distance context without changing access or travel safety | M8 | LW-130..LW-131 | in progress |
 | M14 — Discovery foundation | add durable personal/world discovery memory and prove it through additive Waystone integration without coupling presentation or changing Waystone rules | M3, M13 | LW-140..LW-142 | in progress |
+| M15 — Biome discovery | turn first biome encounters into personal Discovery records through bounded movement events and namespaced-key identity; implementation lives on its own branch and runtime smoke is deferred | M14 | LW-150..LW-152 | in progress |
+| M16 — World landmarks | turn declaratively tagged generated structures into world-scope Discovery records using per-instance persistent UUIDs and destination-chunk-only detection | M14 | LW-160..LW-163 | in progress |
 
 ## Sequencing principles
 

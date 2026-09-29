@@ -6,19 +6,19 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M13/M14 integration — Waystone navigation clarity + Discovery foundation on `main`
-- **Current acceptance:** integrated code must pass main gates, then a real player confirms nearest-first menu/lore/travel and one-time Discovery behavior without regressions in climate/Waystones
-- **Current validation:** merged tree passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks` (183 tests, 57 suites, 0 failures/errors/skips), IntelliJ build and cached diff whitespace gate; user confirmed the first live Discovery title (`Descoberto`), while the remaining LW-131/LW-142 scenarios are still pending
+- **Current task:** M16 / LW-160 — world-landmark Discovery contract on `discovery/m16-world-landmarks`
+- **Current acceptance:** landmark Discovery uses WORLD scope; eligibility is declarative through `#livingworld:landmarks`; each generated eligible structure instance receives one persistent plugin-owned UUID in its `GeneratedStructure` PDC; detection must remain destination-chunk-only and avoid radius search, scans, polling and force-load
+- **Current validation:** M16 implementation has not started. Technical research against current Paper APIs confirmed dynamic structure registry tags, `Registry#hasTag`, destination-chunk `Chunk#getStructures()` intersection semantics, `GeneratedStructure#getBoundingBox()`, and persistent `GeneratedStructure` PDC backed by `StructureStart` NBT. Existing M13/M14 runtime-only scenarios remain deferred in `RUNTIME_VALIDATION_BACKLOG.md`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
-- **Observed branch:** `main`
+- **Observed branch:** `discovery/m16-world-landmarks` (based on `main` `cb8803e`)
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
 - **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability validated; M12.3 concluído; M12.4 implementado/validado; M13 LW-130 validated by integrated-main gates; M14 LW-140/LW-141 implemented with runtime smoke pending
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
-- **Blockers:** none confirmed
-- **Next action:** complete the remaining LW-131/LW-142 real-player scenarios, then return to LW-122 environmental/thermal specification
+- **Blockers:** none for LW-160 automated work; LW-163 real-player validation is explicitly deferrable and must stay separate from automated acceptance
+- **Next action:** implement LW-160 only: add a pure `LandmarkDiscovery` contract (WORLD type, UUID identity, readable structure-key fallback label) plus tests and composition-root registration. Validate via branch GitHub Actions before starting the Paper resolver in LW-161
 
 ## M12.4 — checkpoint local
 

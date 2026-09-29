@@ -114,6 +114,43 @@ For each completed runtime item, record:
 
 ---
 
+### LW-163 — World landmark Discovery real-player smoke
+
+**Branch:** `discovery/m16-world-landmarks`.
+
+**Current state:** pending; runtime validation may be deferred after automated LW-160..LW-162 gates are green.
+
+**Goal:** prove that declaratively tagged generated structures become durable world-scope discoveries without radius searches, coordinate-based identity or duplicate presentation.
+
+**Prepare**
+
+- Provide a datapack/server data setup where `#livingworld:landmarks` contains at least one generated structure key.
+- Prefer two distinct generated instances of an eligible structure; a custom/datapack namespace is useful when available.
+
+**Scenarios**
+
+- Enter the bounding box of an undiscovered eligible generated structure and confirm exactly one Discovery presentation.
+- Continue moving inside the same structure and confirm no duplicate presentation.
+- Leave and re-enter the same instance and confirm it remains known/silent.
+- Enter a second eligible generated instance and confirm it becomes a distinct world discovery.
+- Disconnect/reconnect and revisit both instances; confirm identity remains durable.
+- Restart the server, revisit a known instance and confirm the same structure UUID is reused rather than creating a new discovery.
+- Remove/omit `#livingworld:landmarks` in a controlled setup and confirm the feature becomes safely inert rather than failing plugin startup.
+- When a non-`minecraft` structure is available, include it in the tag and confirm namespace-agnostic behavior.
+- Confirm server logs stay clean and no nearby/unloaded chunks are force-loaded by the feature.
+
+**Evidence to record**
+
+- Branch + exact commit tested.
+- Paper/Purpur and client versions.
+- Datapack/tag contents used by the scenario.
+- First-instance presentation, repeated-entry silence and second-instance presentation.
+- Evidence that restart/reconnect preserved the same generated-structure identity.
+- Missing-tag behavior.
+- Relevant logs and any setup/cleanup performed.
+
+---
+
 ### LW-191 — Hotbar Auto-Refill real-player smoke
 
 **Branch implementation:** `qol/hotbar-auto-refill`.
