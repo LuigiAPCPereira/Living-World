@@ -572,3 +572,285 @@ Living World should prefer **layered interpretations** over a single-civilizatio
 5. **Future dimensions:** new Mojang dimensions can deepen or contradict in-world theories without requiring Living World to rewrite its core mechanics.
 
 This makes the lore intentionally compatible with Minecraft's evolving canon and keeps The Sift available as a future expansion surface rather than prematurely consuming it as an explanation.
+
+
+## Candidate design — First Resonance contact
+
+This section is a **design candidate**, not an approved milestone or implementation contract.
+
+### Design objective
+
+The first geode should not behave like a vending machine for magic. It should be the player's first proof that the world contains a phenomenon they previously did not know how to perceive.
+
+The sequence should communicate:
+
+1. **something responded;**
+2. **the player noticed it;**
+3. **the player became capable of recognizing related patterns;**
+4. **no practical rune power is granted yet.**
+
+### First-contact trigger
+
+A first version should prefer an ordinary server-observable action inside a naturally generated amethyst geode rather than a bespoke GUI.
+
+Candidate trigger:
+
+- player enters/interacts inside a geode and directly interacts with a meaningful amethyst component;
+- the event must be one-time per player;
+- the system should avoid triggering from an arbitrary placed amethyst block in a base if the implementation can reliably distinguish geode context;
+- if reliable natural-geode classification proves too brittle, use a narrower explicit interaction contract rather than pretend certainty.
+
+The exact trigger remains open until implementation research proves which Paper/world-generation signals are reliable enough.
+
+### Presentation
+
+The moment should be short and restrained:
+
+- a subtle amethyst/chime sound;
+- a small local particle response;
+- a short title/subtitle or action-bar line;
+- no cinematic lock, teleport, long text wall or forced GUI.
+
+Working copy tone:
+
+> **Ressonância**
+> Os cristais respondem.
+
+or
+
+> **Sintonia**
+> Você começa a perceber um padrão nos cristais.
+
+The wording is illustrative only. It should feel like discovery, not a quest notification.
+
+### What changes after first contact
+
+The player gains **Attunement** as a durable knowledge/perception state.
+
+At this stage Attunement should mean only:
+
+- the player can recognize/read runic inscriptions;
+- the player can receive meaningful feedback from future resonance/rune discoveries;
+- the player may gain access to a lightweight knowledge record/codex.
+
+Attunement should **not yet** mean:
+- a Mana bar;
+- passive stat buffs;
+- automatic spellcasting;
+- increased mining speed;
+- free resonance generation.
+
+This preserves a clean progression boundary between *perceiving magic* and *wielding magic*.
+
+## Candidate design — Resonance Codex
+
+A lightweight **Codex of Resonance** can act as the player's durable in-world record without becoming a skill-tree GUI.
+
+### Principle
+
+The Codex records what the player has discovered. It does not sell unlocks.
+
+The player should never open the Codex and see:
+
+> Vein Rune — locked — costs 30 XP
+
+Instead, unknown knowledge can remain absent, fragmentary or represented as unreadable/empty sections until the world gives the player enough evidence.
+
+### Initial scope
+
+After first Attunement, the Codex may contain only:
+
+- a short note explaining that amethyst appears to resonate;
+- a record of the geode discovery;
+- an initially empty **Inscriptions** section;
+- perhaps a short reminder that unfamiliar runic marks may now be recognizable.
+
+The first practical rune is learned later, from exploration.
+
+### Server-side-first representation
+
+A first implementation could use a normal book-like item or another vanilla-compatible inventory item carrying Living World metadata. A resource pack could later improve icon/model/presentation without owning the actual knowledge state.
+
+The canonical knowledge state must remain server-side and player-owned; losing the physical Codex must not erase learned runes.
+
+The physical Codex is therefore a **view/interface**, not the database.
+
+## Candidate design — Rune knowledge discovery
+
+A rune discovery should have two layers:
+
+1. **Inscription source** — where the world exposes the pattern;
+2. **Player knowledge** — durable record that the player understands that pattern.
+
+A candidate flow:
+
+```
+Attuned player
+   ↓
+finds ancient inscription
+   ↓
+recognizes it as meaningful
+   ↓
+studies/reads/interacts
+   ↓
+RuneKnowledge unlocked
+   ↓
+Codex gains an entry
+   ↓
+player can reproduce that rune later
+```
+
+The original inscription does not need to be a consumable one-time loot item.
+
+For SMP fairness, the strongest current candidate is that knowledge sources should either:
+
+- be readable by multiple players;
+- be reproducible/transcribable by someone who already knows the rune;
+- or both.
+
+This avoids turning a single rare chest roll into permanent server monopoly.
+
+## Candidate design — Inscription tone
+
+Rune names should be mildly mystical while retaining functional legibility.
+
+Working examples:
+
+- **Runa da Veia Profunda** — follows connected ore veins;
+- **Runa do Lenho Vivo** — follows the structure of a natural tree;
+- **Runa da Fratura** — breaks a bounded area/pattern, such as a future 3×3 mining effect.
+
+The rule is:
+
+> evocative noun/phrase first, but the name alone should give a competent player a strong clue about the behavior.
+
+Avoid both extremes:
+
+- technical/mod-like: “3x3 Mining Rune”;
+- opaque high-fantasy: “Sigil of Xhar'Veth”.
+
+## Candidate design — The first practical rune
+
+The strongest first practical rune remains **Runa da Veia Profunda** because:
+
+- eligible blocks can be tightly enumerated;
+- the effect is easy to understand;
+- false positives are much less destructive than tree classification errors;
+- it proves RuneKnowledge + inscription + Bound Resonance + bounded execution with one contained feature.
+
+The first rune should not be awarded during geode Attunement itself.
+
+A stronger progression is:
+
+```
+Geode
+→ discover Resonance
+
+later
+
+Underground/ancient knowledge source
+→ discover Runa da Veia Profunda
+
+later
+
+Inscription process
+→ create first runic pickaxe
+
+later
+
+Recharge
+→ maintain the artifact
+```
+
+This gives each mechanic its own narrative beat instead of collapsing the entire system into one tutorial moment.
+
+## Candidate design — Applying a known rune
+
+Three candidate application surfaces remain open:
+
+### Smithing Table
+
+Strong Vanilla+ fit. It already communicates intentional equipment modification.
+
+Possible conceptual recipe:
+
+```
+tool
++ runic medium/matrix
++ resonant binding material
+→ inscribed tool
+```
+
+Advantages:
+- familiar vanilla station;
+- no new block required;
+- explicit, repeatable, server-side-friendly.
+
+Risk:
+- can feel too much like another smithing template if presentation is not distinct.
+
+### Anvil
+
+Simple and very Vanilla-compatible, but risks feeling like “enchanted book again.”
+
+### Runescribing interaction / altar
+
+Best fantasy identity, but too large as a prerequisite for the first rune unless later design proves the extra world interaction is worth it.
+
+**Current research preference:** Smithing Table first; leave a bespoke runescribing station for a later, broader magic system.
+
+## Candidate design — Recharge
+
+The recharge model should preserve the distinction:
+
+- **Rune** = behavior;
+- **Resonance** = fuel.
+
+The player should not need to repeatedly rediscover/recreate the rune when charge reaches zero.
+
+Current strongest material candidate remains amethyst, but direct `amethyst shard -> charge` conversion may be too flat.
+
+Three possible depths:
+
+1. **Direct:** consume amethyst to recharge the tool.
+2. **Refined:** convert amethyst + another vanilla reagent into a resonant medium, then recharge.
+3. **World interaction:** use geode/amethyst infrastructure or a future resonant station to recharge more efficiently.
+
+A first implementation can use a simple/refined material loop while leaving room for later world-based recharge.
+
+## Candidate progression — perception before embodiment
+
+The magic progression should remain staged:
+
+```
+1. Perception
+   player becomes Attuned
+
+2. Knowledge
+   player learns specific runic patterns
+
+3. Artifact use
+   player inscribes and powers tools
+
+4. Advanced understanding
+   player learns broader Resonance behavior
+
+5. Embodiment (future)
+   player learns to stabilize Resonance internally
+
+6. Mana / Inner Resonance (future)
+   if the broader magic ecosystem justifies it
+```
+
+This avoids introducing a personal Mana resource before the world has taught the player why such a thing should exist.
+
+## Open questions after this candidate
+
+1. What exact event should identify the first geode revelation reliably enough to avoid placed-amethyst false positives?
+2. Does Attunement automatically grant a Codex item, or should the player craft/assemble the first Codex after the revelation?
+3. Is the Codex a literal carried item, a command/UI surface, or both?
+4. Is rune knowledge account/player-bound only, or can it be intentionally copied to books/inscriptions for teaching?
+5. Which structure should hold the first Vein rune knowledge?
+6. What material recipe makes a repeatable runic matrix feel mystical without creating unnecessary custom-item inflation?
+7. Should a non-Attuned player be able to use an already-inscribed charged tool, even if they cannot create/read its rune?
+8. Should recharge be possible anywhere, or become more efficient near natural amethyst/geode structures?
