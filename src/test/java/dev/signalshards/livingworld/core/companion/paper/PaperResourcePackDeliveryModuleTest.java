@@ -3,6 +3,8 @@ package dev.signalshards.livingworld.core.companion.paper;
 import dev.signalshards.livingworld.core.companion.CompanionPackKind;
 import dev.signalshards.livingworld.core.companion.CompanionPackManifest;
 import dev.signalshards.livingworld.core.companion.ResourcePackSessionStore;
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -37,6 +39,12 @@ class PaperResourcePackDeliveryModuleTest {
         assertEquals(
                 f.requestId,
                 f.sessions.session(f.playerId).orElseThrow().requestId()
+        );
+        assertEquals(
+                1L,
+                f.performance.snapshot().value(
+                        EnvironmentalMetric.RESOURCE_PACK_REQUESTS
+                )
         );
     }
 
@@ -82,6 +90,8 @@ class PaperResourcePackDeliveryModuleTest {
                 "c3c5bd6b-6528-450d-9435-0710685ab8e1"
         );
         final ResourcePackSessionStore sessions = new ResourcePackSessionStore();
+        final EnvironmentalPerformanceMetrics performance =
+                new EnvironmentalPerformanceMetrics();
         final Player onlinePlayer = player(playerId);
         final PaperResourcePackDeliveryModule module;
 
@@ -107,9 +117,10 @@ class PaperResourcePackDeliveryModuleTest {
                                     1
                             )
                     )
-                            : Optional.empty(),
+                           : Optional.empty(),
                     new dev.signalshards.livingworld.core.companion.CompanionPackContractPolicy(),
-                    () -> requestId
+                    () -> requestId,
+                    performance
             );
         }
 

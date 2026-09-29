@@ -1,6 +1,8 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -34,6 +36,7 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
     private final PaperThermalFeedbackPresenter presenter;
     private final PaperFrostFeedbackPresenter frostPresenter;
     private final LongSupplier clock;
+    private final EnvironmentalPerformanceMetrics performanceMetrics;
     private final Map<UUID, Long> lastPulseNanos = new HashMap<>();
     private BukkitTask task;
     private boolean active;
@@ -51,7 +54,27 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                 feedback,
                 presenter,
                 frostPresenter,
-                System::nanoTime
+                System::nanoTime,
+                new EnvironmentalPerformanceMetrics()
+        );
+    }
+
+    public PaperThermalFeedbackModule(
+            Plugin plugin,
+            PaperThermalFeedbackSettings settings,
+            ThermalFeedbackCoordinator feedback,
+            PaperThermalFeedbackPresenter presenter,
+            PaperFrostFeedbackPresenter frostPresenter,
+            EnvironmentalPerformanceMetrics performanceMetrics
+    ) {
+        this(
+                plugin,
+                settings,
+                feedback,
+                presenter,
+                frostPresenter,
+                System::nanoTime,
+                performanceMetrics
         );
     }
 
@@ -63,6 +86,26 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
             PaperFrostFeedbackPresenter frostPresenter,
             LongSupplier clock
     ) {
+        this(
+                plugin,
+                settings,
+                feedback,
+                presenter,
+                frostPresenter,
+                clock,
+                new EnvironmentalPerformanceMetrics()
+        );
+    }
+
+    PaperThermalFeedbackModule(
+            Plugin plugin,
+            PaperThermalFeedbackSettings settings,
+            ThermalFeedbackCoordinator feedback,
+            PaperThermalFeedbackPresenter presenter,
+            PaperFrostFeedbackPresenter frostPresenter,
+            LongSupplier clock,
+            EnvironmentalPerformanceMetrics performanceMetrics
+    ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(settings, "configuração de feedback");
         this.feedback = Objects.requireNonNull(feedback, "coordenador de feedback");
@@ -72,6 +115,10 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                 "presenter de frost"
         );
         this.clock = Objects.requireNonNull(clock, "relógio");
+        this.performanceMetrics = Objects.requireNonNull(
+                performanceMetrics,
+                "métricas de performance"
+        );
     }
 
     @Override
@@ -137,12 +184,18 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                                 player,
                                 decision.profile().breath().intensity()
                         );
+                        performanceMetrics.increment(
+                                EnvironmentalMetric.BREATH_PRESENTATIONS
+                        );
                     }
                     if (settings.frostEnabled()
                             && decision.profile().frostEnabled()) {
                         frostPresenter.presentFrost(
                                 player,
                                 decision.profile().frostIntensity()
+                        );
+                        performanceMetrics.increment(
+                                EnvironmentalMetric.FROST_PRESENTATIONS
                         );
                     }
                 });

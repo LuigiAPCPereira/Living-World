@@ -9,6 +9,8 @@ import dev.signalshards.livingworld.core.companion.CompanionPackRequirement;
 import dev.signalshards.livingworld.core.companion.LivingWorldCompanionContracts;
 import dev.signalshards.livingworld.core.companion.ResourcePackSessionStore;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
@@ -38,6 +40,7 @@ public final class PaperResourcePackDeliveryModule
     private final CompanionPackManifestSource manifestSource;
     private final CompanionPackContractPolicy contractPolicy;
     private final Supplier<UUID> requestIds;
+    private final EnvironmentalPerformanceMetrics performanceMetrics;
     private boolean active;
     private boolean deliveryReady;
 
@@ -53,7 +56,26 @@ public final class PaperResourcePackDeliveryModule
                 sessions,
                 manifestSource,
                 new CompanionPackContractPolicy(),
-                UUID::randomUUID
+                UUID::randomUUID,
+                new EnvironmentalPerformanceMetrics()
+        );
+    }
+
+    public PaperResourcePackDeliveryModule(
+            Plugin plugin,
+            PaperResourcePackDeliverySettings settings,
+            ResourcePackSessionStore sessions,
+            CompanionPackManifestSource manifestSource,
+            EnvironmentalPerformanceMetrics performanceMetrics
+    ) {
+        this(
+                plugin,
+                settings,
+                sessions,
+                manifestSource,
+                new CompanionPackContractPolicy(),
+                UUID::randomUUID,
+                performanceMetrics
         );
     }
 
@@ -64,6 +86,26 @@ public final class PaperResourcePackDeliveryModule
             CompanionPackManifestSource manifestSource,
             CompanionPackContractPolicy contractPolicy,
             Supplier<UUID> requestIds
+    ) {
+        this(
+                plugin,
+                settings,
+                sessions,
+                manifestSource,
+                contractPolicy,
+                requestIds,
+                new EnvironmentalPerformanceMetrics()
+        );
+    }
+
+    PaperResourcePackDeliveryModule(
+            Plugin plugin,
+            PaperResourcePackDeliverySettings settings,
+            ResourcePackSessionStore sessions,
+            CompanionPackManifestSource manifestSource,
+            CompanionPackContractPolicy contractPolicy,
+            Supplier<UUID> requestIds,
+            EnvironmentalPerformanceMetrics performanceMetrics
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(settings, "configuração de delivery");
@@ -77,6 +119,10 @@ public final class PaperResourcePackDeliveryModule
                 "policy de contrato"
         );
         this.requestIds = Objects.requireNonNull(requestIds, "gerador de request IDs");
+        this.performanceMetrics = Objects.requireNonNull(
+                performanceMetrics,
+                "métricas de performance"
+        );
     }
 
     @Override
@@ -184,6 +230,9 @@ public final class PaperResourcePackDeliveryModule
                     .prompt(Component.text(settings.prompt()))
                     .build();
             player.sendResourcePacks(request);
+            performanceMetrics.increment(
+                    EnvironmentalMetric.RESOURCE_PACK_REQUESTS
+            );
         } catch (RuntimeException exception) {
             sessions.reset(player.getUniqueId());
             plugin.getLogger().log(

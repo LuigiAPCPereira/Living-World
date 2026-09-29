@@ -1,5 +1,6 @@
 package dev.signalshards.livingworld.features.waystones.paper;
 
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.climate.application.ClimateRuleReadout;
@@ -520,6 +521,28 @@ public final class PaperWaystoneCommand implements BasicCommand {
                 "status.performance",
                 snapshot.tpsOneMinute(),
                 snapshot.averageTickTimeMillis()
+        ));
+        var environmental = snapshot.environmentalPerformance();
+        sender.sendMessage(messages.component(
+                NamedTextColor.DARK_GREEN,
+                "status.environment-work",
+                environmental.value(EnvironmentalMetric.THERMAL_PLAYER_UPDATES),
+                environmental.value(EnvironmentalMetric.THERMAL_UPDATE_NANOS)
+                        / 1_000_000.0D,
+                environmental.value(EnvironmentalMetric.WINTER_PROBES),
+                environmental.value(EnvironmentalMetric.WINTER_MUTATIONS),
+                environmental.value(EnvironmentalMetric.WINTER_UPDATE_NANOS)
+                        / 1_000_000.0D
+        ));
+        sender.sendMessage(messages.component(
+                NamedTextColor.DARK_AQUA,
+                "status.environment-output",
+                environmental.value(EnvironmentalMetric.BREATH_PRESENTATIONS),
+                environmental.value(EnvironmentalMetric.FROST_PRESENTATIONS),
+                environmental.value(EnvironmentalMetric.RESOURCE_PACK_REQUESTS),
+                environmental.value(
+                        EnvironmentalMetric.RESOURCE_PACK_STATUS_EVENTS
+                )
         ));
         sender.sendMessage(messages.component(
                 NamedTextColor.YELLOW,

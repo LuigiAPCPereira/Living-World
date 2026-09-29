@@ -1,6 +1,8 @@
 package dev.signalshards.livingworld.features.ecology.paper;
 
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.domain.EnvironmentalDimensionPolicy;
 import dev.signalshards.livingworld.features.climate.paper.PaperAmbientTemperatureProvider;
 import dev.signalshards.livingworld.features.climate.paper.PaperEnvironmentalDimensionMapper;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.LongSupplier;
 
 /**
  * Owner bounded do inverno físico ativo para ICE.
@@ -57,6 +60,8 @@ public final class PaperPhysicalWinterModule
     private final PaperWinterSurfaceTargetResolver targetResolver;
     private final EnvironmentalDimensionPolicy dimensionPolicy;
     private final PaperWinterSnowMutator snowMutator;
+    private final EnvironmentalPerformanceMetrics performanceMetrics;
+    private final LongSupplier nanoClock;
     private final Map<UUID, Integer> probeCursors = new HashMap<>();
     private BukkitTask task;
     private boolean active;
@@ -76,7 +81,31 @@ public final class PaperPhysicalWinterModule
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
                 new EnvironmentalDimensionPolicy(),
-                new PaperWinterSnowMutator(snowSettings)
+                new PaperWinterSnowMutator(snowSettings),
+                new EnvironmentalPerformanceMetrics(),
+                System::nanoTime
+        );
+    }
+
+    public PaperPhysicalWinterModule(
+            Plugin plugin,
+            PaperPhysicalWinterSettings settings,
+            PaperAmbientTemperatureProvider ambientTemperature,
+            PhysicalSnowSettings snowSettings,
+            EnvironmentalPerformanceMetrics performanceMetrics
+    ) {
+        this(
+                plugin,
+                settings,
+                ambientTemperature,
+                new PaperWinterSurfaceOwnershipStore(plugin, settings.domain()),
+                new WinterThermalPhasePolicy(settings.domain()),
+                new WinterSurfaceMutationPolicy(),
+                new PaperWinterSurfaceTargetResolver(),
+                new EnvironmentalDimensionPolicy(),
+                new PaperWinterSnowMutator(snowSettings),
+                performanceMetrics,
+                System::nanoTime
         );
     }
 
@@ -90,6 +119,34 @@ public final class PaperPhysicalWinterModule
             PaperWinterSurfaceTargetResolver targetResolver,
             EnvironmentalDimensionPolicy dimensionPolicy,
             PaperWinterSnowMutator snowMutator
+    ) {
+        this(
+                plugin,
+                settings,
+                ambientTemperature,
+                ownershipStore,
+                thermalPhasePolicy,
+                mutationPolicy,
+                targetResolver,
+                dimensionPolicy,
+                snowMutator,
+                new EnvironmentalPerformanceMetrics(),
+                System::nanoTime
+        );
+    }
+
+    PaperPhysicalWinterModule(
+            Plugin plugin,
+            PaperPhysicalWinterSettings settings,
+            PaperAmbientTemperatureProvider ambientTemperature,
+            PaperWinterSurfaceOwnershipStore ownershipStore,
+            WinterThermalPhasePolicy thermalPhasePolicy,
+            WinterSurfaceMutationPolicy mutationPolicy,
+            PaperWinterSurfaceTargetResolver targetResolver,
+            EnvironmentalDimensionPolicy dimensionPolicy,
+            PaperWinterSnowMutator snowMutator,
+            EnvironmentalPerformanceMetrics performanceMetrics,
+            LongSupplier nanoClock
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(
@@ -124,6 +181,14 @@ public final class PaperPhysicalWinterModule
                 snowMutator,
                 "mutator de neve"
         );
+        this.performanceMetrics = Objects.requireNonNull(
+                performanceMetrics,
+                "métricas de performance"
+        );
+        this.nanoClock = Objects.requireNonNull(
+                nanoClock,
+                "relógio de nanos"
+        );
     }
 
     @Override
@@ -157,11 +222,19 @@ public final class PaperPhysicalWinterModule
         if (!active) {
             return;
         }
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if (!player.isOnline() || player.isDead()) {
-                continue;
+        long started = nanoClock.getAsLong();
+        try {
+            for (Player player : plugin.getServer().getOnlinePlayers()) {
+                if (!player.isOnline() || player.isDead()) {
+                    continue;
+                }
+                processPlayer(player);
             }
-            processPlayer(player);
+        } finally {
+            performanceMetrics.add(
+                    EnvironmentalMetric.WINTER_UPDATE_NANOS,
+                    Math.max(0L, nanoClock.getAsLong() - started)
+            );
         }
     }
 
@@ -192,6 +265,7 @@ public final class PaperPhysicalWinterModule
                 continue;
             }
 
+            performanceMetrics.increment(EnvironmentalMetric.WINTER_PROBES);
             Block surface = world.getHighestBlockAt(
                     x,
                     z,
@@ -199,6 +273,9 @@ public final class PaperPhysicalWinterModule
             );
             if (processCandidate(surface)) {
                 mutations++;
+                performanceMetrics.increment(
+                        EnvironmentalMetric.WINTER_MUTATIONS
+                );
             }
         }
 

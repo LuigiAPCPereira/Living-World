@@ -59,7 +59,7 @@ class PaperWaystoneCommandTest {
         PaperWaystoneCommand command = command();
         command.execute(source, new String[]{"status"});
 
-        assertEquals(9, messagesSent.get());
+        assertEquals(11, messagesSent.get());
         assertEquals(List.of("status"), List.copyOf(command.suggest(source, new String[0])));
     }
 

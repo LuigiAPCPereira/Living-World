@@ -1,5 +1,7 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.application.ThermalEnvironmentContext;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
@@ -47,6 +49,12 @@ class PaperThermalFeedbackModuleTest {
         assertEquals(1, f.emissions);
         assertEquals(1, f.registrations);
         assertEquals(1, f.schedules);
+        assertEquals(
+                1L,
+                f.performance.snapshot().value(
+                        EnvironmentalMetric.BREATH_PRESENTATIONS
+                )
+        );
     }
 
     @Test
@@ -80,6 +88,12 @@ class PaperThermalFeedbackModuleTest {
 
         assertEquals(0, f.emissions);
         assertEquals(1, f.frostPresentations);
+        assertEquals(
+                1L,
+                f.performance.snapshot().value(
+                        EnvironmentalMetric.FROST_PRESENTATIONS
+                )
+        );
     }
 
     @Test
@@ -222,6 +236,8 @@ class PaperThermalFeedbackModuleTest {
         int cancellations;
         final UUID playerId = UUID.randomUUID();
         final ThermalFeedbackCoordinator feedback = new ThermalFeedbackCoordinator();
+        final EnvironmentalPerformanceMetrics performance =
+                new EnvironmentalPerformanceMetrics();
         final GameMode gameMode;
         final Player player;
         final BukkitTask task = stub(BukkitTask.class, (proxy, method, args) -> switch (method.getName()) {
@@ -289,7 +305,8 @@ class PaperThermalFeedbackModuleTest {
                     feedback,
                     (ignored, intensity) -> emissions++,
                     (ignored, intensity) -> frostPresentations++,
-                    () -> now
+                    () -> now,
+                    performance
             );
         }
     }

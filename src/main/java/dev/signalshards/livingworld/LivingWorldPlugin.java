@@ -11,6 +11,7 @@ import dev.signalshards.livingworld.core.companion.paper.PaperResourcePackStatus
 import dev.signalshards.livingworld.core.companion.paper.PaperDatapackContractModule;
 import dev.signalshards.livingworld.core.companion.paper.PaperDatapackContractSettingsLoader;
 import dev.signalshards.livingworld.core.module.ModuleManager;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarModule;
@@ -207,6 +208,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
         );
         var thermalRuntimeService = new PlayerThermalRuntimeService();
         var thermalFeedback = new ThermalFeedbackCoordinator();
+        var environmentalPerformance = new EnvironmentalPerformanceMetrics();
         var resourcePackSessions = new ResourcePackSessionStore();
         var datapackContract = new PaperDatapackContractModule(
                 this,
@@ -220,7 +222,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
         );
         var resourcePackStatus = new PaperResourcePackStatusModule(
                 this,
-                resourcePackSessions
+                resourcePackSessions,
+                environmentalPerformance
         );
         var resourcePackDelivery = new PaperResourcePackDeliveryModule(
                 this,
@@ -231,14 +234,16 @@ public final class LivingWorldPlugin extends JavaPlugin {
                                 getDataFolder().toPath(),
                                 CompanionPackKind.RESOURCE_PACK
                         )
-                )
+                ),
+                environmentalPerformance
         );
         PaperThermalRuntimeModule thermalRuntime = new PaperThermalRuntimeModule(
                 this,
                 PaperThermalRuntimeSettingsLoader.load(getConfig()),
                 thermalEnvironment,
                 thermalRuntimeService,
-                thermalFeedback
+                thermalFeedback,
+                environmentalPerformance
         );
         PaperThermalFeedbackModule thermalFeedbackModule =
                 new PaperThermalFeedbackModule(
@@ -246,7 +251,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         PaperThermalFeedbackSettingsLoader.load(getConfig()),
                         thermalFeedback,
                         new PaperColdBreathPresenter(),
-                        new PaperSnowflakeFrostPresenter()
+                        new PaperSnowflakeFrostPresenter(),
+                        environmentalPerformance
                 );
         var thermalReadoutProvider = new PaperThermalRuntimeReadoutProvider(
                 thermalEnvironment,
@@ -273,7 +279,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         this,
                         PaperPhysicalWinterSettingsLoader.load(getConfig()),
                         thermalAmbient,
-                        PaperPhysicalSnowSettingsLoader.load(getConfig())
+                        PaperPhysicalSnowSettingsLoader.load(getConfig()),
+                        environmentalPerformance
                 );
         PaperGroundCoverSpreadModule groundCoverSpread =
                 new PaperGroundCoverSpreadModule(
@@ -339,7 +346,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                     desireLines.cachedChunkCount(),
                     waystones.allWaystones().size(),
                     getServer().getTPS()[0],
-                    getServer().getAverageTickTime()
+                    getServer().getAverageTickTime(),
+                    environmentalPerformance.snapshot()
             );
         };
 

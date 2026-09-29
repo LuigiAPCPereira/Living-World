@@ -1,6 +1,8 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import org.bukkit.entity.Player;
@@ -37,6 +39,8 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
     private final PlayerThermalRuntimeService runtime;
     private final ThermalFeedbackCoordinator feedback;
     private final LongSupplier clock;
+    private final EnvironmentalPerformanceMetrics performanceMetrics;
+    private final LongSupplier performanceClock;
     private final Map<UUID, Long> lastUpdateNanos = new HashMap<>();
     private final Set<UUID> trackedPlayers = new HashSet<>();
     private BukkitTask task;
@@ -55,6 +59,28 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
                 environmentProvider,
                 runtime,
                 feedback,
+                System::nanoTime,
+                new EnvironmentalPerformanceMetrics(),
+                System::nanoTime
+        );
+    }
+
+    public PaperThermalRuntimeModule(
+            Plugin plugin,
+            PaperThermalRuntimeSettings settings,
+            PaperThermalEnvironmentProvider environmentProvider,
+            PlayerThermalRuntimeService runtime,
+            ThermalFeedbackCoordinator feedback,
+            EnvironmentalPerformanceMetrics performanceMetrics
+    ) {
+        this(
+                plugin,
+                settings,
+                environmentProvider,
+                runtime,
+                feedback,
+                System::nanoTime,
+                performanceMetrics,
                 System::nanoTime
         );
     }
@@ -67,6 +93,28 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
             ThermalFeedbackCoordinator feedback,
             LongSupplier clock
     ) {
+        this(
+                plugin,
+                settings,
+                environmentProvider,
+                runtime,
+                feedback,
+                clock,
+                new EnvironmentalPerformanceMetrics(),
+                System::nanoTime
+        );
+    }
+
+    PaperThermalRuntimeModule(
+            Plugin plugin,
+            PaperThermalRuntimeSettings settings,
+            PaperThermalEnvironmentProvider environmentProvider,
+            PlayerThermalRuntimeService runtime,
+            ThermalFeedbackCoordinator feedback,
+            LongSupplier clock,
+            EnvironmentalPerformanceMetrics performanceMetrics,
+            LongSupplier performanceClock
+    ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(settings, "configuração térmica");
         this.environmentProvider = Objects.requireNonNull(
@@ -76,6 +124,14 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
         this.runtime = Objects.requireNonNull(runtime, "runtime térmico");
         this.feedback = Objects.requireNonNull(feedback, "coordenador de feedback");
         this.clock = Objects.requireNonNull(clock, "relógio");
+        this.performanceMetrics = Objects.requireNonNull(
+                performanceMetrics,
+                "métricas de performance"
+        );
+        this.performanceClock = Objects.requireNonNull(
+                performanceClock,
+                "relógio de performance"
+        );
     }
 
     @Override
@@ -114,36 +170,50 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
         if (!active) {
             return;
         }
-        long now = clock.getAsLong();
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if (!player.isOnline() || player.isDead()) {
-                continue;
+        long started = performanceClock.getAsLong();
+        try {
+            long now = clock.getAsLong();
+            for (Player player : plugin.getServer().getOnlinePlayers()) {
+                if (!player.isOnline() || player.isDead()) {
+                    continue;
+                }
+                UUID playerId = player.getUniqueId();
+                Long previous = lastUpdateNanos.put(playerId, now);
+                if (previous == null || now <= previous) {
+                    continue;
+                }
+                try {
+                    var environment = environmentProvider.forPlayer(player);
+                    var result = runtime.advance(
+                            playerId,
+                            environment,
+                            Duration.ofNanos(now - previous)
+                    );
+                    feedback.observe(
+                            playerId,
+                            result.thermalState(),
+                            environment
+                    );
+                    trackedPlayers.add(playerId);
+                    performanceMetrics.increment(
+                            EnvironmentalMetric.THERMAL_PLAYER_UPDATES
+                    );
+                } catch (RuntimeException exception) {
+                    plugin.getLogger().log(
+                            Level.WARNING,
+                            "Falha ao atualizar estado térmico do jogador " + playerId,
+                            exception
+                    );
+                }
             }
-            UUID playerId = player.getUniqueId();
-            Long previous = lastUpdateNanos.put(playerId, now);
-            if (previous == null || now <= previous) {
-                continue;
-            }
-            try {
-                var environment = environmentProvider.forPlayer(player);
-                var result = runtime.advance(
-                        playerId,
-                        environment,
-                        Duration.ofNanos(now - previous)
-                );
-                feedback.observe(
-                        playerId,
-                        result.thermalState(),
-                        environment
-                );
-                trackedPlayers.add(playerId);
-            } catch (RuntimeException exception) {
-                plugin.getLogger().log(
-                        Level.WARNING,
-                        "Falha ao atualizar estado térmico do jogador " + playerId,
-                        exception
-                );
-            }
+        } finally {
+            performanceMetrics.add(
+                    EnvironmentalMetric.THERMAL_UPDATE_NANOS,
+                    Math.max(
+                            0L,
+                            performanceClock.getAsLong() - started
+                    )
+            );
         }
     }
 

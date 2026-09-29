@@ -1,5 +1,7 @@
 package dev.signalshards.livingworld.features.ecology.paper;
 
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.EnvironmentalDimensionPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.WinterSurfaceMutationPolicy;
@@ -263,6 +265,8 @@ class PaperPhysicalWinterModuleTest {
         );
         PaperWinterSurfaceOwnershipStore store =
                 new PaperWinterSurfaceOwnershipStore(key, settings.domain());
+        EnvironmentalPerformanceMetrics metrics =
+                new EnvironmentalPerformanceMetrics();
         PaperPhysicalWinterModule module = new PaperPhysicalWinterModule(
                 plugin,
                 settings,
@@ -272,13 +276,23 @@ class PaperPhysicalWinterModuleTest {
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
                 new EnvironmentalDimensionPolicy(),
-                snowMutator()
+                snowMutator(),
+                metrics,
+                () -> 0L
         );
 
         module.processPlayer(player);
 
         assertEquals(1, highestBlockCalls.get());
         assertEquals(Material.ICE, type.get());
+        assertEquals(
+                1L,
+                metrics.snapshot().value(EnvironmentalMetric.WINTER_PROBES)
+        );
+        assertEquals(
+                1L,
+                metrics.snapshot().value(EnvironmentalMetric.WINTER_MUTATIONS)
+        );
     }
 
     @Test

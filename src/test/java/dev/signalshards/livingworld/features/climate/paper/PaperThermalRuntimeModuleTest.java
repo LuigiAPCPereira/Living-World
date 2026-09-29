@@ -1,5 +1,7 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import dev.signalshards.livingworld.features.climate.application.ThermalEnvironmentContext;
@@ -48,6 +50,12 @@ class PaperThermalRuntimeModuleTest {
         assertEquals(1, f.environmentReads);
         assertEquals(1, f.registrations);
         assertEquals(1, f.schedules);
+        assertEquals(
+                1L,
+                f.performance.snapshot().value(
+                        EnvironmentalMetric.THERMAL_PLAYER_UPDATES
+                )
+        );
     }
 
     @Test
@@ -121,6 +129,8 @@ class PaperThermalRuntimeModuleTest {
         final UUID playerId = UUID.randomUUID();
         final PlayerThermalRuntimeService runtime = new PlayerThermalRuntimeService();
         final ThermalFeedbackCoordinator feedback = new ThermalFeedbackCoordinator();
+        final EnvironmentalPerformanceMetrics performance =
+                new EnvironmentalPerformanceMetrics();
         final Player player = stub(Player.class, (proxy, method, args) -> switch (method.getName()) {
             case "getUniqueId" -> playerId;
             case "isOnline" -> true;
@@ -189,6 +199,8 @@ class PaperThermalRuntimeModuleTest {
                     environment,
                     runtime,
                     feedback,
+                    () -> now,
+                    performance,
                     () -> now
             );
         }

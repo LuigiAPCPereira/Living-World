@@ -2,6 +2,8 @@ package dev.signalshards.livingworld.core.companion.paper;
 
 import dev.signalshards.livingworld.core.companion.ResourcePackClientStatus;
 import dev.signalshards.livingworld.core.companion.ResourcePackSessionStore;
+import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
+import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,8 +25,10 @@ class PaperResourcePackStatusModuleTest {
         AtomicInteger registrations = new AtomicInteger();
         Plugin plugin = plugin(registrations);
         ResourcePackSessionStore store = new ResourcePackSessionStore();
+        EnvironmentalPerformanceMetrics performance =
+                new EnvironmentalPerformanceMetrics();
         PaperResourcePackStatusModule module =
-                new PaperResourcePackStatusModule(plugin, store);
+                new PaperResourcePackStatusModule(plugin, store, performance);
         UUID playerId = UUID.randomUUID();
         UUID requestId = UUID.randomUUID();
         Player player = player(playerId);
@@ -38,6 +42,29 @@ class PaperResourcePackStatusModuleTest {
         ));
 
         assertEquals(1, registrations.get());
+        assertEquals(
+                ResourcePackClientStatus.LOADED,
+                store.session(playerId).orElseThrow().status()
+        );
+        assertEquals(
+                1L,
+                performance.snapshot().value(
+                        EnvironmentalMetric.RESOURCE_PACK_STATUS_EVENTS
+                )
+        );
+
+        module.onResourcePackStatus(new PlayerResourcePackStatusEvent(
+                player,
+                UUID.randomUUID(),
+                PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD
+        ));
+
+        assertEquals(
+                1L,
+                performance.snapshot().value(
+                        EnvironmentalMetric.RESOURCE_PACK_STATUS_EVENTS
+                )
+        );
         assertEquals(
                 ResourcePackClientStatus.LOADED,
                 store.session(playerId).orElseThrow().status()
