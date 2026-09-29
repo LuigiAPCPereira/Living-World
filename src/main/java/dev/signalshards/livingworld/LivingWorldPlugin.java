@@ -46,6 +46,9 @@ import dev.signalshards.livingworld.features.ecology.paper.PaperNaturalGrowthMod
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import dev.signalshards.livingworld.features.landmarks.application.LandmarkDiscovery;
+import dev.signalshards.livingworld.features.landmarks.application.LandmarkEntryTracker;
+import dev.signalshards.livingworld.features.landmarks.paper.PaperLandmarkDiscoveryModule;
+import dev.signalshards.livingworld.features.landmarks.paper.PaperLandmarkResolver;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudModule;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudSettingsLoader;
 import dev.signalshards.livingworld.features.hud.paper.TemperatureColorPolicy;
@@ -137,6 +140,13 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new PaperPlayerDiscoveryStore(this),
                 new PaperWorldDiscoveryStore(this)
         );
+        PaperLandmarkDiscoveryModule landmarkDiscovery =
+                new PaperLandmarkDiscoveryModule(
+                        this,
+                        discovery,
+                        new PaperLandmarkResolver(this),
+                        new LandmarkEntryTracker()
+                );
         PaperWaystoneTravelService waystoneTravel = new PaperWaystoneTravelService(
                 getServer(),
                 waystones,
@@ -283,6 +293,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         ),
                         getConfig().getBoolean("discovery.presentation.enabled", true)
                 ),
+                landmarkDiscovery,
                 new PaperWaystoneModule(
                         this,
                         waystoneSettings,
