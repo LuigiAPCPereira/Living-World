@@ -4,6 +4,7 @@ import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.ModuleManager;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
+import dev.signalshards.livingworld.features.biomes.application.BiomeDiscovery;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarModule;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarWorldResolver;
 import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
@@ -120,7 +121,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
         );
 
         DiscoveryRegistry discoveryTypes = new DiscoveryRegistry(List.of(
-                WaystoneDiscovery.DEFINITION
+                WaystoneDiscovery.DEFINITION,
+                BiomeDiscovery.DEFINITION
         ));
         DiscoveryEventPublisher discoveryEvents = new DiscoveryEventPublisher(failure ->
                 getLogger().log(
