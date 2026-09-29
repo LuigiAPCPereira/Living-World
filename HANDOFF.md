@@ -8,11 +8,11 @@ Este arquivo é um checkpoint portátil de sessão. A verdade durável continua 
 
 - Repositório: `/home/luigiapcp/IdeaProjects/Living World`
 - Branch: `ecology/m12-thermal-foundation`
-- HEAD publicado antes deste handoff: `60229c3` — `docs: fecha implementacao automatizada do inverno fisico`
+- Base reconciliada no início desta continuação: `7092ed5`
+- Checkpoint de instrumentação LW-128: `383e5a1` — `perf: instrumenta gate ambiental LW-128`
 - Upstream: `origin/ecology/m12-thermal-foundation`
-- Worktree: **sujo e intencional**; não resetar/reverter.
-- Estado observado antes do handoff: 19 entradas, 15 modificadas + 4 untracked, 0 staged, 0 conflitos.
-- `git diff --check`: limpo.
+- O worktree sujo original do LW-128 foi preservado, inspecionado e commitado sem reset/revert.
+- Gate do checkpoint de instrumentação: focused tests verdes; IntelliJ build e inspections de produção limpos; `git diff --check` limpo; suíte completa reexecutada sem cache com 479 testes / 155 suítes / 0 falhas/erros/skips.
 
 ## Último escopo publicado
 
@@ -28,10 +28,11 @@ com cliente real continua pendente.
 
 ## Missão atual — LW-128
 
-O worktree já contém uma implementação **não commitada** da fundação do
-environmental performance gate. Não considerar esse código validado ainda.
+A fundação de instrumentação do environmental performance gate foi consolidada
+e validada no commit `383e5a1`. O LW-128 continua **em andamento** porque os
+workloads/baselines representativos ainda não foram medidos.
 
-Delta presente:
+Instrumentação consolidada:
 
 - novos `EnvironmentalMetric`, `EnvironmentalPerformanceMetrics` e
   `EnvironmentalPerformanceSnapshot`;
@@ -55,44 +56,33 @@ Delta presente:
 - novo `EnvironmentalPerformanceMetricsTest` cobre cumulatividade, zeros e
   rejeição de incremento negativo.
 
-Arquivos untracked observados:
+Arquivos introduzidos pelo checkpoint:
 
 - `src/main/java/dev/signalshards/livingworld/core/status/EnvironmentalMetric.java`
 - `src/main/java/dev/signalshards/livingworld/core/status/EnvironmentalPerformanceMetrics.java`
 - `src/main/java/dev/signalshards/livingworld/core/status/EnvironmentalPerformanceSnapshot.java`
 - `src/test/java/dev/signalshards/livingworld/core/status/EnvironmentalPerformanceMetricsTest.java`
 
-Os demais arquivos LW-128 aparecem modificados no `git status`; inspecionar o
-diff real antes de editar.
+Os adapters/runtime/status e testes relacionados foram atualizados no mesmo
+commit, preservando uma única instância compartilhada de métricas no composition root.
 
-## Validação conhecida do delta LW-128
+## Validação conhecida do LW-128
 
-- Ainda **não existe gate durável confirmado** para o worktree LW-128.
-- Não inferir que os testes passaram só porque o código está presente.
-- O handoff observou apenas `git diff --check` limpo e ausência de conflitos.
+- A fundação de instrumentação está **validada e commitada** em `383e5a1`.
+- O gate focado incluiu `EnvironmentalPerformanceMetricsTest`, `PaperThermalRuntimeModuleTest`, `PaperThermalFeedbackModuleTest`, `PaperPhysicalWinterModuleTest`, `PaperResourcePackDeliveryModuleTest` e `PaperWaystoneCommandTest`; `PaperResourcePackStatusModuleTest` também foi ampliado para verificar ownership da métrica de status.
+- IntelliJ build passou; inspections dos 11 arquivos de produção tocados vieram sem warnings/erros.
+- `git diff --check` passou.
+- `./gradlew clean test build` passou; como a suíte completa veio do cache, `./gradlew test --rerun-tasks` foi executado depois e passou com 479 testes / 155 suítes / 0 falhas/erros/skips.
+- Isso valida a **instrumentação**, não o gate de performance final. Nenhum workload representativo/baseline comparativo foi medido ainda.
 
 ## Próxima ação executável
 
-1. Ler `AGENTS.md`, `TASKLIST.md`, `PROJECT_STATE.md`,
-   `ECOLOGY_AND_SEASONS.md` e este arquivo.
-2. Rodar `git status`, `git diff --stat` e inspecionar o delta LW-128.
-3. Não resetar/reverter mudanças preexistentes.
-4. Rodar primeiro testes focados:
-   `EnvironmentalPerformanceMetricsTest`,
-   `PaperThermalRuntimeModuleTest`,
-   `PaperThermalFeedbackModuleTest`,
-   `PaperPhysicalWinterModuleTest`,
-   `PaperResourcePackDeliveryModuleTest` e
-   `PaperWaystoneCommandTest`.
-5. Corrigir apenas regressões reais. Preservar o desenho de uma instância
-   compartilhada de métricas no composition root.
-6. Executar build IntelliJ, inspections dos arquivos de produção tocados,
-   `git diff --check` e então `./gradlew clean test build`.
-7. Só depois checkpointar/pushar o slice de instrumentação LW-128.
-8. Para o gate de performance propriamente dito, seguir
-   `agent-protocol/investigating-performance`: definir workload/baseline antes
-   de otimizar ou fazer claims. Medir perfis 1/10/25/50+ jogadores apenas onde o
-   tooling realmente permitir e registrar limitações.
+1. Confirmar branch/HEAD/upstream e que `383e5a1` está presente; não repetir o trabalho de instrumentação.
+2. Para o gate de performance propriamente dito, seguir `agent-protocol/investigating-performance`: definir primeiro workload, ambiente, janela de medição e baseline reproduzível.
+3. Medir o menor perfil realmente disponível (1 jogador) antes de escalar; registrar TPS/MSPT e deltas das métricas ambientais no mesmo intervalo.
+4. Comparar janelas equivalentes com as features ambientais relevantes desabilitadas/habilitadas, sem alterar gameplay como otimização escondida.
+5. Só expandir para 10/25/50+ jogadores onde o tooling puder produzir carga representativa; registrar explicitamente limitações de simulação/carga.
+6. Se surgir custo real, identificar hot path e formar uma única hipótese antes de mudar código; caso contrário, registrar o baseline e não otimizar por intuição.
 
 ## Restrições importantes
 

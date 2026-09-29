@@ -8,7 +8,7 @@
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-128 — environmental performance gate preparation; LW-126 remains open for client visual proof and LW-127 awaits live winter smoke
 - **Current acceptance:** LW-127 automated implementation is closed: one opt-in bounded owner handles real ICE+SNOW with persistent ownership, hysteresis and loaded-chunk-only probes; natural/player surfaces fail closed
-- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 is implemented-not-validated with 477 tests / 154 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`; runtime/tuning smoke remains pending
+- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 is implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at commit `383e5a1`: focused tests passed, IntelliJ build and production inspections are clean, `git diff --check` is clean, and full `./gradlew test --rerun-tasks` passed with 479 tests / 155 suites / 0 failures/errors/skips; representative performance workloads are still pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** reconcile the dirty LW-128 performance-instrumentation worktree described in `HANDOFF.md`: run focused metric/module tests first, then IntelliJ/build/full gates. Do not reset the existing delta. Only after a green instrumentation checkpoint should representative performance workloads/baselines be measured
+- **Next action:** continue LW-128 from instrumentation commit `383e5a1`: define a reproducible representative workload/baseline before optimization, then measure the smallest feasible profile first (1 player) with TPS/MSPT plus environmental counter deltas; expand toward 10/25/50+ only where tooling actually permits. Compare equivalent feature-disabled/enabled windows before any performance claim
 
 ## M12.4 — checkpoint local
 
