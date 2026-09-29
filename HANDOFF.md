@@ -10,6 +10,8 @@ Este arquivo é um checkpoint portátil de sessão. A verdade durável continua 
 - Branch: `ecology/m12-thermal-foundation`
 - Base reconciliada no início desta continuação: `7092ed5`
 - Checkpoint de instrumentação LW-128: `383e5a1` — `perf: instrumenta gate ambiental LW-128`
+- Retomada após adiamento do benchmark: `8d530ac` — `docs: adia benchmark LW-128 e retoma LW-126`
+- Preparação de build NMS LW-126: `a552170` — `build: prepara userdev NMS para LW-126`
 - Upstream: `origin/ecology/m12-thermal-foundation`
 - O worktree sujo original do LW-128 foi preservado, inspecionado e commitado sem reset/revert.
 - Gate do checkpoint de instrumentação: focused tests verdes; IntelliJ build e inspections de produção limpos; `git diff --check` limpo; suíte completa reexecutada sem cache com 479 testes / 155 suítes / 0 falhas/erros/skips.
@@ -22,9 +24,18 @@ chunks carregados e proteção fail-closed de superfícies naturais/jogador.
 `PROJECT_STATE.md` registra o último gate publicado em 477 testes / 154 suítes,
 0 falhas/erros/skips. Smoke runtime/tuning continua pendente.
 
-LW-126 continua aberto apenas como spike visual: não existe NMS de produção.
-O caminho `ClientboundChunksBiomesPacket` foi mapeado conceitualmente, mas prova
-com cliente real continua pendente.
+LW-126 continua aberto como spike visual: ainda não existe adapter NMS de produção.
+O caminho `ClientboundChunksBiomesPacket` foi mapeado conceitualmente e o build
+agora está preparado para internals via `paperweight-userdev`, mas essa mudança
+de build ainda precisa de compile/test gate antes da primeira classe NMS.
+
+## LW-126 — preparação NMS
+
+- `a552170` adiciona `io.papermc.paperweight.userdev` `2.0.0-beta.24` e usa `paperweight.paperDevBundle("26.3.build.+")`, substituindo o `compileOnly` principal de `paper-api`.
+- O artifact de produção foi explicitado como `MOJANG_PRODUCTION`, coerente com Paper 26.3; a dependência `paper-api` permanece no classpath de testes.
+- A decisão segue o caminho suportado pelo Paper para internals/NMS; reflection improvisada e mutação de biome server-side continuam proibidas.
+- **Validação pendente:** nesta continuação via GitHub não havia CI configurado e a sessão local da IDE terminou antes de executar Gradle após a mudança. Portanto `a552170` é build-prep implementado, ainda não validado.
+- Nenhuma classe NMS de produção foi adicionada neste slice. O próximo código só entra depois de `./gradlew clean test build` verde sobre `a552170` ou descendente equivalente.
 
 ## Validação runtime adiada — LW-128
 
@@ -87,10 +98,10 @@ commit, preservando uma única instância compartilhada de métricas no composit
 
 ## Próxima ação executável
 
-1. Confirmar branch/HEAD/upstream e que `383e5a1`/`efa75a8` estão presentes.
-2. Continuar **LW-126** pelo próximo slice automatizável: preparar corretamente a fronteira NMS/versionada da projeção visual sazonal, sem usar reflection improvisada e sem mutar biome server-side.
-3. Tratar qualquer mudança de build para NMS como dependência explícita e validada; preservar `LivingWorldPlugin` como composition root pequeno e manter internals confinados a adapter estreito.
-4. Validar por compile/test/build/CI o que puder ser provado sem cliente real; manter a prova visual/client-side como `implemented not validated` até smoke posterior.
+1. Confirmar branch/HEAD/upstream e que `a552170` está presente.
+2. Executar primeiro `./gradlew clean test build` sobre o build userdev; se falhar, corrigir somente a integração de build antes de escrever NMS.
+3. Com o gate verde, implementar **um único adapter Paper 26.3** para construir `ClientboundChunksBiomesPacket` a partir de cópias dos biome containers de chunks já carregados e enviar somente ao jogador-alvo; nunca chamar `World#setBiome` nem mutar o container real.
+4. Manter scheduler/política sazonal fora do adapter neste slice; provar primeiro serialização/envio e boundedness. A prova visual/client-side continua `implemented not validated` até smoke posterior.
 5. Manter LW-128 na fila de validação adiada: quando retomado, usar workload/baseline reproduzível, começar em 1 jogador, registrar TPS/MSPT + deltas ambientais e só então fazer claims/otimizações.
 
 ## Restrições importantes

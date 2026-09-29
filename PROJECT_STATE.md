@@ -8,7 +8,7 @@
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-126 — seasonal client visual projection spike; LW-128 instrumentation is validated and its runtime benchmark is explicitly deferred for later
 - **Current acceptance:** LW-127 automated implementation is closed: one opt-in bounded owner handles real ICE+SNOW with persistent ownership, hysteresis and loaded-chunk-only probes; natural/player surfaces fail closed
-- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 is implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at commit `383e5a1`: focused tests passed, IntelliJ build and production inspections are clean, `git diff --check` is clean, and full `./gradlew test --rerun-tasks` passed with 479 tests / 155 suites / 0 failures/errors/skips; representative performance workloads are still pending
+- **Current validation:** LW-126 build preparation for NMS is implemented at `a552170`: official `paperweight-userdev` + Paper 26.3 dev bundle + Mojang production artifact are configured, but no Gradle gate was available after this remote-only change, so it is not yet compile-validated and no NMS production adapter exists. LW-127 remains implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at `383e5a1` with 479 tests / 155 suites / 0 failures/errors/skips; its representative runtime benchmark is explicitly deferred
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -17,8 +17,8 @@
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
-- **Blockers:** none for automated continuation. Runtime/client validation remains deferred for LW-122..LW-128 where noted; specifically, LW-128 benchmark data must not be invented from a stale or empty runtime
-- **Next action:** advance LW-126 with the smallest build-safe NMS slice: use the supported Paper userdev path for internals, keep NMS behind a narrow version-sensitive adapter, preserve server biome truth, and validate compile/tests/CI without claiming visual runtime success. Return to LW-128 benchmark later with a real connected client/runtime
+- **Blockers:** no product blocker, but the code frontier is validation-gated: `a552170` must pass `./gradlew clean test build` before adding NMS production code. Runtime/client validation remains deferred for LW-122..LW-128 where noted; LW-128 benchmark data must not be invented
+- **Next action:** validate the userdev build on `a552170` (or descendant). Once green, add one narrow Paper 26.3 biome-projection adapter that only copies/serializes biome containers from already-loaded chunks and sends `ClientboundChunksBiomesPacket` to the target player, without server biome mutation or scheduler/policy expansion. Live visual proof remains a later validation step
 
 ## M12.4 — checkpoint local
 
