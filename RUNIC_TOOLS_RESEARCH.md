@@ -974,3 +974,246 @@ later discoveries
 ```
 
 The order of "first specific rune" versus "general inscription technique" is still open and may be swapped if a better discovery sequence emerges.
+
+
+## Candidate walkthrough — first complete runic journey
+
+This walkthrough tests the fantasy and information flow from ordinary Survival to the first functioning runic pickaxe. It is **not** a balance specification.
+
+### Beat 0 — Ordinary Survival
+
+Before Attunement:
+
+- amethyst is just a vanilla material;
+- runic inscriptions may exist in the world, but the player cannot meaningfully interpret them;
+- runic artifacts can physically exist, be traded/stored, and still behave as ordinary vanilla tools for a non-Attuned player;
+- no magic HUD, Mana bar or visible skill tree exists.
+
+The system should not advertise a locked feature list.
+
+### Beat 1 — First Resonance
+
+The player harvests a mature Amethyst Cluster attached to Budding Amethyst.
+
+Presentation is brief:
+- subtle amethyst response;
+- one short discovery line;
+- no forced GUI.
+
+Candidate text:
+
+> **Sintonia**
+> Há um padrão no som.
+
+Durable change:
+- player becomes **Attuned**.
+
+Attunement means:
+- can recognize Resonance/runic phenomena;
+- can understand that previously unreadable inscriptions are meaningful;
+- still knows no practical rune by default.
+
+### Beat 2 — Recording the discovery
+
+After Attunement, the player can craft a **Caderno da Ressonância**.
+
+The Codex is optional as a physical item but useful as the diegetic interface for discovered knowledge.
+
+Initial content should be sparse:
+- First Attunement;
+- Amethyst observation;
+- no visible list of undiscovered runes.
+
+The physical Codex is not the authority for knowledge. Player knowledge persists independently.
+
+### Beat 3 — First ancient pattern
+
+The first practical rune should be discovered underground, with **Runa da Veia Profunda** as the leading candidate.
+
+Strong thematic source:
+- Abandoned Mineshafts.
+
+Possible secondary/backup sources:
+- Ancient City;
+- Stronghold library or another underground structure;
+- player-made transcription from someone who already knows the rune.
+
+Design requirement:
+- discovery should not depend on one ultra-low-probability chest roll;
+- the system should support multiple sources or reliable social transmission.
+
+The exact world-generation/loot implementation remains undecided.
+
+When an Attuned player studies the inscription:
+- RuneKnowledge for Veia Profunda becomes permanent;
+- Codex gains the rune entry;
+- the player understands what the pattern does, but does not automatically receive a charged tool.
+
+### Beat 4 — Understanding inscription technique
+
+Do not require a second rare exploration RNG gate merely to learn how to bind the first rune.
+
+Current strongest candidate:
+- studying the first complete rune plus the Codex's existing amethyst observations unlocks or derives the **general technique of Runic Inscription** through a short research/crafting step.
+
+This makes the first rune teach both:
+- one specific pattern;
+- the general realization that patterns can be bound into artifacts.
+
+Later runes reuse this general technique and therefore do not repeat the tutorial.
+
+This is preferred over forcing a separate "Inscription Technique" relic in another structure for the first implementation.
+
+### Beat 5 — Preparing a runic matrix
+
+The player prepares a neutral physical carrier: working name **Matriz Rúnica em Branco**.
+
+Conceptual material language:
+- amethyst = resonance/conduction/storage;
+- lapis = enchantment/arcane inscription;
+- copper = physical conductor/binder candidate.
+
+No exact recipe is approved.
+
+A player who knows a rune can encode a Blank Matrix into that known pattern.
+
+Example:
+
+```
+Matriz Rúnica em Branco
++ conhecimento: Veia Profunda
++ inscription cost
+→ Matriz da Veia Profunda
+```
+
+The exact encoding interaction could be crafting, smithing-assisted, or another minimal vanilla surface. Avoid a new custom workstation unless the broader system later justifies one.
+
+### Beat 6 — Binding the rune to a tool
+
+Current preferred surface remains the Smithing Table.
+
+Conceptual flow:
+
+```
+compatible pickaxe
++ Matriz da Veia Profunda
++ resonant binding material
+→ pickaxe inscribed with Runa da Veia Profunda
+```
+
+The result should preserve ordinary vanilla identity/enchantments and gain:
+- rune identity;
+- Resonance capacity;
+- current Resonance charge.
+
+The first artifact should be understandable from its tooltip without a separate menu.
+
+### Beat 7 — First charge
+
+Do not collapse inscription and fueling into the same invisible action.
+
+The player should learn:
+
+> the rune exists, but an artifact needs Resonance to perform magical work.
+
+For the first implementation, the charging process should remain simple enough to avoid building a magical infrastructure system prematurely.
+
+Current candidates:
+- direct amethyst-based recharge;
+- a small refined "Resonant Charge" intermediary made from vanilla materials;
+- Smithing/another vanilla interaction for loading charge.
+
+Current preference is a **small refined intermediary**, because it distinguishes raw conductor material from stabilized artifact fuel while leaving room for future better recharge methods.
+
+No exact ratio/capacity is approved.
+
+### Beat 8 — First activation
+
+The player uses the runic pickaxe on a valid ore vein with explicit intent.
+
+Working interaction:
+- sneak + normal block break.
+
+Behavior:
+- first block breaks as vanilla;
+- the rune searches only bounded connected ore-family candidates;
+- each additional successful break consumes Bound Resonance and ordinary tool durability;
+- protection/cancelled breaks are respected;
+- hard operation limits apply regardless of available charge;
+- the propagation is presented as a short sequence/wave, not one giant synchronous burst.
+
+The first successful propagation is the first time the player **deliberately wields** Resonance rather than merely observing it.
+
+### Beat 9 — Maintenance teaches the economy
+
+After enough use, the tool reaches low/zero Bound Resonance.
+
+At zero:
+- vanilla pickaxe behavior remains;
+- runic propagation simply becomes dormant;
+- no item is destroyed;
+- no knowledge is lost.
+
+The player then performs the already learned recharge loop.
+
+This closes the first complete system loop:
+
+```
+discover
+→ understand
+→ inscribe
+→ charge
+→ use
+→ maintain
+```
+
+## UX principle — reveal only the next meaningful layer
+
+The system should avoid front-loading every concept.
+
+Suggested information timing:
+
+- before Attunement: no explanation;
+- at geode: only "something responded";
+- Codex: names Resonance as a hypothesis/observation;
+- first rune: introduces runic patterns;
+- first inscription: introduces artifact binding;
+- first empty charge: reinforces maintenance;
+- future Inner Resonance/Mana remains completely absent until a much later discovery.
+
+This prevents the first hour from feeling like a mod manual.
+
+## First-journey anti-patterns
+
+Avoid:
+
+- giving the player a fully populated magic book on first geode contact;
+- showing undiscovered rune slots/tiers;
+- requiring several unrelated rare structure drops before the first useful artifact;
+- making the first rune a random enchanting-table roll;
+- making raw amethyst simultaneously be rune, knowledge, fuel and crafting template;
+- introducing player Mana before artifact Resonance has proven itself;
+- forcing a bespoke altar/workstation before the system has enough content to deserve one;
+- making the first practical rune so expensive that players hoard it instead of learning the loop.
+
+## Candidate first-arc narrative tone
+
+The player's first arc should feel like:
+
+> "I noticed something strange."
+>
+> "I recorded it."
+>
+> "Someone before me understood part of this."
+>
+> "I learned their pattern."
+>
+> "I found a way to reproduce it."
+>
+> "I made it work."
+>
+> "Now I know there is much more I do not understand."
+
+Not:
+
+> "You unlocked Magic Tier I."
