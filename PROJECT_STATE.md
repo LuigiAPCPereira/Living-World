@@ -6,7 +6,7 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-128 — environmental performance gate preparation; LW-126 remains open for client visual proof and LW-127 awaits live winter smoke
+- **Current task:** LW-126 — seasonal client visual projection spike; LW-128 instrumentation is validated and its runtime benchmark is explicitly deferred for later
 - **Current acceptance:** LW-127 automated implementation is closed: one opt-in bounded owner handles real ICE+SNOW with persistent ownership, hysteresis and loaded-chunk-only probes; natural/player surfaces fail closed
 - **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 is implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at commit `383e5a1`: focused tests passed, IntelliJ build and production inspections are clean, `git diff --check` is clean, and full `./gradlew test --rerun-tasks` passed with 479 tests / 155 suites / 0 failures/errors/skips; representative performance workloads are still pending
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
@@ -17,8 +17,8 @@
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
-- **Blockers:** LW-128 measurement is currently blocked by runtime availability: MCPFabric is on the client side but reports `serverPresent=false` / 0 players; the existing Paper 26.3 build 133 dev server predates instrumentation commit `383e5a1` and holds `run/world/session.lock`, while a fresh build 135 `runServer` attempt aborts on that lock. No benchmark data from the stale/empty runtime is accepted
-- **Next action:** unblock LW-128 by connecting a real client to a server that has actually loaded the current instrumented jar (safely replacing the stale dev runtime first if needed). Then define one fixed measurement window/workload and capture the 1-player baseline with TPS/MSPT plus environmental counter deltas; compare equivalent feature-disabled/enabled windows before any claim and expand to 10/25/50+ only where tooling permits
+- **Blockers:** none for automated continuation. Runtime/client validation remains deferred for LW-122..LW-128 where noted; specifically, LW-128 benchmark data must not be invented from a stale or empty runtime
+- **Next action:** advance LW-126 with the smallest build-safe NMS slice: use the supported Paper userdev path for internals, keep NMS behind a narrow version-sensitive adapter, preserve server biome truth, and validate compile/tests/CI without claiming visual runtime success. Return to LW-128 benchmark later with a real connected client/runtime
 
 ## M12.4 — checkpoint local
 

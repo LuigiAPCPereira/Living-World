@@ -26,11 +26,13 @@ LW-126 continua aberto apenas como spike visual: não existe NMS de produção.
 O caminho `ClientboundChunksBiomesPacket` foi mapeado conceitualmente, mas prova
 com cliente real continua pendente.
 
-## Missão atual — LW-128
+## Validação runtime adiada — LW-128
 
 A fundação de instrumentação do environmental performance gate foi consolidada
-e validada no commit `383e5a1`. O LW-128 continua **em andamento** porque os
-workloads/baselines representativos ainda não foram medidos.
+e validada no commit `383e5a1`. Por decisão explícita do usuário em 2026-09-28,
+o benchmark local/runtime fica **adiado para retomada posterior** e não bloqueia
+a continuidade automatizada da frente ecológica. Nenhuma claim de performance
+é permitida até essa medição ser executada.
 
 Instrumentação consolidada:
 
@@ -85,13 +87,11 @@ commit, preservando uma única instância compartilhada de métricas no composit
 
 ## Próxima ação executável
 
-1. Confirmar branch/HEAD/upstream e que `383e5a1` está presente; não repetir o trabalho de instrumentação.
-2. Conectar um cliente real a um runtime que tenha carregado o jar instrumentado atual. Se for necessário substituir o servidor dev build 133, fazê-lo de forma segura/graciosa antes de iniciar o novo `runServer`.
-3. Para o gate de performance propriamente dito, seguir `agent-protocol/investigating-performance`: fixar workload, ambiente, janela de medição e baseline reproduzível antes de otimizar.
-4. Medir primeiro 1 jogador; registrar TPS/MSPT e deltas das métricas ambientais no mesmo intervalo.
-5. Comparar janelas equivalentes com as features ambientais relevantes desabilitadas/habilitadas, sem alterar gameplay como otimização escondida.
-6. Só expandir para 10/25/50+ jogadores onde o tooling puder produzir carga representativa; registrar explicitamente limitações de simulação/carga.
-7. Se surgir custo real, identificar hot path e formar uma única hipótese antes de mudar código; caso contrário, registrar o baseline e não otimizar por intuição.
+1. Confirmar branch/HEAD/upstream e que `383e5a1`/`efa75a8` estão presentes.
+2. Continuar **LW-126** pelo próximo slice automatizável: preparar corretamente a fronteira NMS/versionada da projeção visual sazonal, sem usar reflection improvisada e sem mutar biome server-side.
+3. Tratar qualquer mudança de build para NMS como dependência explícita e validada; preservar `LivingWorldPlugin` como composition root pequeno e manter internals confinados a adapter estreito.
+4. Validar por compile/test/build/CI o que puder ser provado sem cliente real; manter a prova visual/client-side como `implemented not validated` até smoke posterior.
+5. Manter LW-128 na fila de validação adiada: quando retomado, usar workload/baseline reproduzível, começar em 1 jogador, registrar TPS/MSPT + deltas ambientais e só então fazer claims/otimizações.
 
 ## Restrições importantes
 
@@ -99,7 +99,7 @@ commit, preservando uma única instância compartilhada de métricas no composit
   começar por `get_status` quando runtime for necessário.
 - Nenhuma claim de performance sem comparação medida.
 - Não alterar gameplay como “otimização” escondida.
-- Não iniciar NMS do LW-126 enquanto o LW-128 sujo não estiver reconciliado.
+- A antiga restrição de não iniciar NMS enquanto o LW-128 estivesse sujo está satisfeita: a instrumentação foi reconciliada, validada e publicada. O benchmark runtime continua adiado, separado da implementação.
 - Trabalhar em **blocos pequenos/médios**: o chat anterior apresentou
   `stream recovery polling timed out` / `Error in input stream` em blocos
   grandes. Preferir uma ação principal e 1–2 chamadas curtas por bloco.
