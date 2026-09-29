@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M15 / LW-151 — bounded Paper biome-entry detector on `discovery/m15-biome-discovery`
+- **Current task:** M15 / LW-152 — biome-discovery runtime smoke, explicitly deferred
 - **Current acceptance:** biome Discovery is PERSONAL; any stable Paper namespaced biome key is eligible without vanilla/mod namespace tables; durable identity is the full key while display label is non-persistent; implementation reuses the existing Discovery service/presentation and keeps detection event-driven/bounded
-- **Current validation:** M13/M14 automated integration gates remain green and their real-player scenarios remain in `RUNTIME_VALIDATION_BACKLOG.md`. LW-150 is validated at `d1ff670`: biome type/identity/label policy and composition-root registration are implemented, with GitHub Actions run #6 green on `clean test build`. LW-151 is the current frontier
+- **Current validation:** M13/M14 automated integration gates remain green and their real-player scenarios remain in `RUNTIME_VALIDATION_BACKLOG.md`. LW-150 is validated at `d1ff670`: biome type/identity/label policy and composition-root registration are implemented, with GitHub Actions run #6 green on `clean test build`. LW-151 is implemented at `2849d61` and GitHub Actions run #8 is green; runtime behavior remains intentionally separated into LW-152
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `discovery/m15-biome-discovery` (based on `main` `cb8803e`)
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for LW-150/LW-151 automated work. LW-131/LW-142 and the new LW-152 runtime smokes are explicitly deferred in `RUNTIME_VALIDATION_BACKLOG.md`; independent ecology/QoL/research branches must remain isolated
-- **Next action:** implement LW-151 as a Paper movement listener with per-player last-biome suppression and quit/disable cleanup; keep all first-time/idempotency semantics delegated to `DiscoveryService` and do not add scans, polling or biome allowlists
+- **Next action:** keep LW-152 in `RUNTIME_VALIDATION_BACKLOG.md` for a later real-player smoke. Recompute the independent automated frontier before starting another implementation slice; do not mark M15 fully validated until that smoke exists
 
 ## M12.4 — checkpoint local
 

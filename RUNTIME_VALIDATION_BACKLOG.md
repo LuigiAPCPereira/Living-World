@@ -118,7 +118,7 @@ For each completed runtime item, record:
 
 **Branch:** `discovery/m15-biome-discovery`.
 
-**Current state:** pending; runtime validation may be deferred after automated gates are green.
+**Current state:** pending and explicitly deferred. Automated implementation gate is green at `2849d61` (GitHub Actions run #8, `./gradlew clean test build --no-daemon`).
 
 **Goal:** prove that bounded biome-entry detection produces durable personal discoveries without duplicate presentation or namespace assumptions.
 
