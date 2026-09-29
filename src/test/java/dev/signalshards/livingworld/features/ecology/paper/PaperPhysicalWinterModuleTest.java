@@ -410,6 +410,78 @@ class PaperPhysicalWinterModuleTest {
     }
 
     @Test
+    void snowMutationTambemEncerraProbeBudget() {
+        AtomicInteger registrations = new AtomicInteger();
+        AtomicInteger schedules = new AtomicInteger();
+        AtomicInteger highestBlockCalls = new AtomicInteger();
+        Plugin plugin = plugin(registrations, schedules);
+        PaperPhysicalWinterSettings settings =
+                new PaperPhysicalWinterSettings(
+                        false,
+                        40L,
+                        4,
+                        1,
+                        8,
+                        PhysicalWinterSettings.defaults()
+                );
+        NamespacedKey key = new NamespacedKey(
+                "livingworld",
+                "physical_winter_ownership"
+        );
+        Map<NamespacedKey, Object> data = new HashMap<>();
+        Chunk chunk = chunk(pdc(data));
+        AtomicReference<Material> aboveType =
+                new AtomicReference<>(Material.AIR);
+        Block above = snowPlacementBlock(aboveType, 2, 65, 3);
+        World[] holder = new World[1];
+        Block[] surface = new Block[1];
+        World world = (World) Proxy.newProxyInstance(
+                World.class.getClassLoader(),
+                new Class<?>[]{World.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getEnvironment" -> World.Environment.NORMAL;
+                    case "hasStorm" -> true;
+                    case "isChunkLoaded" -> true;
+                    case "getHighestBlockAt" -> {
+                        highestBlockCalls.incrementAndGet();
+                        yield surface[0];
+                    }
+                    default -> null;
+                }
+        );
+        holder[0] = world;
+        surface[0] = snowSupportBlock(world, chunk, above);
+        Player player = (Player) Proxy.newProxyInstance(
+                Player.class.getClassLoader(),
+                new Class<?>[]{Player.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getWorld" -> holder[0];
+                    case "getLocation" -> new Location(holder[0], 0, 64, 0);
+                    case "getUniqueId" -> java.util.UUID.fromString(
+                            "d9f9e15b-3c5e-42f7-8d14-4a328e27cb73"
+                    );
+                    default -> null;
+                }
+        );
+        PaperPhysicalWinterModule module = new PaperPhysicalWinterModule(
+                plugin,
+                settings,
+                ignored -> new AmbientTemperature(-5.0D),
+                new PaperWinterSurfaceOwnershipStore(key, settings.domain()),
+                new WinterThermalPhasePolicy(settings.domain()),
+                new WinterSurfaceMutationPolicy(),
+                new PaperWinterSurfaceTargetResolver(),
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
+        );
+
+        module.processPlayer(player);
+
+        assertEquals(1, highestBlockCalls.get());
+        assertEquals(Material.SNOW, aboveType.get());
+    }
+
+    @Test
     void tempestadeFriaColocaSnowEPersisteOwnership() {
         AtomicInteger registrations = new AtomicInteger();
         AtomicInteger schedules = new AtomicInteger();

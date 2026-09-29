@@ -8,7 +8,7 @@
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-127 — bounded physical winter, SNOW mutation integration in the existing ICE owner
 - **Current acceptance:** SNOW now shares the same bounded probe/mutation loop as ICE while keeping independent policy/ownership semantics; only cold precipitation can place/accumulate owned snow, and thaw/non-terrestrial conditions melt only Living World-owned snow
-- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 SNOW integration passes 476 tests / 154 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`
+- **Current validation:** LW-126 remains an unimplemented visual spike pending client proof; LW-127 SNOW integration passes 477 tests / 154 suites / 0 failures/errors/skips plus IntelliJ build/inspections and `git diff --check`; a dedicated regression proves SNOW mutation stops further probes when the per-player mutation budget is exhausted
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`

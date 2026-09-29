@@ -870,15 +870,13 @@ Thaw só ocorre para `ICE` cujo `WinterSurfaceOwnershipLedger` confirma `WinterS
 
 `PaperWinterSnowTargetResolver` trata neve natural/de jogador como `OTHER` e também rejeita `WATER`/`LAVA` como suporte de placement. Assim o módulo não cobre fluidos com snow layer e não assume ownership de neve existente. ICE e SNOW continuam usando ownership persistente separado pelo mesmo ledger do chunk.
 
-Break/place/fade observados pelo módulo limpam ownership na posição afetada para evitar provenance obsoleta em interações normais de gameplay. Physical SNOW continua fora deste slice.
+Break/place/fade observados pelo módulo limpam ownership na posição afetada para evitar provenance obsoleta em interações normais de gameplay.
 
 **LW-127 / boundedness regressions:** testes do owner Paper fixam os budgets como contrato executável. Com `maxMutationsPerPlayer=1`, o primeiro freeze encerra os probes restantes daquele jogador; quando nenhum candidato muda, `probesPerPlayer=4` resulta em exatamente quatro consultas de superfície. Se `World#isChunkLoaded` for falso, `getHighestBlockAt` nem é chamado. Adicionar SNOW não autoriza aumentar esses limites automaticamente.
 
-**LW-127 / SNOW foundation:** `PhysicalSnowSettings` define um cap inicial configuracional de domínio de 4 layers (válido entre 1 e 8). `WinterSnowMutationPolicy` fica separado da policy de ICE: somente `FREEZING + precipitação` pode colocar/acumular snow owned; frio seco preserva sem acumular; `THAWING` ou dimensão sem frozen surfaces derrete somente snow owned.
+`PhysicalSnowSettings` mantém cap configuracional de 4 layers por default (válido entre 1 e 8). A integração usa o mesmo probe e o mesmo mutation budget do ICE; não existe scheduler separado para neve nem segundo scan da área por jogador.
 
-`PaperWinterSnowTargetResolver` usa regras vanilla do próprio Paper para o suporte futuro: snow existente só é tratada como `OWNED_SNOW` se o ledger confirmar ownership; snow natural/jogador falha fechado. Para nova deposição, o bloco acima precisa estar vazio e `Block#canPlace(SNOW)` deve aceitar o placement. Nenhum bloco de snow é mutado neste sub-slice.
-
-A futura integração deve reutilizar o mesmo probe do ICE e o mesmo mutation budget. Não deve existir scheduler separado para neve, nem segundo scan da área por jogador.
+Regression dedicado confirma que, com `maxMutationsPerPlayer=1`, uma mutação de SNOW encerra imediatamente os probes restantes daquele jogador, exatamente como no caminho de ICE.
 
 Congelamento/degelo deve considerar histerese para impedir oscillation próxima de 0 °C. Valores como congelar abaixo de -2 °C e derreter acima de +2 °C são exemplos de tuning, não decisão final.
 
