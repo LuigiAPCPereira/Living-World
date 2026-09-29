@@ -593,14 +593,19 @@ The sequence should communicate:
 
 A first version should prefer an ordinary server-observable action inside a naturally generated amethyst geode rather than a bespoke GUI.
 
-Candidate trigger:
+**Strongest current candidate:** the first time a player harvests a mature Amethyst Cluster that is directly attached to Budding Amethyst.
 
-- player enters/interacts inside a geode and directly interacts with a meaningful amethyst component;
-- the event must be one-time per player;
-- the system should avoid triggering from an arbitrary placed amethyst block in a base if the implementation can reliably distinguish geode context;
-- if reliable natural-geode classification proves too brittle, use a narrower explicit interaction contract rather than pretend certainty.
+Why this is attractive:
 
-The exact trigger remains open until implementation research proves which Paper/world-generation signals are reliable enough.
+- harvesting a mature cluster is already a normal player action used to obtain amethyst shards;
+- vanilla Budding Amethyst is the growth source for amethyst buds/clusters;
+- Budding Amethyst naturally occurs inside geodes and is not normally obtainable in Survival, giving the interaction a strong natural-geode anchor without scanning an entire structure;
+- the trigger can be event-driven and one-time per player;
+- the player discovers Resonance while physically extracting the material that may later become one of its main conductors.
+
+The implementation must still fail conservatively around Creative/admin-placed Budding Amethyst or custom-worldgen edge cases, and must not claim that every such block is canonical geode generation when the server cannot prove that history.
+
+If this trigger proves technically brittle on the project's actual Paper/worldgen stack, use a narrower explicit interaction contract rather than pretend certainty.
 
 ### Presentation
 
