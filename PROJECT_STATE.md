@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M16 / LW-162 — bounded landmark-entry detector on `discovery/m16-world-landmarks`
+- **Current task:** M16 / LW-163 — world-landmark runtime smoke, explicitly deferred
 - **Current acceptance:** landmark Discovery uses WORLD scope; eligibility is declarative through `#livingworld:landmarks`; each generated eligible structure instance receives one persistent plugin-owned UUID in its `GeneratedStructure` PDC; detection must remain destination-chunk-only and avoid radius search, scans, polling and force-load
-- **Current validation:** LW-160 is validated at `6c3f851`. LW-161 is implemented at `7e8c269` and GitHub Actions run #13 passed `clean test build`; it dynamically resolves `#livingworld:landmarks`, treats missing tag as empty, uses registry-safe keys and reads/creates a UUID in GeneratedStructure PDC. Runtime proof of tag membership/PDC persistence remains intentionally deferred to LW-163
+- **Current validation:** LW-160 is validated at `6c3f851`. LW-161 (`7e8c269`) and LW-162 (`d1b97d1`) are automated-green but runtime-pending; GitHub Actions runs #13 and #15 passed `clean test build`. The detector is block-movement-driven, destination-chunk-only, tag-gated and force-load/search-free. Runtime proof of real structure tag membership, per-instance PDC persistence and player presentation remains intentionally deferred to LW-163
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `discovery/m16-world-landmarks` (based on `main` `cb8803e`)
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for LW-160 automated work; LW-163 real-player validation is explicitly deferrable and must stay separate from automated acceptance
-- **Next action:** implement LW-162 only: pure per-player current-landmark-set suppression plus a Paper movement listener that inspects destination chunk `getStructures()`, bounds-checks the destination, resolves eligible instances via `PaperLandmarkResolver`, and delegates new entries to `LandmarkDiscovery`. No locateNearestStructure, scans, polling or force-load
+- **Next action:** keep LW-163 in `RUNTIME_VALIDATION_BACKLOG.md` for later real-player validation and recompute the next independent automated Discovery frontier before starting more code. Do not describe M16 as fully runtime-validated until that smoke exists
 
 ## M12.4 — checkpoint local
 

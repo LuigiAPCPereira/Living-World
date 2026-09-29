@@ -118,7 +118,7 @@ For each completed runtime item, record:
 
 **Branch:** `discovery/m16-world-landmarks`.
 
-**Current state:** pending; runtime validation may be deferred after automated LW-160..LW-162 gates are green.
+**Current state:** pending and explicitly deferred. Automated implementation is green through `d1b97d1` (GitHub Actions run #15, `./gradlew clean test build --no-daemon`).
 
 **Goal:** prove that declaratively tagged generated structures become durable world-scope discoveries without radius searches, coordinate-based identity or duplicate presentation.
 
