@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none confirmed
-- **Next action:** checkpoint the SNOW policy/target foundation, then wire SNOW into the existing PaperPhysicalWinterModule without adding a second scheduler or increasing probe/mutation budgets. Runtime smoke remains pending because the user currently has no client access
+- **Next action:** reconcile the dirty LW-128 performance-instrumentation worktree described in `HANDOFF.md`: run focused metric/module tests first, then IntelliJ/build/full gates. Do not reset the existing delta. Only after a green instrumentation checkpoint should representative performance workloads/baselines be measured
 
 ## M12.4 — checkpoint local
 

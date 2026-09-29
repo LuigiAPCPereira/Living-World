@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current development focus: **LW-122 / M12.5 Environmental & Thermal Foundation** on `ecology/m12-thermal-foundation`, explicitly authorized by the user after the M13/M14 integration reached `main`. Remaining Discovery smoke scenarios stay open but do not block this ecological branch.
+Current development focus: **LW-128 / M12 Environmental Performance Gate** on `ecology/m12-thermal-foundation`. LW-122..LW-125 and LW-127 are implemented with remaining runtime validation gaps; LW-126 remains an open client-visual spike. The dirty LW-128 instrumentation delta and exact next action are checkpointed in `HANDOFF.md`. Remaining Discovery/Waystone smoke scenarios stay open but do not block this ecological branch.
 
 Do not implement later roadmap modules opportunistically.
 
