@@ -114,6 +114,35 @@ For each completed runtime item, record:
 
 ---
 
+### LW-152 — Biome discovery real-player smoke
+
+**Branch:** `discovery/m15-biome-discovery`.
+
+**Current state:** pending; runtime validation may be deferred after automated gates are green.
+
+**Goal:** prove that bounded biome-entry detection produces durable personal discoveries without duplicate presentation or namespace assumptions.
+
+**Scenarios**
+
+- Move at least one block in an undiscovered biome and confirm exactly one `Descoberto` title for that biome.
+- Continue moving inside the same biome and confirm no repeated title/work-visible behavior.
+- Cross into a genuinely different undiscovered biome and confirm one new title.
+- Return to a previously discovered biome and confirm it remains silent.
+- When a custom/datapack/modded biome is available, enter it and confirm the namespaced-key identity is accepted without a vanilla-only table.
+- Disconnect/reconnect, revisit a known biome and confirm the discovery remains durable and presentation stays silent.
+- Confirm quit/disable/reconnect produces no Living World errors related to the detector cache.
+
+**Evidence to record**
+
+- Branch + exact commit tested.
+- Paper/Purpur and client versions.
+- First-biome title, second-biome title and known-biome silence.
+- Custom namespaced biome result when available.
+- Server log cleanliness.
+- Any world/client fixture setup and cleanup.
+
+---
+
 ### LW-191 — Hotbar Auto-Refill real-player smoke
 
 **Branch implementation:** `qol/hotbar-auto-refill`.

@@ -26,7 +26,7 @@ Heavy custom world generation, large structure systems, and recreation of projec
 
 The active scope is the project foundation described in `PRODUCT.md` and `TASKLIST.md`.
 
-Current integration/test focus: **M13 Waystone navigation clarity + M14 Discovery foundation** on local `main`. The accepted M12.5 environmental/thermal direction remains staged and must not be implemented opportunistically while this integration is being validated.
+Current development focus on this branch: **M15 Biome discovery**, starting with LW-150/LW-151 on `discovery/m15-biome-discovery`. M13/M14 runtime-only checks remain explicitly deferred in `RUNTIME_VALIDATION_BACKLOG.md`; independent ecology/QoL/research branches remain separate and must not be folded into this branch opportunistically.
 
 Do not implement later roadmap modules opportunistically.
 

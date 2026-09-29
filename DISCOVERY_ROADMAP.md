@@ -32,13 +32,23 @@ Validation state: automated gates green on the integration branch; **live Paper 
 
 ## M15 — Biome discovery
 
-Outcome: entering a biome for the first time is a personal discovery.
+Outcome: entering/encountering a biome for the first time is a personal discovery.
 
-- New `DiscoveryType("biome")`, `DiscoveryScope.PERSONAL`, own id mapping (biome key).
-- Event-driven from movement, reusing the existing bounded "block actually changed" pattern from Desire Lines; no biome scan, no per-tick work.
+Initial policy decision:
+
+- Every biome with a stable namespaced key exposed by Paper counts, regardless of vanilla/datapack/modded namespace. M15 does not guess whether a biome is "natural enough" and does not maintain a curated allowlist.
+- Durable identity is the full namespaced key (for example `minecraft:plains` or `terralith:yellowstone`), so equal path names in different namespaces remain distinct.
+- Presentation may humanize the key path as a readable fallback, but that label is event data only and is never persisted. A future localization/catalog policy can improve labels without migrating discovery identity.
+- If real servers reveal noisy/internal biome entries, filtering becomes a later evidence-driven policy instead of an assumption in the foundation.
+
+Slices:
+
+- **LW-150 — biome discovery contract:** declare `DiscoveryType("biome")`, personal scope, stable key→`DiscoveryId` mapping and readable fallback label; register the type in the composition root.
+- **LW-151 — bounded Paper detector:** observe only real player block movement/teleport events, resolve the biome at the destination block, suppress repeated work while the player remains in the same biome and delegate first-time semantics to `DiscoveryService`. No biome scan and no per-tick polling.
+- **LW-152 — runtime smoke:** prove first presentation, silence while remaining/re-entering an already-known biome, a second title for a genuinely new biome, custom namespaced biome handling when available, cleanup on quit/reconnect and clean logs. This smoke may remain deferred under `RUNTIME_VALIDATION_BACKLOG.md` while automated work continues.
+
 - Reuse the existing title presentation; no new client surface.
 - Depends on: M14.
-- Open question: which biomes count (natural vs generated, modded vs vanilla). Needs a decision, not an assumption.
 
 ## M16 — World landmarks
 

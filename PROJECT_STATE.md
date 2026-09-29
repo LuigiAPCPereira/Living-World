@@ -6,19 +6,19 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M13/M14 integration — Waystone navigation clarity + Discovery foundation on `main`
-- **Current acceptance:** integrated code must pass main gates, then a real player confirms nearest-first menu/lore/travel and one-time Discovery behavior without regressions in climate/Waystones
-- **Current validation:** merged tree passes `./gradlew clean test build`, forced `./gradlew test --rerun-tasks` (183 tests, 57 suites, 0 failures/errors/skips), IntelliJ build and cached diff whitespace gate; user confirmed the first live Discovery title (`Descoberto`), while the remaining LW-131/LW-142 scenarios are still pending
+- **Current task:** M15 / LW-150 — biome discovery contract on `discovery/m15-biome-discovery`
+- **Current acceptance:** biome Discovery is PERSONAL; any stable Paper namespaced biome key is eligible without vanilla/mod namespace tables; durable identity is the full key while display label is non-persistent; implementation reuses the existing Discovery service/presentation and keeps detection event-driven/bounded
+- **Current validation:** M13/M14 automated integration gates remain green and their real-player scenarios remain in `RUNTIME_VALIDATION_BACKLOG.md`. M15 has been promoted from the accepted Discovery roadmap; no M15 implementation is claimed yet. Branch-local GitHub Actions gate exists from `05c0421` and must remain green for implementation commits
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
-- **Observed branch:** `main`
+- **Observed branch:** `discovery/m15-biome-discovery` (based on `main` `cb8803e`)
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
 - **Baseline build:** `./gradlew build` succeeded before protocol initialization
 - **Implementation:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9/M10 validated; M11 weather readability validated; M12.3 concluído; M12.4 implementado/validado; M13 LW-130 validated by integrated-main gates; M14 LW-140/LW-141 implemented with runtime smoke pending
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
-- **Blockers:** none confirmed
-- **Next action:** complete the remaining LW-131/LW-142 real-player scenarios, then return to LW-122 environmental/thermal specification
+- **Blockers:** none for LW-150/LW-151 automated work. LW-131/LW-142 and the new LW-152 runtime smokes are explicitly deferred in `RUNTIME_VALIDATION_BACKLOG.md`; independent ecology/QoL/research branches must remain isolated
+- **Next action:** implement LW-150 first: add the biome discovery type/identity/label policy with pure tests and register it in the composition root. Only after that gate is green, implement LW-151 as a Paper movement listener with per-player last-biome suppression and quit/disable cleanup
 
 ## M12.4 — checkpoint local
 
