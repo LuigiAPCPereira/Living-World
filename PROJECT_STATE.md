@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M16 / LW-160 — world-landmark Discovery contract on `discovery/m16-world-landmarks`
+- **Current task:** M16 / LW-161 — Paper landmark identity/resolver on `discovery/m16-world-landmarks`
 - **Current acceptance:** landmark Discovery uses WORLD scope; eligibility is declarative through `#livingworld:landmarks`; each generated eligible structure instance receives one persistent plugin-owned UUID in its `GeneratedStructure` PDC; detection must remain destination-chunk-only and avoid radius search, scans, polling and force-load
-- **Current validation:** M16 implementation has not started. Technical research against current Paper APIs confirmed dynamic structure registry tags, `Registry#hasTag`, destination-chunk `Chunk#getStructures()` intersection semantics, `GeneratedStructure#getBoundingBox()`, and persistent `GeneratedStructure` PDC backed by `StructureStart` NBT. Existing M13/M14 runtime-only scenarios remain deferred in `RUNTIME_VALIDATION_BACKLOG.md`
+- **Current validation:** LW-160 is validated at `6c3f851`: WORLD-scope landmark contract, UUID identity mapping, structure-key fallback label, Discovery registry registration and i18n are implemented; GitHub Actions run #11 passed `clean test build`. Paper API research also confirmed dynamic structure registry tags, `Registry#hasTag`, destination-chunk `Chunk#getStructures()` intersection semantics, `GeneratedStructure#getBoundingBox()`, and persistent `GeneratedStructure` PDC backed by `StructureStart` NBT
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `discovery/m16-world-landmarks` (based on `main` `cb8803e`)
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for LW-160 automated work; LW-163 real-player validation is explicitly deferrable and must stay separate from automated acceptance
-- **Next action:** implement LW-160 only: add a pure `LandmarkDiscovery` contract (WORLD type, UUID identity, readable structure-key fallback label) plus tests and composition-root registration. Validate via branch GitHub Actions before starting the Paper resolver in LW-161
+- **Next action:** implement LW-161 only: a narrow Paper resolver that checks `#livingworld:landmarks`, treats absent/empty tag as no-op, resolves stable structure keys through the registry, and reads-or-creates one UUID in eligible `GeneratedStructure` PDC. Do not add movement listeners yet
 
 ## M12.4 — checkpoint local
 
