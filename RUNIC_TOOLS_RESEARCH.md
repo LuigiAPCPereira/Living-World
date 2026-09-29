@@ -1217,3 +1217,194 @@ The player's first arc should feel like:
 Not:
 
 > "You unlocked Magic Tier I."
+
+
+## Candidate design — from recovered knowledge to original research
+
+This section explores how the player can eventually stop merely copying old runes and begin deriving new ones.
+
+### Research should not be a point tree
+
+Avoid:
+
+- generic Research Points;
+- magic levels;
+- click-to-buy nodes;
+- hidden grind counters such as "use Vein Mining 500 times";
+- blind recipe combinations where the player brute-forces symbols/materials.
+
+A Living World research loop should instead be based on **distinct evidence and understanding**.
+
+### Four research states
+
+A promising structure is:
+
+1. **Observation** — the player encounters a phenomenon or complete rune.
+2. **Principle** — the Codex records what can reasonably be inferred from that evidence.
+3. **Hypothesis** — once compatible principles are understood, the player can formulate a new possible behavior.
+4. **Proof** — a bounded field experiment or inscription attempt demonstrates that the hypothesis is stable enough to become repeatable Rune Knowledge.
+
+This is not a visible technology tree. The Codex should present it as notes and deductions.
+
+### Example principles
+
+Names below are design vocabulary, not necessarily player-facing labels.
+
+**Resonance / Conduction**
+- learned from geode/amethyst interaction;
+- establishes that Resonance can be received/conducted/stabilized.
+
+**Binding**
+- learned when the player derives Runic Inscription;
+- establishes that a runic pattern can be fixed into an artifact.
+
+**Affinity**
+- learned from the Veia Profunda pattern;
+- establishes that a runic effect can recognize/materially follow a class of similar matter.
+
+**Propagation**
+- also learned from Veia Profunda;
+- establishes that an effect can continue from one valid target to another.
+
+**Boundary / Form**
+- not yet assigned to a source;
+- would establish that a runic effect can be constrained to a deliberate geometry instead of following a natural material structure.
+
+**Living Continuity**
+- candidate future principle from Lenho Vivo or another nature-related discovery;
+- establishes that Resonance can follow a coherent living/natural structure rather than simple block similarity.
+
+These principles should remain few and meaningful. Do not turn every implementation detail into a collectible research tag.
+
+### Important consequence for Runa da Fratura
+
+The future 3×3/area-mining rune should **not** be derivable from Veia Profunda alone.
+
+Veia Profunda teaches:
+
+> follow what is naturally connected and materially related.
+
+A 3×3 rune requires a fundamentally different concept:
+
+> ignore natural continuity and impose an artificial shape/boundary on the effect.
+
+Therefore a credible synthesis path is closer to:
+
+```
+Propagation
++ Binding
++ Boundary/Form
++ tool/mining context
+→ hypothesis: controlled fracture
+→ proof
+→ Runa da Fratura
+```
+
+The missing **Boundary/Form** principle should come from some other meaningful discovery, not an arbitrary XP threshold.
+
+This keeps synthesis logically grounded and gives future exploration a reason to matter.
+
+### Hypotheses should appear, not be purchased
+
+When the player has enough relevant knowledge, the Codex may add a new entry such as:
+
+> **Hypothesis: Fratura Controlada**
+>
+> A propagação da Veia Profunda segue a matéria por afinidade. Se o padrão pudesse ser limitado por uma forma imposta, talvez a Ressonância pudesse partir uma área definida sem depender da composição do bloco.
+
+This is not yet a usable rune.
+
+The player now knows what they are trying to prove.
+
+### Proof should happen in the world
+
+A hypothesis should become repeatable knowledge through one meaningful, bounded experiment rather than a menu confirmation.
+
+General design requirements:
+
+- the experiment should be understandable from the Codex note;
+- it should use ordinary world/material interactions when possible;
+- failure must be safe and should not destroy rare gear unexpectedly;
+- it should not require hundreds of repetitions;
+- successful proof should feel like "I made this work", not "I filled a progress bar."
+
+The exact Fracture proof is intentionally unresolved until a convincing Boundary/Form source and field experiment are designed.
+
+### Discovery graph, not tech tree
+
+Internally, rune research may naturally form a graph:
+
+```
+Geode
+  ↓
+Resonance / Conduction
+  ↓
+Runic Inscription → Binding
+  ↓
+Veia Profunda → Affinity + Propagation
+                         ↓
+       another discovery → Boundary/Form
+                         ↓
+                 Fratura hypothesis
+                         ↓
+                       Proof
+                         ↓
+                Runa da Fratura
+```
+
+But the player should not be shown this complete graph ahead of time.
+
+Only discovered observations, inferred principles and currently plausible hypotheses should appear.
+
+### Why this is preferable
+
+This model allows Living World to support original player discovery while preserving mystery:
+
+- exploration still matters because new phenomena teach new principles;
+- ancient runes matter because they can reveal techniques the player did not yet know;
+- the player can eventually combine ideas rather than remain dependent on ancient loot;
+- new Minecraft dimensions/updates can introduce new principles without invalidating old knowledge;
+- the system can remain small initially because only the principles needed for implemented content need to exist.
+
+## Candidate design — Codex as a reasoning journal
+
+The Codex can evolve from a record into a lightweight research interface without becoming a skill menu.
+
+Potential sections, revealed only as needed:
+
+- **Observações** — direct phenomena experienced;
+- **Materiais** — properties inferred from materials;
+- **Inscrições** — understood rune patterns;
+- **Princípios** — relationships the player has inferred;
+- **Hipóteses** — possible new patterns not yet proven;
+- **Artefatos** — successfully created runic items;
+- **Fenômenos** — broader later discoveries such as Inner Resonance.
+
+A hypothesis entry should explain *why* the character thinks it may work.
+
+That explanation is part of the fantasy and also serves as gameplay guidance.
+
+## Candidate design — knowledge can be incomplete without becoming fragment grind
+
+Not every discovery needs to produce a complete Principle immediately.
+
+A large or unusual mystery can produce a partial note:
+
+> The pattern repeats, but one element is missing.
+
+However:
+
+- avoid numbered fragment collections;
+- avoid forcing every rune through multiple pieces;
+- use incomplete knowledge only when the uncertainty itself is narratively/gameplay meaningful.
+
+The first practical rune should remain relatively direct.
+
+## Open research questions for synthesis
+
+1. What world phenomenon should teach **Boundary/Form** convincingly enough to support area-shaped runes?
+2. Should Principles be explicitly named to the player, or remain implicit in Codex prose?
+3. Can one player transcribe a derived Rune Knowledge just like an ancient one?
+4. Should original synthesis require Attunement only, or a later "researcher" capability?
+5. How much automation should the Codex perform when prerequisites are met: immediate hypothesis appearance, or only after a contextual observation?
+6. Can different discovery paths lead to the same principle/rune, allowing Minecraft updates and server variation to coexist?
