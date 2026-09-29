@@ -859,3 +859,118 @@ This avoids introducing a personal Mana resource before the world has taught the
 6. What material recipe makes a repeatable runic matrix feel mystical without creating unnecessary custom-item inflation?
 7. Should a non-Attuned player be able to use an already-inscribed charged tool, even if they cannot create/read its rune?
 8. Should recharge be possible anywhere, or become more efficient near natural amethyst/geode structures?
+
+
+## Candidate design — Attunement, knowledge and artifact use
+
+This section refines the progression model without approving implementation.
+
+### Attunement should be immediate and durable
+
+Current strongest candidate:
+
+- the first valid geode resonance event permanently **Attunes** the player;
+- no second ritual is required to "confirm" it;
+- death does not remove it;
+- losing a Codex does not remove it;
+- Attunement grants no stats, Mana, mining bonus or passive power.
+
+Attunement is a **perception/capability threshold**, not a level.
+
+### Three distinct player states
+
+Living World should avoid collapsing these into one boolean:
+
+1. **Attunement** — the player can perceive/recognize Resonance and runic phenomena.
+2. **Rune Knowledge** — the player understands a specific runic pattern.
+3. **Inscription Technique** — the player knows how to bind a known pattern into a compatible artifact/tool.
+
+This lets discovery remain meaningful without making every rune a separate crafting-system tutorial.
+
+### Proposed artifact-use rule
+
+A useful social/multiplayer distinction is:
+
+- **Not Attuned:** can possess/trade/store a runic artifact, but its runic behavior remains dormant for that player; the underlying vanilla tool still works.
+- **Attuned, rune not learned:** can activate/use an already-inscribed artifact but cannot reproduce/transcribe that rune.
+- **Attuned + Rune Knowledge + Inscription Technique:** can create/reproduce that runic artifact, subject to material/energy costs.
+
+This is currently preferred over either extreme:
+- "anyone can use everything immediately", which weakens Attunement;
+- "you must personally discover every rune before using gifted gear", which weakens SMP cooperation/trade.
+
+The exact UX for showing an unknown rune to an Attuned player remains open; it should communicate that the item is runic without necessarily revealing the full recipe/knowledge entry.
+
+## Candidate design — Rune provenance
+
+Not every rune should come from Ancient Cities or even from ancient civilizations.
+
+A stronger long-term model has at least three provenance families:
+
+### Ancient / inherited inscriptions
+
+Knowledge recovered from ruins, structures, forgotten artifacts or surviving records.
+
+This supports exploration and fragmented history.
+
+### Natural patterns
+
+Knowledge learned by observing a phenomenon closely enough to recognize a repeatable Resonance pattern.
+
+The geode Attunement itself is the first example: nature teaches before civilization does.
+
+Future candidates could involve lightning, sculk vibration/echo, unusual environmental cycles, dimensional materials or other Mojang-supported phenomena.
+
+### Modern synthesis
+
+Some runes may be **new discoveries made by the player**, derived from previously understood patterns rather than recovered intact from an ancient source.
+
+This prevents the setting from implying that all meaningful magic was invented in the past and the player can only imitate lost civilizations.
+
+It also creates a clean place for more artificial utility patterns—such as a future bounded area-fracture/3×3 mining rune—if design later decides that such a behavior is better understood as a modern synthesis than as ancient archaeology.
+
+### Worldbuilding consequence
+
+The player is not merely an archaeologist.
+
+Progression can evolve from:
+
+> "I found what they knew"
+
+to
+
+> "I understand enough to discover something they may never have written down."
+
+This is a strong long-term fit for Living World's discovery-driven identity.
+
+## Candidate design — First knowledge arc
+
+A coherent first arc now looks like:
+
+```
+natural phenomenon
+  geode / amethyst
+        ↓
+Attunement
+  player can perceive Resonance
+        ↓
+recording
+  Resonance Codex
+        ↓
+ancient/inherited pattern
+  Runa da Veia Profunda
+        ↓
+general technique
+  Runic Inscription
+        ↓
+artifact creation
+  first runic pickaxe
+        ↓
+Bound Resonance
+  recharge/maintenance
+        ↓
+later discoveries
+  natural, ancient or player-synthesized runes
+```
+
+The order of "first specific rune" versus "general inscription technique" is still open and may be swapped if a better discovery sequence emerges.
