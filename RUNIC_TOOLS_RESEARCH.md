@@ -300,3 +300,231 @@ No final system name, recipes, numbers, rune acquisition, recharge rule, M22 mil
 - Warcraft Wiki — Runeforging / Runic Power distinction
 - Minecraft/Mojang documentation — data-driven enchantments and amethyst vibration resonance
 - Paper 26.3 Javadocs — `Player.breakBlock(Block)` and item metadata/data APIs
+
+
+## Second research pass — knowledge, embodied resonance and magical-world identity
+
+### Accepted creative direction from product discussion
+
+The following direction is now intentionally preserved for future design work, without promoting it to an implementation milestone:
+
+- Rune names should be slightly mystical/evocative but still communicate their practical behavior at a glance.
+- Rune acquisition should fundamentally be **knowledge discovery**, not endless one-off artifact farming.
+- Exploration should reveal rune knowledge, with Ancient Cities and other fitting structures as candidate sources.
+- Amethyst geodes should become materially meaningful to the magical system rather than existing only as another recipe source.
+- A future personal-magic system may be explained as **Resonance internalized/stabilized in a living body**, but this is an open cosmology direction, not an approved player-mana mechanic.
+- Minecraft magic mods, fantasy/RPG systems, manga/manhwa and similar fiction are accepted inspiration sources, provided Living World translates patterns rather than copying names/lore/mechanics wholesale.
+
+### Fiction pattern — foreign power becomes part of the body
+
+Further research corrected and sharpened the Swordmaster's Youngest Son reference.
+
+Jin Runcandel has two distinct relevant power patterns:
+
+1. his divine contract with Solderet gives him access to Shadow Force alongside Aura and Mana;
+2. later, Vahn gives him a physical **Heart of Light** formed from her blood. The heart exists on/in his chest, contains aura, enables the Illustrious Legends' techniques, and is later associated with lightning energy.
+
+The useful inspiration is not the exact fiction terminology. It is the distinction between:
+
+- **knowledge/training** — knowing the technique;
+- **capacity/vessel** — possessing the bodily organ/core able to conduct it;
+- **external relationship/contract** — gaining access to a different class of power.
+
+Living World can reuse that structural separation without importing the setting.
+
+### Other fiction patterns
+
+**The Beginning After the End**
+- Magic is organized around a bodily Mana Core with progressive stages.
+- A high-grade Mana Beast can pass a Beast Will to a person, adding an inherited/foreign capability that the recipient must learn to control.
+- Useful pattern: internal capacity and learned/inherited special ability are separate progression axes.
+
+**Second Life Ranker**
+- The protagonist eventually uses a Dragon Heart and other internalized artifacts/powers whose resonance interacts with his mana stream.
+- Useful pattern: an incorporated artifact/core can alter how internal energy flows without being identical to the energy itself.
+
+**Nano Machine**
+- A foreign system is physically integrated into the protagonist and permanently changes what his body can perceive/perform.
+- Useful pattern: an "awakening" can be a persistent capability unlock rather than a consumable buff.
+
+These works support a useful Living World distinction:
+
+> The world may contain Resonance; an artifact may store Resonance; a living being may later become capable of conducting/stabilizing Resonance. These are related phenomena, not necessarily the same resource pool.
+
+### Minecraft pattern — discovery before recipe
+
+**Spectrum** is the strongest direct reference found for the desired exploration feeling.
+
+- It describes itself around discovery/exploration rather than exposing everything up front.
+- Recipes and guidebook entries unlock step-by-step.
+- The player's guidebook is given after stumbling upon the first geode.
+- Progress is framed as realizing that meaningful things were already present in the world but the player previously lacked the knowledge/tools to perceive them.
+
+This strongly supports making the first geode encounter a **revelation/attunement moment**, not merely a place to farm recharge material.
+
+**Thaumcraft** separates Observation and Theory. Players learn by scanning world objects/events and by researching, and some entries remain hidden until the right object/event is encountered.
+
+Useful pattern:
+
+> knowledge is earned by encountering evidence in the world, then understanding it.
+
+Living World should prefer this over a GUI button that simply spends XP to "buy" a rune.
+
+**Slimefun** demonstrates a practical server-side per-player research model: items/features can remain locked until the player's research is unlocked, and XP can be a cost. Slimefun also has physical Ancient Runes and an Ancient Altar.
+
+Useful pattern:
+- per-player knowledge gating is technically/player-experience viable on a server;
+- however, Living World should avoid Slimefun's more menu-driven "click locked research and pay XP" feel if the goal is mystical discovery.
+
+**Mana and Artifice** combines several relevant patterns:
+- rune/manaweave patterns can appear in structure loot;
+- progression is tiered and guided through a codex;
+- enchanting/runescribing is a multi-step magical process;
+- knowledge can be represented by journals/theses/patterns and shared/transcribed.
+
+Useful pattern: exploration can discover **knowledge artifacts**, while crafting/inscription remains a later repeatable skill.
+
+**Ars Nouveau** is especially relevant materially:
+- Amethyst or Lapis can be transformed into Source Gems;
+- Glyphs are learned knowledge stored on the player;
+- learned knowledge can be shared through a codex.
+
+Useful pattern: **vanilla material -> magical medium** and **physical glyph -> permanent learned knowledge** can coexist cleanly.
+
+**Botania** remains the reference for a much larger possible future:
+- energy is generated/stored in world infrastructure;
+- portable batteries exist;
+- equipment consumes or stores that energy.
+
+Living World should not require that infrastructure for first runic tools, but it remains a good future model if Resonance eventually becomes a world-energy system.
+
+### MysticalCraft naming ambiguity
+
+The currently discoverable project named **MysticalCraft** is a 2025–2026 Bedrock addon focused on elemental biomes/materials/world generation. It does not currently provide a strong reference for the specific knowledge/rune system under discussion.
+
+If "Mystical Craft" in conversation referred to a different older Java mod/modpack, that specific reference remains unresolved and should not be silently substituted.
+
+## Emerging cosmology hypothesis
+
+A coherent model now exists that can grow from two runic tools into broader fantasy without requiring a retcon.
+
+### Resonance
+
+**Resonance** is a property/energy phenomenon of the world: patterns, materials and living systems can receive, store, conduct or reshape it.
+
+Amethyst is not "mana ore." It is a naturally excellent **resonator**. This distinction matters because it lets many future materials interact with Resonance differently without making every magical recipe an amethyst recipe.
+
+### Runes
+
+A **Rune** is an encoded pattern that tells Resonance *how to behave*.
+
+The rune is information/structure, not fuel.
+
+This supports self-explanatory mystical names such as:
+
+- **Runa da Veia Profunda** — follows connected mineral veins;
+- **Runa do Lenho Vivo** — reads/follows a natural tree structure;
+- **Runa da Fratura** — candidate future 3x3/block-area breaking behavior.
+
+Names are illustrative, not final content commitments.
+
+### Bound Resonance
+
+An artifact/tool can hold **Bound Resonance**: a finite reserve stabilized inside the inscribed object.
+
+Runic tools can therefore exist before player mana exists.
+
+The tool is the vessel; the rune defines behavior; Bound Resonance pays for magical work.
+
+### Inner Resonance
+
+A future living being may become **attuned** enough to stabilize Resonance inside the body.
+
+Working concept:
+
+> **Mana could be the practical name for Resonance stabilized/circulating within a living body.**
+
+This avoids inventing two unrelated magical substances.
+
+It also gives Living World a clean future hierarchy:
+
+- World Resonance — ambient/latent phenomenon.
+- Bound Resonance — stored in artifacts/tools.
+- Inner Resonance / Mana — stored or circulated by a living being.
+- Rune — pattern/instruction that shapes Resonance.
+- Attunement — ability to perceive/conduct/control Resonance.
+
+No player Mana meter is approved yet.
+
+### Why this model is attractive
+
+It allows first implementation to stay small:
+
+- rune knowledge;
+- inscribed tool;
+- tool charge;
+- vein mining.
+
+But it also naturally supports later ideas:
+
+- body attunement;
+- spells or active abilities;
+- magical artifacts;
+- environmental/seasonal resonance;
+- rituals;
+- magical structures;
+- rare rune families;
+- exploration-driven lore.
+
+Narrative unification must **not** imply technical coupling. For example, ecology and seasons may one day be explained through the world's Resonance, while their existing domain code remains independent unless a future gameplay requirement proves a real integration seam.
+
+## Candidate discovery loop
+
+A promising, not-yet-approved progression loop is:
+
+1. Player encounters a geode and experiences the first **Resonance revelation/attunement**.
+2. This unlocks the ability to recognize runic inscriptions rather than immediately granting all rune recipes.
+3. Specific rune knowledge is found through exploration: Ancient Cities, Mineshafts, Trial Chambers, Strongholds, archaeology or other thematically appropriate sources.
+4. Reading/studying an inscription permanently records the rune knowledge for that player.
+5. A knowledgeable player can then reproduce/inscribe that rune using repeatable material + XP/lapis/amethyst costs.
+6. Recharging the resulting tool uses a repeatable Resonance source/process.
+
+Important SMP question: rare one-time chest loot must not make knowledge unfairly monopolizable. Candidate social solutions include copyable/transcribable rune knowledge, non-consumed readable inscriptions, or a learned player being able to create a teachable copy at material cost. This requires explicit design later.
+
+## Geodes as a magical foundation
+
+The geode is a particularly strong first-contact location because:
+
+- it already communicates crystal/vibration/resonance through vanilla mechanics;
+- budding amethyst provides a renewable loop after discovery;
+- geodes are exploration targets that many players otherwise have limited reason to revisit;
+- they exist naturally without Living World needing to replace world generation;
+- they can support both lore ("this is where you first hear/understand Resonance") and economy ("amethyst participates in storing/conducting it").
+
+Do not make geodes the exclusive source of all future magic. Their role is better as **first resonance school / fundamental conductor**, leaving sculk, echo shards, Nether materials, End materials and future discoveries room to express other branches.
+
+## Architecture implication for future design
+
+If this cosmology is accepted later, separate durable concepts should remain distinct:
+
+- **RuneKnowledge** — what the player has learned;
+- **RuneDefinition** — what a rune means/can be applied to;
+- **RunicInscription** — rune identity bound to an item;
+- **ResonanceStore** — finite artifact charge/capacity;
+- **Attunement** — future personal capability, if approved;
+- **RuneExecution** — bounded gameplay effect such as vein propagation.
+
+This prevents "mana", discovery, item metadata and world lore from collapsing into one manager.
+
+## Next design questions
+
+Before implementation, the highest-value questions are now:
+
+1. What exactly happens at the player's **first geode revelation**?
+2. Is Attunement merely the ability to understand inscriptions, or does it physically change the player?
+3. How is rune knowledge represented and shared on an SMP?
+4. Which vanilla structures are thematically responsible for each first rune?
+5. Does applying a known rune use Smithing, a minimal runescribing interaction, or another existing-world ritual?
+6. Is amethyst consumed directly to recharge Bound Resonance, refined first, or used through a resonant station?
+7. Should the first tool rune require the player to be Attuned, or can anyone use a charged runic artifact while only knowledgeable players can create it?
+8. If Inner Resonance/Mana arrives later, can it power artifacts at all, or should artifact and personal reservoirs remain deliberately separate for balance?
