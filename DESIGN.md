@@ -365,7 +365,7 @@ LW-127 / segundo slice: `PaperPhysicalWinterModule` é um owner opt-in de ICE co
 
 LW-127 / boundedness gate: regressões verificam early-stop no mutation budget, teto exato de probes quando não há mutation e ausência total de surface lookup em chunk não carregado. Esses limites são parte do contrato do owner, não apenas documentação.
 
-LW-127 / SNOW foundation: `WinterSnowMutationPolicy` e `PaperWinterSnowTargetResolver` mantêm snow separado de ICE. Cold precipitation pode place/accumulate owned snow até cap de layers; thaw/non-terrestrial só afetam ownership do plugin; snow não-owned falha fechado. A integração futura deve compartilhar o mesmo scheduler/probe/mutation budget do ICE.
+LW-127 / SNOW integration: `WinterSnowMutationPolicy`, `PaperWinterSnowTargetResolver` e `PaperWinterSnowMutator` mantêm snow separado de ICE em policy/ownership, mas compartilham o mesmo scheduler/probe/mutation budget de `PaperPhysicalWinterModule`. Cold precipitation pode place/accumulate owned snow até cap de layers; thaw/non-terrestrial só afetam ownership do plugin; snow não-owned falha fechado. WATER/LAVA não são suportes válidos para placement.
 
 Performance permanece bounded: nenhum scan recorrente global; trabalho por jogador/região possui budget; mudanças são preferencialmente event/delta-driven com cache/invalidação; acesso Bukkit permanece thread-safe; async é reservado a trabalho puro quando medição justificar.
 

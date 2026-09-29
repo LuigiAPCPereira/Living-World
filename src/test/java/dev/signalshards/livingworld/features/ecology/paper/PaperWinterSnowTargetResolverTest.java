@@ -62,6 +62,25 @@ class PaperWinterSnowTargetResolverTest {
     }
 
     @Test
+    void liquidoNuncaEhSupportParaSnow() {
+        WinterSurfaceOwnershipLedger ownership =
+                WinterSurfaceOwnershipLedger.empty(8);
+        Block water = block(
+                Material.WATER,
+                null,
+                0,
+                64,
+                0,
+                null
+        );
+
+        var observation = resolver.resolve(water, ownership);
+
+        assertEquals(WinterSnowTarget.OTHER, observation.target());
+        assertSame(water, observation.mutationBlock());
+    }
+
+    @Test
     void superficieValidaRetornaBlocoAcimaParaPlacement() {
         WinterSurfaceOwnershipLedger ownership =
                 WinterSurfaceOwnershipLedger.empty(8);

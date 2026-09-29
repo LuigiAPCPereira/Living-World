@@ -866,6 +866,10 @@ Freeze só ocorre quando `PaperWinterSurfaceTargetResolver` encontra WATER sourc
 
 Thaw só ocorre para `ICE` cujo `WinterSurfaceOwnershipLedger` confirma `WinterSurfaceKind.ICE`. Em `THAWING` — ou em dimensão que não permite frozen surfaces — a mutação é `ICE -> WATER` e o ownership é removido. ICE natural ou de jogador sem ownership é tratado como `OTHER` e nunca é removido por este módulo.
 
+**LW-127 / SNOW integration:** `PaperWinterSnowMutator` agora roda dentro do mesmo probe/mutation budget de `PaperPhysicalWinterModule`, antes do caminho de ICE. Em `FREEZING` com precipitação, suporte válido pode receber uma camada de `SNOW`; neve já owned pode acumular até o `max-snow-layers` configurado (default 4). Em `THAWING` ou dimensão não-terrestre, somente neve owned perde camadas e o ownership é removido quando a última camada desaparece.
+
+`PaperWinterSnowTargetResolver` trata neve natural/de jogador como `OTHER` e também rejeita `WATER`/`LAVA` como suporte de placement. Assim o módulo não cobre fluidos com snow layer e não assume ownership de neve existente. ICE e SNOW continuam usando ownership persistente separado pelo mesmo ledger do chunk.
+
 Break/place/fade observados pelo módulo limpam ownership na posição afetada para evitar provenance obsoleta em interações normais de gameplay. Physical SNOW continua fora deste slice.
 
 **LW-127 / boundedness regressions:** testes do owner Paper fixam os budgets como contrato executável. Com `maxMutationsPerPlayer=1`, o primeiro freeze encerra os probes restantes daquele jogador; quando nenhum candidato muda, `probesPerPlayer=4` resulta em exatamente quatro consultas de superfície. Se `World#isChunkLoaded` for falso, `getHighestBlockAt` nem é chamado. Adicionar SNOW não autoriza aumentar esses limites automaticamente.

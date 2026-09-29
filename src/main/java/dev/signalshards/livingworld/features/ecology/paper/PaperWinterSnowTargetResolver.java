@@ -45,6 +45,15 @@ public final class PaperWinterSnowTargetResolver {
             );
         }
 
+        if (surface.getType() == Material.WATER
+                || surface.getType() == Material.LAVA) {
+            return new Observation(
+                    WinterSnowTarget.OTHER,
+                    surface,
+                    0
+            );
+        }
+
         Block above = surface.getRelative(BlockFace.UP);
         if (!above.isEmpty() || !above.canPlace(placementData)) {
             return new Observation(

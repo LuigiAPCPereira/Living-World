@@ -108,3 +108,4 @@ ecology:
     freeze-at-or-below-celsius: -1.0
     thaw-at-or-above-celsius: 2.0
     max-owned-positions-per-chunk: 256
+    max-snow-layers: 4

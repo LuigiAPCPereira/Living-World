@@ -10,6 +10,7 @@ import dev.signalshards.livingworld.features.ecology.domain.WinterSurfaceMutatio
 import dev.signalshards.livingworld.features.ecology.domain.WinterSurfaceMutationPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.WinterSurfacePosition;
 import dev.signalshards.livingworld.features.ecology.domain.WinterThermalPhasePolicy;
+import dev.signalshards.livingworld.features.ecology.domain.PhysicalSnowSettings;
 import org.bukkit.HeightMap;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -55,6 +56,7 @@ public final class PaperPhysicalWinterModule
     private final WinterSurfaceMutationPolicy mutationPolicy;
     private final PaperWinterSurfaceTargetResolver targetResolver;
     private final EnvironmentalDimensionPolicy dimensionPolicy;
+    private final PaperWinterSnowMutator snowMutator;
     private final Map<UUID, Integer> probeCursors = new HashMap<>();
     private BukkitTask task;
     private boolean active;
@@ -62,7 +64,8 @@ public final class PaperPhysicalWinterModule
     public PaperPhysicalWinterModule(
             Plugin plugin,
             PaperPhysicalWinterSettings settings,
-            PaperAmbientTemperatureProvider ambientTemperature
+            PaperAmbientTemperatureProvider ambientTemperature,
+            PhysicalSnowSettings snowSettings
     ) {
         this(
                 plugin,
@@ -72,7 +75,8 @@ public final class PaperPhysicalWinterModule
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                new PaperWinterSnowMutator(snowSettings)
         );
     }
 
@@ -84,7 +88,8 @@ public final class PaperPhysicalWinterModule
             WinterThermalPhasePolicy thermalPhasePolicy,
             WinterSurfaceMutationPolicy mutationPolicy,
             PaperWinterSurfaceTargetResolver targetResolver,
-            EnvironmentalDimensionPolicy dimensionPolicy
+            EnvironmentalDimensionPolicy dimensionPolicy,
+            PaperWinterSnowMutator snowMutator
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(
@@ -114,6 +119,10 @@ public final class PaperPhysicalWinterModule
         this.dimensionPolicy = Objects.requireNonNull(
                 dimensionPolicy,
                 "policy de dimensão"
+        );
+        this.snowMutator = Objects.requireNonNull(
+                snowMutator,
+                "mutator de neve"
         );
     }
 
@@ -213,6 +222,18 @@ public final class PaperPhysicalWinterModule
         var phase = thermalPhasePolicy.phaseFor(
                 ambientTemperature.ambientTemperatureAt(block)
         );
+        if (snowMutator.mutate(
+                block,
+                ownership,
+                phase,
+                dimension,
+                block.getWorld().hasStorm()
+        )) {
+            if (ownership.isDirty()) {
+                ownershipStore.save(chunk, ownership);
+            }
+            return true;
+        }
         var target = targetResolver.resolve(block, ownership);
         WinterSurfaceMutation mutation = mutationPolicy.decide(
                 phase,

@@ -4,7 +4,9 @@ import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.EnvironmentalDimensionPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.WinterSurfaceMutationPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.WinterThermalPhasePolicy;
+import dev.signalshards.livingworld.features.ecology.domain.PhysicalSnowSettings;
 import dev.signalshards.livingworld.features.ecology.domain.PhysicalWinterSettings;
+import dev.signalshards.livingworld.features.ecology.domain.WinterSnowMutationPolicy;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Chunk;
@@ -14,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
@@ -60,7 +63,8 @@ class PaperPhysicalWinterModuleTest {
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
         );
 
         module.enable();
@@ -97,7 +101,8 @@ class PaperPhysicalWinterModuleTest {
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
         );
 
         module.enable();
@@ -139,7 +144,8 @@ class PaperPhysicalWinterModuleTest {
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
         );
 
         assertTrue(module.processCandidate(block));
@@ -198,7 +204,8 @@ class PaperPhysicalWinterModuleTest {
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
         );
 
         assertTrue(module.processCandidate(block));
@@ -264,7 +271,8 @@ class PaperPhysicalWinterModuleTest {
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
         );
 
         module.processPlayer(player);
@@ -326,7 +334,8 @@ class PaperPhysicalWinterModuleTest {
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
         );
 
         module.processPlayer(player);
@@ -390,13 +399,220 @@ class PaperPhysicalWinterModuleTest {
                 new WinterThermalPhasePolicy(settings.domain()),
                 new WinterSurfaceMutationPolicy(),
                 new PaperWinterSurfaceTargetResolver(),
-                new EnvironmentalDimensionPolicy()
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
         );
 
         module.processPlayer(player);
 
         assertEquals(4, highestBlockCalls.get());
         assertEquals(Material.STONE, type.get());
+    }
+
+    @Test
+    void tempestadeFriaColocaSnowEPersisteOwnership() {
+        AtomicInteger registrations = new AtomicInteger();
+        AtomicInteger schedules = new AtomicInteger();
+        Plugin plugin = plugin(registrations, schedules);
+        PaperPhysicalWinterSettings settings =
+                new PaperPhysicalWinterSettings(
+                        false,
+                        40L,
+                        4,
+                        1,
+                        8,
+                        PhysicalWinterSettings.defaults()
+                );
+        NamespacedKey key = new NamespacedKey(
+                "livingworld",
+                "physical_winter_ownership"
+        );
+        Map<NamespacedKey, Object> data = new HashMap<>();
+        Chunk chunk = chunk(pdc(data));
+        AtomicReference<Material> aboveType =
+                new AtomicReference<>(Material.AIR);
+        Block above = snowPlacementBlock(aboveType, 2, 65, 3);
+        World world = winterWorld(true);
+        Block surface = snowSupportBlock(world, chunk, above);
+        PaperWinterSurfaceOwnershipStore store =
+                new PaperWinterSurfaceOwnershipStore(key, settings.domain());
+        PaperPhysicalWinterModule module = new PaperPhysicalWinterModule(
+                plugin,
+                settings,
+                ignored -> new AmbientTemperature(-5.0D),
+                store,
+                new WinterThermalPhasePolicy(settings.domain()),
+                new WinterSurfaceMutationPolicy(),
+                new PaperWinterSurfaceTargetResolver(),
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
+        );
+
+        assertTrue(module.processCandidate(surface));
+        assertEquals(Material.SNOW, aboveType.get());
+        assertEquals(
+                dev.signalshards.livingworld.features.ecology.domain.WinterSurfaceKind.SNOW,
+                store.load(chunk).kindAt(
+                        new dev.signalshards.livingworld.features.ecology.domain.WinterSurfacePosition(
+                                2,
+                                65,
+                                3
+                        )
+                ).orElseThrow()
+        );
+    }
+
+    @Test
+    void thawDaUltimaLayerRemoveSnowEOwnershipPersistido() {
+        AtomicInteger registrations = new AtomicInteger();
+        AtomicInteger schedules = new AtomicInteger();
+        Plugin plugin = plugin(registrations, schedules);
+        PaperPhysicalWinterSettings settings =
+                new PaperPhysicalWinterSettings(
+                        false,
+                        40L,
+                        4,
+                        1,
+                        8,
+                        PhysicalWinterSettings.defaults()
+                );
+        NamespacedKey key = new NamespacedKey(
+                "livingworld",
+                "physical_winter_ownership"
+        );
+        Map<NamespacedKey, Object> data = new HashMap<>();
+        Chunk chunk = chunk(pdc(data));
+        PaperWinterSurfaceOwnershipStore store =
+                new PaperWinterSurfaceOwnershipStore(key, settings.domain());
+        var position =
+                new dev.signalshards.livingworld.features.ecology.domain.WinterSurfacePosition(
+                        2,
+                        65,
+                        3
+                );
+        var ledger = store.load(chunk);
+        ledger.claim(
+                position,
+                dev.signalshards.livingworld.features.ecology.domain.WinterSurfaceKind.SNOW
+        );
+        store.save(chunk, ledger);
+
+        AtomicReference<Material> type =
+                new AtomicReference<>(Material.SNOW);
+        Block snow = singleLayerSnowBlock(
+                winterWorld(false),
+                chunk,
+                type,
+                2,
+                65,
+                3
+        );
+        PaperPhysicalWinterModule module = new PaperPhysicalWinterModule(
+                plugin,
+                settings,
+                ignored -> new AmbientTemperature(5.0D),
+                store,
+                new WinterThermalPhasePolicy(settings.domain()),
+                new WinterSurfaceMutationPolicy(),
+                new PaperWinterSurfaceTargetResolver(),
+                new EnvironmentalDimensionPolicy(),
+                snowMutator()
+        );
+
+        assertTrue(module.processCandidate(snow));
+        assertEquals(Material.AIR, type.get());
+        assertTrue(store.load(chunk).kindAt(position).isEmpty());
+    }
+
+    private World winterWorld(boolean storm) {
+        return (World) Proxy.newProxyInstance(
+                World.class.getClassLoader(),
+                new Class<?>[]{World.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getEnvironment" -> World.Environment.NORMAL;
+                    case "hasStorm" -> storm;
+                    default -> null;
+                }
+        );
+    }
+
+    private Block snowPlacementBlock(
+            AtomicReference<Material> type,
+            int x,
+            int y,
+            int z
+    ) {
+        return (Block) Proxy.newProxyInstance(
+                Block.class.getClassLoader(),
+                new Class<?>[]{Block.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "isEmpty" -> type.get() == Material.AIR;
+                    case "canPlace" -> true;
+                    case "getType" -> type.get();
+                    case "getX" -> x;
+                    case "getY" -> y;
+                    case "getZ" -> z;
+                    case "setType" -> {
+                        type.set((Material) args[0]);
+                        yield null;
+                    }
+                    default -> null;
+                }
+        );
+    }
+
+    private Block snowSupportBlock(
+            World world,
+            Chunk chunk,
+            Block above
+    ) {
+        return (Block) Proxy.newProxyInstance(
+                Block.class.getClassLoader(),
+                new Class<?>[]{Block.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getType" -> Material.STONE;
+                    case "getRelative" -> above;
+                    case "getChunk" -> chunk;
+                    case "getWorld" -> world;
+                    default -> null;
+                }
+        );
+    }
+
+    private Block singleLayerSnowBlock(
+            World world,
+            Chunk chunk,
+            AtomicReference<Material> type,
+            int x,
+            int y,
+            int z
+    ) {
+        Snow snow = (Snow) Proxy.newProxyInstance(
+                Snow.class.getClassLoader(),
+                new Class<?>[]{Snow.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getLayers" -> 1;
+                    default -> null;
+                }
+        );
+        return (Block) Proxy.newProxyInstance(
+                Block.class.getClassLoader(),
+                new Class<?>[]{Block.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getType" -> type.get();
+                    case "getBlockData" -> snow;
+                    case "getX" -> x;
+                    case "getY" -> y;
+                    case "getZ" -> z;
+                    case "getChunk" -> chunk;
+                    case "getWorld" -> world;
+                    case "setType" -> {
+                        type.set((Material) args[0]);
+                        yield null;
+                    }
+                    default -> null;
+                }
+        );
     }
 
     private Block sourceWaterBlock(
@@ -416,6 +632,7 @@ class PaperPhysicalWinterModuleTest {
                 new Class<?>[]{Block.class},
                 (proxy, method, args) -> switch (method.getName()) {
                     case "isEmpty" -> true;
+                    case "canPlace" -> false;
                     default -> null;
                 }
         );
@@ -424,6 +641,7 @@ class PaperPhysicalWinterModuleTest {
                 new Class<?>[]{World.class},
                 (proxy, method, args) -> switch (method.getName()) {
                     case "getEnvironment" -> World.Environment.NORMAL;
+                    case "hasStorm" -> false;
                     default -> null;
                 }
         );
@@ -477,6 +695,23 @@ class PaperPhysicalWinterModuleTest {
                     );
                     default -> null;
                 }
+        );
+    }
+
+    private PaperWinterSnowMutator snowMutator() {
+        Snow placement = (Snow) Proxy.newProxyInstance(
+                Snow.class.getClassLoader(),
+                new Class<?>[]{Snow.class},
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getLayers" -> 1;
+                    default -> null;
+                }
+        );
+        return new PaperWinterSnowMutator(
+                new WinterSnowMutationPolicy(
+                        PhysicalSnowSettings.defaults()
+                ),
+                new PaperWinterSnowTargetResolver(placement)
         );
     }
 

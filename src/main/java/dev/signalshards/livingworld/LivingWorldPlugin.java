@@ -56,6 +56,7 @@ import dev.signalshards.livingworld.features.ecology.domain.SeasonalLeafVisualPo
 import dev.signalshards.livingworld.features.ecology.paper.PaperSeasonalLeavesModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperPhysicalWinterModule;
 import dev.signalshards.livingworld.features.ecology.paper.PaperPhysicalWinterSettingsLoader;
+import dev.signalshards.livingworld.features.ecology.paper.PaperPhysicalSnowSettingsLoader;
 import dev.signalshards.livingworld.features.ecology.domain.NaturalGrowthSuitabilityPolicy;
 import dev.signalshards.livingworld.features.ecology.domain.DefaultSeasonalEcologyModifier;
 import dev.signalshards.livingworld.features.ecology.paper.PaperEcologySettings;
@@ -271,7 +272,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 new PaperPhysicalWinterModule(
                         this,
                         PaperPhysicalWinterSettingsLoader.load(getConfig()),
-                        thermalAmbient
+                        thermalAmbient,
+                        PaperPhysicalSnowSettingsLoader.load(getConfig())
                 );
         PaperGroundCoverSpreadModule groundCoverSpread =
                 new PaperGroundCoverSpreadModule(
