@@ -45,6 +45,7 @@ import dev.signalshards.livingworld.features.ecology.paper.PaperGroundCoverSprea
 import dev.signalshards.livingworld.features.ecology.paper.PaperNaturalGrowthModule;
 import dev.signalshards.livingworld.features.qol.doubledoors.paper.PaperDoubleDoorsModule;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
+import dev.signalshards.livingworld.features.landmarks.application.LandmarkDiscovery;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudModule;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudSettingsLoader;
 import dev.signalshards.livingworld.features.hud.paper.TemperatureColorPolicy;
@@ -120,7 +121,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
         );
 
         DiscoveryRegistry discoveryTypes = new DiscoveryRegistry(List.of(
-                WaystoneDiscovery.DEFINITION
+                WaystoneDiscovery.DEFINITION,
+                LandmarkDiscovery.DEFINITION
         ));
         DiscoveryEventPublisher discoveryEvents = new DiscoveryEventPublisher(failure ->
                 getLogger().log(
