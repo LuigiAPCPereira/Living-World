@@ -8,7 +8,7 @@
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-126 — seasonal client visual projection spike; LW-128 instrumentation is validated and its runtime benchmark is explicitly deferred for later
 - **Current acceptance:** LW-127 automated implementation is closed: one opt-in bounded owner handles real ICE+SNOW with persistent ownership, hysteresis and loaded-chunk-only probes; natural/player surfaces fail closed
-- **Current validation:** LW-126 build preparation for NMS is implemented at `a552170`: official `paperweight-userdev` + Paper 26.3 dev bundle + Mojang production artifact are configured, but no Gradle gate was available after this remote-only change, so it is not yet compile-validated and no NMS production adapter exists. LW-127 remains implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at `383e5a1` with 479 tests / 155 suites / 0 failures/errors/skips; its representative runtime benchmark is explicitly deferred
+- **Current validation:** LW-126 build preparation (`a552170`) and the narrow Paper 26.3 biome projection adapter (`217e791`) are compile/build validated by GitHub Actions: both remote `./gradlew clean test build --no-daemon` gates passed. The adapter operates only on already-loaded chunks, serializes copied biome containers and sends `ClientboundChunksBiomesPacket` to one target player without mutating server biome truth. Live client visual proof remains deferred, so LW-126 stays in progress. LW-127 remains implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at `383e5a1` with 479 tests / 155 suites / 0 failures/errors/skips; its representative runtime benchmark is explicitly deferred
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -17,8 +17,8 @@
 - **Previous validation (M10):** live /lw climate contrast confirmed savanna 39°C Escaldante/Árido versus snowy_plains -1°C Congelante/Equilibrado with ecology percentages matching the existing growth/farmland/fire/frozen-surface policies; runtime log stayed clean and random_tick_speed remained 3
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
-- **Blockers:** no product blocker, but the code frontier is validation-gated: `a552170` must pass `./gradlew clean test build` before adding NMS production code. Runtime/client validation remains deferred for LW-122..LW-128 where noted; LW-128 benchmark data must not be invented
-- **Next action:** validate the userdev build on `a552170` (or descendant). Once green, add one narrow Paper 26.3 biome-projection adapter that only copies/serializes biome containers from already-loaded chunks and sends `ClientboundChunksBiomesPacket` to the target player, without server biome mutation or scheduler/policy expansion. Live visual proof remains a later validation step
+- **Blockers:** none for automated task-graph reconciliation. Runtime/client validation remains deferred for LW-122..LW-128 where noted; LW-126 visual proof and LW-128 benchmark data must not be invented
+- **Next action:** reconcile `TASKLIST.md`, `ROADMAP.md`, `PRODUCT.md` and `ECOLOGY_AND_SEASONS.md` after compile-validating the LW-126 packet boundary. Do not expand LW-126 with scheduler/policy/auxiliary biome assumptions before its deferred client proof. Select or promote the next automated slice only when the accepted product sources provide concrete acceptance; otherwise create the smallest planning/spec slice rather than inventing behavior
 
 ## M12.4 — checkpoint local
 

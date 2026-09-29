@@ -814,7 +814,13 @@ Algoritmo candidato:
       -> ClientboundChunksBiomesPacket
       -> target player's NMS connection only
 
-Esse desenho preserva a verdade do servidor porque nunca chama `World#setBiome` nem modifica o container real do chunk. Ainda assim permanece **experimental**: depende de NMS version-specific, precisa ser version-gated, bounded a chunks já enviados/carregados e validado visualmente antes de entrar em produção.
+Esse desenho preserva a verdade do servidor porque nunca chama `World#setBiome` nem modifica o container real do chunk.
+
+**LW-126 / spike slice 3 — build NMS suportado:** o build passou a usar `paperweight-userdev` 2.0.0-beta.24 com `paperDevBundle("26.3.build.+")` e artifact `MOJANG_PRODUCTION`. Isso torna a dependência de internals explícita e version-sensitive, sem reflection improvisada. Um GitHub Actions mínimo em Java 25 executa `./gradlew clean test build --no-daemon`; o primeiro run fechou verde sobre essa preparação.
+
+**LW-126 / spike slice 4 — boundary packet-level:** `Paper263SeasonalBiomeProjectionAdapter` implementa somente a prova de transporte para um jogador e um chunk. O adapter exige main thread, jogador online no mesmo mundo e chunk já carregado; resolve o biome visual no registry, copia os `PalettedContainer` de biome de cada `LevelChunkSection`, substitui apenas as células 4×4×4 das cópias, serializa essas cópias e envia um único `ClientboundChunksBiomesPacket` à conexão do jogador-alvo. O chunk real não é mutado, não há `World#setBiome`, force-load, scheduler ou política sazonal dentro do adapter. O GitHub Actions também fechou verde sobre esse código.
+
+Esse slice comprova **compatibilidade automatizada de build/serialização/envio**, não resultado visual no cliente. A prova de foliage/grass/water/sky/fog, restauração para a apresentação real, reconnect e compatibilidade vanilla continua como smoke client-side adiado. Até esse smoke existir, Living World não promove broad seasonal tint a comportamento validado nem inventa biomas auxiliares sem contrato declarativo comprovado.
 
 ### 8.2 Physical Ecology
 
