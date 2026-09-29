@@ -5,6 +5,8 @@ import dev.signalshards.livingworld.core.module.ModuleManager;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusSnapshot;
 import dev.signalshards.livingworld.core.status.LivingWorldStatusProvider;
 import dev.signalshards.livingworld.features.biomes.application.BiomeDiscovery;
+import dev.signalshards.livingworld.features.biomes.application.BiomeEntryTracker;
+import dev.signalshards.livingworld.features.biomes.paper.PaperBiomeDiscoveryModule;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarModule;
 import dev.signalshards.livingworld.features.calendar.paper.PaperCalendarWorldResolver;
 import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
@@ -136,6 +138,10 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 discoveryEvents,
                 new PaperPlayerDiscoveryStore(this),
                 new PaperWorldDiscoveryStore(this)
+        );
+        PaperBiomeDiscoveryModule biomeDiscovery = new PaperBiomeDiscoveryModule(
+                this,
+                new BiomeEntryTracker(discovery)
         );
         PaperWaystoneTravelService waystoneTravel = new PaperWaystoneTravelService(
                 getServer(),
@@ -283,6 +289,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                         ),
                         getConfig().getBoolean("discovery.presentation.enabled", true)
                 ),
+                biomeDiscovery,
                 new PaperWaystoneModule(
                         this,
                         waystoneSettings,
