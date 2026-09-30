@@ -20,6 +20,7 @@ No delivery dates are committed. Milestones describe dependency order and verifi
 | M13 — Waystone navigation clarity | make the existing Waystone network easier to scan by surfacing nearest-first same-world ordering plus world/coordinate/distance context without changing access or travel safety | M8 | LW-130..LW-131 | in progress |
 | M14 — Discovery foundation | add durable personal/world discovery memory and prove it through additive Waystone integration without coupling presentation or changing Waystone rules | M3, M13 | LW-140..LW-142 | in progress |
 | M15 — Biome discovery | turn first biome encounters into personal Discovery records through bounded movement events, with namespaced-key identity and no biome scans | M14 | LW-150..LW-152 | in progress |
+| M16 — World landmarks | remember the first encounter with each generated structure type per world through bounded destination-chunk structure checks and registry-driven identity | M14 | LW-160..LW-162 | in progress |
 
 ## Sequencing principles
 

@@ -143,6 +143,35 @@ For each completed runtime item, record:
 
 ---
 
+### LW-162 — World landmark discovery real-player smoke
+
+**Branch:** `discovery/m15-biome-discovery`.
+
+**Current state:** pending; may be deferred after LW-161 automated gates are green.
+
+**Goal:** prove that world-scope landmark discovery is type-level, bounded and silent after the first world discovery of a structure type.
+
+**Scenarios**
+
+- Enter a generated structure of an undiscovered structure type and confirm exactly one discovery presentation.
+- Leave and re-enter the same structure and confirm silence.
+- Enter another physical instance of the same structure type and confirm silence because the world already knows that type.
+- Enter a genuinely different structure type and confirm one new world discovery.
+- When a datapack/custom namespaced structure is available, enter it and confirm no vanilla-only allowlist is required.
+- Disconnect/reconnect and revisit known structure types; discovery memory remains durable and presentation stays silent.
+- Confirm quit/disable/reconnect produces no Living World errors related to transient detector state.
+
+**Evidence to record**
+
+- Branch + exact commit tested.
+- Paper/Purpur and client versions.
+- Structure keys exercised.
+- First-type presentation, same-type silence and second-type presentation.
+- Custom namespace result when available.
+- Server log cleanliness.
+
+---
+
 ### LW-191 — Hotbar Auto-Refill real-player smoke
 
 **Branch implementation:** `qol/hotbar-auto-refill`.

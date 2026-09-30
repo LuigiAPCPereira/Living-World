@@ -52,11 +52,24 @@ Slices:
 
 ## M16 — World landmarks
 
-Outcome: significant places become part of the world's memory.
+Outcome: the world remembers the first encounter with each generated structure type.
 
-- New `DiscoveryType("landmark")` with `DiscoveryScope.WORLD`, exercising `WorldDiscoveryStore` for the first time.
-- Producing feature stays separate from Discovery; the landmark rule owns detection, Discovery owns recording.
-- Open question: how landmarks are identified without hard-coding a structure list.
+Initial policy decision:
+
+- M16 records **structure-type discovery**, not a catalog of every physical structure instance. The durable discovery ID is the structure's full Paper namespaced key; therefore the first `minecraft:village_plains`, `terralith:...` or datapack structure found in that world unlocks once for the world, while another instance of the same type remains silent.
+- This is intentionally narrower than per-instance landmarks. Paper exposes no native stable UUID for a generated structure instance, and introducing a secondary coordinate/UUID catalog is not justified by the current product outcome. If later gameplay needs named individual ruins/landmarks, promote that as a separate persistence contract instead of hiding it inside M16.
+- Detection uses public Paper APIs only. On real block movement/teleport, inspect only the destination chunk's `Chunk#getStructures()`; accept a candidate only when its `GeneratedStructure#getBoundingBox()` contains the destination point. Identity comes from `GeneratedStructure#getStructure().getKey()`.
+- No structure registry allowlist is maintained. Paper's structure registry supports datapack-added structures, so unknown/custom namespaces participate automatically.
+- No locate search, radius scan, forced chunk load, scheduler or per-tick polling is allowed.
+
+Slices:
+
+- **LW-160 — landmark discovery contract:** declare `DiscoveryType("landmark")`, WORLD scope, namespaced structure-key identity and readable non-persistent label.
+- **LW-161 — bounded Paper landmark detector:** movement-driven destination-chunk lookup + bounding-box containment; per-player last-landmark suppression; delegate world first-time semantics to `DiscoveryService`; cleanup on quit/disable.
+- **LW-162 — runtime smoke:** prove first world discovery, silence for a second instance of the same structure type, a second title/event for a different structure type, custom namespace safety when available, reconnect/cleanup and clean logs. Runtime may be deferred under `RUNTIME_VALIDATION_BACKLOG.md`.
+
+- Producing feature stays separate from Discovery; landmark rules own detection and labeling, Discovery owns recording.
+- Depends on: M14; may proceed independently while M15 runtime smoke remains deferred.
 
 ## M17 — Collective discovery & broadcast
 
