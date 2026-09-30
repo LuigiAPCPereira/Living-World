@@ -1408,3 +1408,135 @@ The first practical rune should remain relatively direct.
 4. Should original synthesis require Attunement only, or a later "researcher" capability?
 5. How much automation should the Codex perform when prerequisites are met: immediate hypothesis appearance, or only after a contextual observation?
 6. Can different discovery paths lead to the same principle/rune, allowing Minecraft updates and server variation to coexist?
+
+
+## Candidate design — Vanilla phenomena as teachers of magical principles
+
+A major improvement over a single "research location" is to let existing Minecraft systems teach different aspects of Resonance after Attunement.
+
+The player does not discover a hidden magic minigame. They reinterpret vanilla phenomena they already know.
+
+### Enchanting Table — arrangement influences power
+
+Vanilla enchanting already establishes that the spatial arrangement of bookshelves around an enchanting table changes the strength of the enchanting system.
+
+Living World can interpret an Attuned player's observation as evidence that:
+
+> magical influence can depend on **relative position and arrangement**, not only on material composition.
+
+This can support an early concept such as **Configuration** or **Spatial Relation**.
+
+Important: Living World is providing an in-world interpretation of a vanilla mechanic, not claiming canonical Mojang lore.
+
+### Conduit — a core held inside a defined frame creates a field
+
+A Conduit is an even stronger teacher.
+
+Vanilla requires a central Conduit inside a valid prismarine/sea-lantern structure, and increasing the valid frame increases the Conduit effect range.
+
+For an Attuned observer, this is compelling evidence that:
+
+> a powered center plus a deliberate structure can impose an effect into surrounding space.
+
+This can support principles such as:
+- **Form / Frame**;
+- **Field**;
+- **Boundary**;
+- possibly **Projection**.
+
+The Conduit is currently the strongest candidate for the missing knowledge needed to make an area-shaped rune intellectually credible.
+
+### Beacon — structure scale controls field scale
+
+A Beacon requires a mineral pyramid, and larger pyramid levels extend its available effects/range.
+
+An Attuned player can infer:
+
+> the magnitude/extent of a magical field can be controlled by the supporting structure.
+
+This is useful later for **Amplification**, **Range**, or advanced area effects.
+
+It should not be required for the first Fracture rune if that would push a basic mining utility behind Wither progression.
+
+### Multiple observations can teach overlapping principles
+
+Do not make one exact vanilla block mandatory forever.
+
+A useful model is:
+
+- Enchanting Table can teach **Configuration** early;
+- Conduit can strongly establish **Field/Form**;
+- Beacon can deepen that understanding into **Scale/Amplification**.
+
+Future Minecraft systems, including The Sift, may provide alternate evidence for the same concepts.
+
+This makes research a graph with redundant discovery paths rather than a rigid campaign.
+
+## Refined candidate path — Runa da Fratura
+
+A more convincing route now exists:
+
+```
+Geode
+→ Resonance / Conduction
+
+Veia Profunda
+→ Propagation + Affinity
+
+Runic Inscription
+→ Binding
+
+Enchanting / Conduit observation
+→ Configuration / Form / Field
+
+combined understanding
+→ Hypothesis: Fratura Controlada
+
+field proof
+→ Runa da Fratura
+```
+
+The exact proof is still open, but the hypothesis now has a believable intellectual basis.
+
+A possible Codex hypothesis tone:
+
+> **Hipótese — Fratura Controlada**
+>
+> A Veia Profunda deixa a propagação seguir a matéria. O aqueduto demonstra o contrário: uma estrutura pode impor forma e alcance a um efeito. Talvez uma inscrição possa conter a propagação em uma região definida, independentemente do material encontrado.
+
+This is substantially stronger than unlocking a 3×3 rune from mining usage alone.
+
+## Design rule — vanilla knowledge can be recontextualized after Attunement
+
+Attunement can cause the player to notice **new meaning in old mechanics**.
+
+For example, a player may have built an Enchanting Table or Conduit before becoming Attuned. After Attunement, interacting with/observing the same system can produce a new Codex observation.
+
+The physical Minecraft mechanic was always there. The player's interpretation changed.
+
+This supports the central fantasy:
+
+> the world did not suddenly become magical; the player became capable of perceiving a deeper pattern in things that already existed.
+
+## Avoiding forced checklist research
+
+Do not require the player to activate every magical vanilla structure merely to progress.
+
+Preferred approach:
+
+- important principles can have more than one evidence source;
+- the first qualifying observation unlocks or advances the relevant understanding;
+- later sources enrich/refine Codex notes rather than acting as mandatory checklist steps.
+
+For example, Conduit may be the clearest route to Field/Form, while a future Mojang mechanic could provide another path.
+
+## Progression implication
+
+This gives Living World a way to reuse vanilla progression without replacing it:
+
+- early enchanting can teach arrangement;
+- ocean exploration can deepen spatial/field understanding through Conduits;
+- Nether/Wither progression can deepen amplification through Beacons;
+- future dimensions can introduce genuinely new principles.
+
+The magic system therefore grows **alongside Minecraft progression**, rather than building a parallel progression ladder that ignores vanilla.
