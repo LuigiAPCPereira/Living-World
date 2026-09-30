@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M16 / LW-160 — implemented at `0c8106f`, awaiting exact CI gate
+- **Current task:** M16 / LW-160 — test expectation fixed at `09a6367`, awaiting exact CI gate
 - **Current acceptance:** landmark Discovery is WORLD and intentionally type-level for the first slice: the world's first encounter with each generated structure namespaced key records once; detection is destination-chunk-only with bounding-box containment, registry-driven and scan-free; no per-instance coordinate/UUID catalog is introduced
-- **Current validation:** LW-160 code is implemented at `0c8106f`: WORLD landmark type, namespaced-key identity/label policy, composition-root registration and WORLD/idempotency tests are present. Exact GitHub Actions run #18 (`36659913063`) is still in progress, so LW-160 remains implemented-not-validated. Earlier M15 automated gates remain green; runtime smokes stay deferred in `RUNTIME_VALIDATION_BACKLOG.md`
+- **Current validation:** LW-160 production code is implemented at `0c8106f`. GitHub Actions run #18 (`36659913063`) failed one new test because the test expected one `WorldDiscoveryStore.add` call after two encounters; `DiscoveryService` correctly delegates each attempt and the store owns idempotency. The test expectation was corrected at `09a6367`. Exact run #20 (`36701356898`) for that revision is in progress, so LW-160 remains implemented-not-validated. Earlier M15 automated gates remain green; runtime smokes stay deferred in `RUNTIME_VALIDATION_BACKLOG.md`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `discovery/m15-biome-discovery` (based on `main` `cb8803e`)
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for LW-150/LW-151 automated work. LW-131/LW-142 and the new LW-152 runtime smokes are explicitly deferred in `RUNTIME_VALIDATION_BACKLOG.md`; independent ecology/QoL/research branches must remain isolated
-- **Next action:** reconcile GitHub Actions run #18 (`36659913063`) for exact code revision `0c8106f`. If green, mark LW-160 validated and only then promote LW-161 to in progress; if red, inspect and fix only the LW-160 regression before any detector work
+- **Next action:** reconcile GitHub Actions run #20 (`36701356898`) for exact revision `09a6367`. If green, mark LW-160 validated and promote LW-161 to in progress; if red, inspect only the remaining LW-160 failure before any detector work
 
 ## M12.4 — checkpoint local
 
