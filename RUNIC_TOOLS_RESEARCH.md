@@ -1777,3 +1777,197 @@ With capacity ownership separated, the next high-value question is **recharge ec
 - and how the loop stays meaningful without becoming inventory friction.
 
 This should be decided before numerical capacity.
+
+
+## Candidate design — recharge economy
+
+The recharge loop should make Resonance a real maintenance cost without turning a utility rune into ammunition micromanagement.
+
+### Option A — raw amethyst directly recharges artifacts
+
+**Advantages**
+- simplest possible loop;
+- entirely vanilla material;
+- easy to explain.
+
+**Problems**
+- makes amethyst simultaneously discovery trigger, conductor, crafting component and final fuel;
+- leaves little conceptual room for other future Resonance sources;
+- feels like inserting ore directly into a battery rather than stabilizing magical energy.
+
+**Research stance:** viable fallback, but probably too flat for the intended fantasy.
+
+### Option B — recharge only at a geode / natural source
+
+**Advantages**
+- strongest world identity;
+- keeps geodes permanently meaningful;
+- clearly distinguishes natural Resonance source from artifact storage.
+
+**Problems**
+- repeated travel friction;
+- punishes players whose base is far from a geode;
+- makes a convenience feature inconvenient;
+- strongly couples routine tool maintenance to world location;
+- pressures the first implementation toward chunk/geode-location tracking and special station behavior.
+
+**Research stance:** too restrictive for routine first-generation recharge.
+
+### Option C — portable stabilized Resonance made from geode-derived material
+
+This is the strongest first-generation candidate.
+
+Concept:
+
+```
+renewable amethyst from geode
+        ↓
+simple stabilization/refinement
+        ↓
+portable Resonant Charge
+        ↓
+Bound Resonance in artifact
+```
+
+The geode remains important because Budding Amethyst is the renewable raw source, but the player can harvest, transport and prepare energy for ordinary use.
+
+This preserves:
+- exploration value;
+- base-building freedom;
+- practical daily tool use;
+- future compatibility with other Resonance sources.
+
+### Why a refined intermediary earns its complexity
+
+A single custom consumable is justified only if it removes more complexity than it adds.
+
+A **Resonant Charge** (working name) gives one stable boundary:
+
+> any approved raw/source process can create standardized transferable Resonance; runic artifacts consume that standardized resource.
+
+Future content could add:
+- a more efficient refinement process;
+- another dimension/material capable of producing Resonant Charge;
+- a station that transfers Resonance directly;
+- rare higher-density storage.
+
+The runic tool does not need to know the source.
+
+This is a real seam conceptually, but software should still remain simple until more than one source actually exists.
+
+### Material language
+
+No exact recipe is approved.
+
+Current thematic candidates:
+- **Amethyst:** primary resonant/conductive raw material;
+- **Lapis:** arcane inscription/attunement association;
+- **Copper:** physical conduction/binding association.
+
+Avoid making every recharge consume too many unrelated materials. Routine fuel should remain practical after the player has established access to amethyst.
+
+A good first recipe should communicate "stabilized amethyst" rather than "expensive magical potion."
+
+### Geode role after first Attunement
+
+The geode now has three possible long-term functions without becoming a mandatory recharge station:
+
+1. **First revelation** — where the player becomes Attuned.
+2. **Renewable raw source** — Budding Amethyst sustains continued amethyst harvesting.
+3. **Research environment** — later observations may reveal additional Resonance behavior.
+
+This is enough to keep geodes relevant.
+
+Do not add periodic "return to the original geode" requirements merely to preserve their importance.
+
+### Recharge interaction surface
+
+The resource model and the UI/interaction should remain separate decisions.
+
+Candidate surfaces:
+
+#### Smithing Table
+
+Pros:
+- already associated with deliberate equipment work;
+- can visually unify inscription and maintenance.
+
+Cons:
+- routine recharge may feel too heavy if performed frequently.
+
+#### Crafting/inventory combination
+
+Pros:
+- portable;
+- low friction;
+- no new workstation.
+
+Cons:
+- risks feeling like ordinary item repair/ammunition;
+- custom behavior must clearly preserve the original tool and metadata.
+
+#### Direct tool + charge interaction
+
+Pros:
+- fastest;
+- supports field recharge.
+
+Cons:
+- interaction gesture can conflict with normal Minecraft use;
+- discoverability is weaker;
+- easier to create accidental consumption edge cases.
+
+**Current stance:** leave the exact recharge surface open until a small interaction prototype can compare discoverability and conflict risk. Do not create a new custom station for the first tracer bullet.
+
+### Portable does not mean frictionless
+
+Carrying Resonant Charges is allowed to have an opportunity cost, but should not become ammunition micromanagement.
+
+Desired cadence:
+- player can prepare several recharges at home;
+- ordinary mining session does not require opening a workstation every few minutes;
+- running out in the field means the runic effect goes dormant, not that the tool becomes unusable.
+
+### No automatic passive recharge initially
+
+Avoid:
+- recharge over real time;
+- recharge while standing near amethyst;
+- recharge from XP automatically;
+- recharge from kills;
+- passive regeneration.
+
+These rules make cost difficult to reason about and invite AFK optimization.
+
+First-generation Resonance should be explicit:
+- player obtains raw material;
+- player stabilizes it;
+- player deliberately transfers it to the artifact.
+
+### Future hybrid model remains possible
+
+A later system may make world-based stations **more efficient** without making them mandatory.
+
+For example:
+- portable Resonant Charge = standard convenience;
+- resonant station/geode infrastructure = improved conversion efficiency or bulk charging.
+
+Do not build this optimization until actual player behavior shows that a second recharge path would add value.
+
+## Recharge economy principle
+
+The first magic economy should reward **establishing access to a renewable source**, not repetitive travel.
+
+The desired loop is:
+
+```
+explore
+→ find geode
+→ gain Attunement + renewable amethyst access
+→ harvest occasionally
+→ refine at home
+→ carry a practical reserve
+→ use runic tools normally
+```
+
+This keeps exploration meaningful while letting the reward become part of the player's established world.
