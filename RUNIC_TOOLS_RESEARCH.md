@@ -1540,3 +1540,240 @@ This gives Living World a way to reuse vanilla progression without replacing it:
 - future dimensions can introduce genuinely new principles.
 
 The magic system therefore grows **alongside Minecraft progression**, rather than building a parallel progression ladder that ignores vanilla.
+
+
+## Candidate design — what determines Bound Resonance capacity?
+
+This decision affects progression, item identity and future extensibility, so the main alternatives were compared explicitly before introducing new concepts.
+
+### Option A — tool material determines capacity
+
+Example concept:
+
+```
+Iron < Diamond < Netherite
+```
+
+**Advantages**
+- immediately understandable;
+- no extra magical component;
+- follows vanilla equipment progression.
+
+**Problems**
+- conflates physical durability/material tier with magical storage;
+- makes Netherite automatically the best magical battery without a clear reason;
+- pressures players to replace a beloved runic tool merely for capacity;
+- creates awkward coupling to future tools/materials;
+- turns vanilla tier progression into a second hidden magic-stat ladder.
+
+**Research stance:** do not make tool material the primary capacity owner.
+
+Tool material should continue to matter through vanilla properties such as durability, mining capability, enchantments and ordinary item identity.
+
+### Option B — rune determines capacity
+
+Example concept:
+
+```
+Veia Profunda I = 32
+Veia Profunda II = 64
+Veia Profunda III = 128
+```
+
+**Advantages**
+- simple data model;
+- easy to explain.
+
+**Problems**
+- conflates *what the rune does* with *how much energy the artifact can hold*;
+- encourages every rune tier to become "same behavior, bigger battery";
+- creates pressure for level/tier inflation;
+- makes balancing capacity changes require changing rune identity.
+
+**Research stance:** avoid as the primary model.
+
+### Option C — a separate core/battery component determines capacity
+
+Example concept:
+
+```
+Rune = behavior
+Core = capacity
+Tool = physical host
+```
+
+**Advantages**
+- clean separation of responsibilities;
+- strong future upgrade path;
+- easy to imagine multiple battery qualities.
+
+**Problems**
+- immediately creates sockets/cores/upgrade-item infrastructure;
+- increases item count and explanation burden before the first rune exists;
+- risks turning a restrained Vanilla+ system into RPG equipment engineering.
+
+**Research stance:** conceptually clean, but too much product surface for the first implementation.
+
+### Option D — inscription matrix owns capacity, with one standard quality initially
+
+This is the strongest current candidate.
+
+The already-proposed **Runic Matrix** can perform two related physical jobs:
+
+1. hold the encoded rune pattern;
+2. provide the stable lattice/vessel in which Bound Resonance is stored.
+
+Conceptually:
+
+```
+tool
+= physical host
+
+runic pattern
+= behavior/instruction
+
+inscribed matrix/lattice
+= stabilizes pattern + Bound Resonance
+
+Bound Resonance
+= current stored energy
+```
+
+The rune still does **not** define capacity. The matrix/lattice does.
+
+For the first implementation there does not need to be more than one matrix quality. Every first-generation runic artifact can use one standard capacity defined by the runic-inscription system.
+
+Later, only if gameplay proves useful, different matrix/lattice qualities could alter capacity without changing rune identity.
+
+This preserves the future seam without building the upgrade system now.
+
+### Why this passes the Agent Protocol boundary test
+
+The concepts change for different reasons:
+
+- tool material changes because of vanilla equipment progression;
+- rune definition changes because behavior changes;
+- matrix/lattice quality changes because storage/stability changes;
+- current charge changes through use/recharge.
+
+They should therefore not be one field disguised as "rune level."
+
+However, this conceptual separation does **not** require four public modules/classes in the first implementation. Keep the software interface small until two or more real variations justify a seam.
+
+## Candidate terminology — lattice instead of battery/core
+
+A separate physical "mana battery" item is not currently desirable.
+
+A useful internal/lore concept is that inscription creates a **runic lattice** within/on the artifact. The prepared matrix is the medium used to establish that lattice.
+
+Working relationship:
+
+```
+Blank Runic Matrix
+→ pattern is encoded
+→ matrix is bound to tool
+→ stable Runic Lattice exists in artifact
+→ lattice can hold Bound Resonance
+```
+
+This explains why the rune remains when the charge reaches zero: the lattice/pattern still exists; only its stored Resonance is depleted.
+
+No final Portuguese player-facing term for "lattice" is approved yet. Possible wording should remain understandable and not become pseudo-scientific jargon.
+
+## First-generation capacity rule
+
+The safest first release should likely have:
+
+- one major rune per compatible tool;
+- one standard runic-matrix quality;
+- one standard capacity policy per artifact/tool category or even one shared initial capacity;
+- no capacity upgrade sockets;
+- no rarity tiers;
+- no random capacity rolls;
+- no percentage efficiency affixes;
+- no overcharge mechanic.
+
+The exact numeric capacity remains a balance question and is intentionally not chosen here.
+
+### Why a fixed initial capacity is useful
+
+It lets the tracer-bullet feature prove:
+
+```
+knowledge
+→ inscription
+→ stored Resonance
+→ bounded magical work
+→ recharge
+```
+
+without simultaneously proving an equipment-upgrade economy.
+
+If players later find the recharge cadence too frequent or too trivial, capacity can be revisited with evidence.
+
+## Relationship to tool material
+
+Tool material should matter **indirectly**, through vanilla behavior.
+
+For example, a better pickaxe already has:
+- different durability;
+- mining-level capability;
+- ordinary enchantment behavior;
+- different acquisition cost.
+
+A runic Netherite Pickaxe is therefore already more valuable/durable than a runic Iron Pickaxe without receiving a larger magical battery for free.
+
+Compatibility can still be restricted by tool type/material if gameplay later requires it, but that is a separate balance decision from capacity ownership.
+
+## Relationship to rune tiers
+
+Current preference remains to launch first runes **without rune levels**.
+
+If levels ever exist, they should represent a meaningful change in the runic pattern—such as allowed propagation complexity or a new behavior—not merely more charge.
+
+Capacity upgrades, if ever justified, should belong to the lattice/matrix side of the system.
+
+## Recharge cadence as the real balance variable
+
+Before inventing capacity progression, test the actual player loop:
+
+> How many ordinary uses should occur before a player naturally thinks, "I should recharge this soon"?
+
+The target should be:
+- frequent enough that Resonance remains a real cost;
+- infrequent enough that the rune feels like a practical daily tool rather than emergency-only magic.
+
+This cadence depends on:
+- capacity;
+- cost per additional block;
+- typical vein/tree sizes;
+- recharge material availability;
+- recharge friction.
+
+Therefore capacity must not be balanced in isolation.
+
+## Future possibilities deliberately deferred
+
+The model leaves room for, but does not approve:
+
+- improved runic matrices;
+- external Resonance batteries;
+- artifact-to-artifact transfer;
+- world/station charging;
+- overcharge;
+- player Mana powering artifacts;
+- specialized matrices for different rune families.
+
+Each should be added only when a concrete gameplay need justifies it.
+
+## Next design frontier
+
+With capacity ownership separated, the next high-value question is **recharge economy**:
+
+- what exactly is converted into Bound Resonance;
+- whether raw amethyst is enough;
+- whether recharge is portable or station-based;
+- what role geodes retain after first Attunement;
+- and how the loop stays meaningful without becoming inventory friction.
+
+This should be decided before numerical capacity.
