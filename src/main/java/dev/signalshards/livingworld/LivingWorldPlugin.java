@@ -51,6 +51,7 @@ import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudModule;
 import dev.signalshards.livingworld.features.hud.paper.PaperHudSettingsLoader;
 import dev.signalshards.livingworld.features.hud.paper.TemperatureColorPolicy;
+import dev.signalshards.livingworld.features.landmarks.application.LandmarkDiscovery;
 import dev.signalshards.livingworld.features.seasons.domain.SeasonCycle;
 import dev.signalshards.livingworld.features.seasons.paper.PaperSeasonTransitionAnnouncement;
 import dev.signalshards.livingworld.features.waystones.application.WaystoneDiscovery;
@@ -124,7 +125,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
 
         DiscoveryRegistry discoveryTypes = new DiscoveryRegistry(List.of(
                 WaystoneDiscovery.DEFINITION,
-                BiomeDiscovery.DEFINITION
+                BiomeDiscovery.DEFINITION,
+                LandmarkDiscovery.DEFINITION
         ));
         DiscoveryEventPublisher discoveryEvents = new DiscoveryEventPublisher(failure ->
                 getLogger().log(
