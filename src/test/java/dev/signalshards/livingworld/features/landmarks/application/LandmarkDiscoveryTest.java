@@ -105,7 +105,7 @@ class LandmarkDiscoveryTest {
         assertEquals(playerId, events.getFirst().discoveredBy());
         assertEquals("minecraft:village_plains", events.getFirst().record().id().value());
         assertEquals("Village Plains", events.getFirst().label());
-        assertEquals(1, worlds.addAttempts);
+        assertEquals(2, worlds.addAttempts);
     }
 
     @Test
