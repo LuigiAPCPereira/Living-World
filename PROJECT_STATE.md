@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** M16 / LW-160 — world landmark discovery contract
+- **Current task:** M16 / LW-160 — implemented at `0c8106f`, awaiting exact CI gate
 - **Current acceptance:** landmark Discovery is WORLD and intentionally type-level for the first slice: the world's first encounter with each generated structure namespaced key records once; detection is destination-chunk-only with bounding-box containment, registry-driven and scan-free; no per-instance coordinate/UUID catalog is introduced
-- **Current validation:** M13/M14 automated integration gates remain green and their real-player scenarios remain in `RUNTIME_VALIDATION_BACKLOG.md`. LW-150 is validated at `d1ff670`: biome type/identity/label policy and composition-root registration are implemented, with GitHub Actions run #6 green on `clean test build`. LW-151 is implemented at `2849d61` and GitHub Actions run #8 is green; runtime behavior remains intentionally separated into LW-152
+- **Current validation:** LW-160 code is implemented at `0c8106f`: WORLD landmark type, namespaced-key identity/label policy, composition-root registration and WORLD/idempotency tests are present. Exact GitHub Actions run #18 (`36659913063`) is still in progress, so LW-160 remains implemented-not-validated. Earlier M15 automated gates remain green; runtime smokes stay deferred in `RUNTIME_VALIDATION_BACKLOG.md`
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `discovery/m15-biome-discovery` (based on `main` `cb8803e`)
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for LW-150/LW-151 automated work. LW-131/LW-142 and the new LW-152 runtime smokes are explicitly deferred in `RUNTIME_VALIDATION_BACKLOG.md`; independent ecology/QoL/research branches must remain isolated
-- **Next action:** implement LW-160 only: add the pure landmark discovery type/identity/label contract, register it in the composition root and cover WORLD-scope/idempotency behavior with tests. Do not start the Paper detector until that automated gate is green
+- **Next action:** reconcile GitHub Actions run #18 (`36659913063`) for exact code revision `0c8106f`. If green, mark LW-160 validated and only then promote LW-161 to in progress; if red, inspect and fix only the LW-160 regression before any detector work
 
 ## M12.4 — checkpoint local
 
