@@ -52,8 +52,10 @@ cliente; nenhuma aparência client-side foi comprovada ainda.
 - Com zVaporius conectado no Overworld, o harness chamou `projectWholeChunk` no chunk atual com alvo `minecraft:swamp`; resultado observado: `SENT`.
 - No mesmo ponto, o biome server-side era `minecraft:savanna` antes e depois do packet, com `unchanged=true`.
 - O caminho de restauração executou `World#refreshChunk` no chunk projetado; retorno `true`, e o biome server-side permaneceu savanna com `unchanged=true`.
-- A aparência no cliente não pôde ser observada independentemente: `MCPFabric#get_status` falhou com `MCP SSE probe returned 404 from openai.org`. Portanto este smoke **não fecha** LW-126 sozinho.
-- O Paper permaneceu ativo após o smoke; o harness temporário deve continuar fora do produto/commit e pode ser removido após o aceite visual.
+- A observação independente via MCPFabric falhou porque `MCPFabric#get_status` retornou `MCP SSE probe returned 404 from openai.org`.
+- O usuário executou manualmente `/lw126visualtest project minecraft:swamp` e `/lw126visualtest restore` em ciclos repetidos; o log confirmou `SENT`, `refreshChunk=true` e biome server-side inalterado em cada ciclo.
+- O usuário confirmou explicitamente que a mudança visual funcionou. Com projeção observada, restauração executada e verdade server-side preservada, LW-126 está **validated**.
+- O Paper permaneceu ativo após o smoke; o harness temporário continua fora do produto/commit e pode ser removido após encerrar a sessão runtime.
 
 ## Validação runtime adiada — LW-128
 
@@ -116,9 +118,9 @@ commit, preservando uma única instância compartilhada de métricas no composit
 
 ## Próxima ação executável
 
-1. Obter a confirmação visual que falta para o smoke LW-126 já executado: a projeção `minecraft:swamp` deve ter sido perceptível no cliente e o refresh subsequente deve ter restaurado a apresentação original.
-2. Se for necessário repetir com observação independente, começar por `MCPFabric#get_status` quando o bridge voltar e reutilizar o mesmo harness bounded; não criar scheduler/policy de produção para contornar a indisponibilidade do bridge.
-3. Não ampliar LW-126 com scheduler/política/biomas inventados antes desse aceite visual.
+1. LW-126 está validado; não ampliar o spike com scheduler/policy/biomas auxiliares sem nova tarefa aceita.
+2. Recuperar os gaps restantes de M12 e selecionar **um** frontier item; preferir fechar trabalho já implementado antes de iniciar implementação nova.
+3. LW-127 physical winter permanece implemented-not-validated e é um candidato concreto para smoke runtime com jogador real.
 4. Manter LW-128 na fila de validação adiada: quando retomado, usar workload/baseline reproduzível, começar em 1 jogador, registrar TPS/MSPT + deltas ambientais e só então fazer claims/otimizações.
 
 ## Restrições importantes

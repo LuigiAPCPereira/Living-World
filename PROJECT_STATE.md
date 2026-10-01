@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-126 — seasonal client visual projection spike; LW-128 instrumentation is validated and its runtime benchmark is explicitly deferred for later
+- **Current task:** LW-126 seasonal client visual projection is validated; next M12 frontier selection is pending recovery from the remaining explicit runtime-validation gaps. LW-128 instrumentation is validated and its representative runtime benchmark remains explicitly deferred
 - **Current acceptance:** LW-127 automated implementation is closed: one opt-in bounded owner handles real ICE+SNOW with persistent ownership, hysteresis and loaded-chunk-only probes; natural/player surfaces fail closed
-- **Current validation:** LW-126 build preparation (`a552170`) and the narrow Paper 26.3 biome projection adapter (`217e791`) are compile/build validated by GitHub Actions: both remote `./gradlew clean test build --no-daemon` gates passed. A partial live packet smoke on Paper 26.3 build 141 with zVaporius used an uncommitted temporary harness: `projectWholeChunk` returned `SENT` for target `minecraft:swamp` while the server biome remained `minecraft:savanna` before/after (`unchanged=true`); a subsequent `World#refreshChunk` returned `true` and server biome truth remained unchanged. The client visual effect/restoration was not independently observed because the MCPFabric connector returned HTTP 404, so LW-126 stays in progress. LW-127 remains implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at `383e5a1` with 479 tests / 155 suites / 0 failures/errors/skips; its representative runtime benchmark is explicitly deferred
+- **Current validation:** LW-126 is validated. Build preparation (`a552170`) and the narrow Paper 26.3 biome projection adapter (`217e791`) passed remote `./gradlew clean test build --no-daemon` gates. Live Paper 26.3 build 141 smoke on 2026-10-01 used an uncommitted temporary harness: `projectWholeChunk` returned `SENT` for target `minecraft:swamp` while server biome truth remained unchanged before/after; repeated manual `World#refreshChunk` restores returned `true` and preserved the real biome. The user explicitly confirmed that the client visual projection/restoration worked. LW-127 remains implemented-not-validated with runtime/tuning smoke pending. LW-128 instrumentation is validated at `383e5a1` with 479 tests / 155 suites / 0 failures/errors/skips; its representative runtime benchmark is explicitly deferred
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for automated task-graph reconciliation. Runtime/client validation remains deferred for LW-122..LW-128 where noted; LW-126 visual proof and LW-128 benchmark data must not be invented
-- **Next action:** obtain the missing client-visible confirmation for the existing LW-126 packet smoke: confirm that the `minecraft:swamp` projection is visibly applied and that the subsequent real-chunk refresh restores the original presentation. Re-run the same bounded smoke when MCPFabric is available if independent client observation is needed. Do not expand LW-126 with scheduler/policy/auxiliary biome assumptions before this acceptance closes.
+- **Next action:** select the next M12 frontier from the remaining explicit runtime-validation gaps now that LW-126 is validated. Prefer closing existing implemented-not-validated work before new implementation; LW-127 physical winter smoke is a concrete candidate, while the LW-128 representative performance benchmark remains explicitly deferred.
 
 ## M12.4 — checkpoint local
 
