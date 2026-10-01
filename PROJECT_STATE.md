@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for automated task-graph reconciliation. Runtime/client validation remains deferred for LW-122..LW-128 where noted; LW-126 visual proof and LW-128 benchmark data must not be invented
-- **Next action:** reconcile `TASKLIST.md`, `ROADMAP.md`, `PRODUCT.md` and `ECOLOGY_AND_SEASONS.md` after compile-validating the LW-126 packet boundary. Do not expand LW-126 with scheduler/policy/auxiliary biome assumptions before its deferred client proof. Select or promote the next automated slice only when the accepted product sources provide concrete acceptance; otherwise create the smallest planning/spec slice rather than inventing behavior
+- **Next action:** execute the deferred LW-126 live client visual/restoration smoke against the compile/build-validated `Paper263SeasonalBiomeProjectionAdapter`, proving client-side projection and restoration without mutating server biome truth. Until client/runtime access is available, do not expand LW-126 with scheduler/policy/auxiliary biome assumptions; select another automated slice only when explicit accepted product scope provides concrete acceptance.
 
 ## M12.4 — checkpoint local
 

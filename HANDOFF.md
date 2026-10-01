@@ -26,10 +26,12 @@ chunks carregados e proteção fail-closed de superfícies naturais/jogador.
 `PROJECT_STATE.md` registra o último gate publicado em 477 testes / 154 suítes,
 0 falhas/erros/skips. Smoke runtime/tuning continua pendente.
 
-LW-126 continua aberto como spike visual: ainda não existe adapter NMS de produção.
-O caminho `ClientboundChunksBiomesPacket` foi mapeado conceitualmente e o build
-agora está preparado para internals via `paperweight-userdev`, mas essa mudança
-de build ainda precisa de compile/test gate antes da primeira classe NMS.
+LW-126 continua aberto como spike visual: o adapter NMS de produção
+`Paper263SeasonalBiomeProjectionAdapter` existe desde `217e791` e está
+compile/build-validado. Ele envia `ClientboundChunksBiomesPacket` apenas ao
+jogador-alvo usando cópias dos containers de biome, sem `World#setBiome` nem
+mutação do chunk real. O aceite restante é o smoke visual/restoration no
+cliente; nenhuma aparência client-side foi comprovada ainda.
 
 ## LW-126 — preparação NMS
 
@@ -102,9 +104,9 @@ commit, preservando uma única instância compartilhada de métricas no composit
 
 ## Próxima ação executável
 
-1. Confirmar branch/HEAD/upstream e que `217e791` e o gate remoto verde estão presentes.
-2. Não ampliar LW-126 com scheduler/política/biomas inventados antes do smoke visual: o adapter packet-level já existe e está compile-validado; a prova client-side foi explicitamente adiada.
-3. Reconciliar `TASKLIST.md`/`ROADMAP.md` e selecionar a próxima tarefa automatizável realmente definida. Se a fronteira restante depender apenas de runtime adiado, planejar/promover o próximo slice a partir das fontes de produto em vez de inventar feature.
+1. Quando houver cliente/runtime disponível, executar o smoke visual/restoration de LW-126 sobre o adapter `217e791` e comprovar projeção + retorno à verdade de biome do servidor.
+2. Não ampliar LW-126 com scheduler/política/biomas inventados antes desse smoke; o adapter packet-level já existe e está compile/build-validado.
+3. Se o runtime continuar indisponível, selecionar outra fatia automatizável somente quando as fontes de produto aceitas fornecerem acceptance concreto; não inventar feature para ocupar a lacuna.
 4. Manter LW-128 na fila de validação adiada: quando retomado, usar workload/baseline reproduzível, começar em 1 jogador, registrar TPS/MSPT + deltas ambientais e só então fazer claims/otimizações.
 
 ## Restrições importantes

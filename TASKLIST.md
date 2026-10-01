@@ -48,7 +48,7 @@ Future ideas remain future until promoted into the active scope. Do not start a 
 
 ## Current task
 
-**M12.4 accepted/validated. LW-121 documents the accepted M12.5 foundation; next executable implementation task is LW-122 when requested.**
+**Current M12 focus: LW-126 — seasonal client visual projection. The Paper 26.3 packet adapter is compile/build validated; remaining acceptance is live client visual/restoration proof. LW-127 is implemented-not-validated, and the LW-128 runtime benchmark remains explicitly deferred.**
 
 | LW-060 | M6 | Establish Paper/spark runtime baseline | validated | M5 | measure representative runtime before optimizing hot paths | spark baseline: TPS 20.0; 10s MSPT min/med/p95/max 2.8/4.4/5.9/13.7 ms; 1m 2.8/4.3/6.2/24.1 ms; no evidence justifying speculative optimization | local master |
 | LW-061 | M6 | Add /lw status operator diagnostics | validated | LW-060 | player/console can inspect runtime state and performance without files or unsafe reloads | clean gates + console-path unit test + live MCPFabric player smoke; output confirmed calendar/runtime counters/TPS/MSPT and latest.log stayed clean | local master |
