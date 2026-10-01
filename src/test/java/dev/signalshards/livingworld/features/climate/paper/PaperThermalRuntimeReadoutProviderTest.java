@@ -1,9 +1,13 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
 import dev.signalshards.livingworld.features.climate.application.InMemoryPlayerThermalStateStore;
+import dev.signalshards.livingworld.features.climate.application.InMemoryThermalRuntimeReadoutStore;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalSimulation;
 import dev.signalshards.livingworld.features.climate.application.ThermalEnvironmentContext;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadout;
+import dev.signalshards.livingworld.features.climate.domain.BreathFeedback;
+import dev.signalshards.livingworld.features.climate.domain.DirectThermalExposure;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
 import dev.signalshards.livingworld.features.climate.domain.ArmorThermalLoadout;
 import dev.signalshards.livingworld.features.climate.domain.PlayerActivity;
@@ -14,17 +18,67 @@ import dev.signalshards.livingworld.features.climate.domain.ShelterFactor;
 import dev.signalshards.livingworld.features.climate.domain.WaterExposure;
 import dev.signalshards.livingworld.features.climate.domain.WetnessState;
 import dev.signalshards.livingworld.features.climate.domain.WindExposure;
+import dev.signalshards.livingworld.features.climate.domain.ThermalFeedbackProfile;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PaperThermalRuntimeReadoutProviderTest {
+    @Test
+    void snapshotPublicadoEvitaNovoProbeAmbiental() {
+        UUID playerId = UUID.randomUUID();
+        AtomicInteger environmentReads = new AtomicInteger();
+        PlayerThermalRuntimeService runtime = new PlayerThermalRuntimeService();
+        InMemoryThermalRuntimeReadoutStore readouts =
+                new InMemoryThermalRuntimeReadoutStore();
+        ThermalRuntimeReadout published = new ThermalRuntimeReadout(
+                PlayerThermalBand.COLD,
+                -0.40D,
+                0.25D,
+                7.5D,
+                PlayerActivity.RESTING,
+                0.0D,
+                0.0D,
+                0.0D,
+                DirectThermalExposure.NONE,
+                0.0D,
+                1.0D,
+                0,
+                0,
+                -0.001D,
+                0.0D,
+                0.0D,
+                0.0D,
+                0.0D,
+                -0.001D,
+                0.0D,
+                new ThermalFeedbackProfile(BreathFeedback.none(), 0.0D)
+        );
+        readouts.save(playerId, published);
+        PaperThermalEnvironmentProvider environment = ignored -> {
+            environmentReads.incrementAndGet();
+            throw new AssertionError("snapshot publicado não deve reprovar ambiente");
+        };
+        PaperThermalRuntimeReadoutProvider provider =
+                new PaperThermalRuntimeReadoutProvider(
+                        environment,
+                        runtime,
+                        readouts
+                );
+
+        var actual = provider.snapshot(player(playerId));
+
+        assertEquals(published, actual);
+        assertEquals(0, environmentReads.get());
+    }
+
     @Test
     void combinaSnapshotPersistidoComAmbienteAtualSemAvancarEstado() {
         UUID playerId = UUID.randomUUID();

@@ -4,7 +4,11 @@ import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
 import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
+import dev.signalshards.livingworld.features.climate.application.InMemoryThermalRuntimeReadoutStore;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadoutAssembler;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadoutStore;
+import dev.signalshards.livingworld.features.climate.domain.PlayerThermalSnapshot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -38,6 +42,8 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
     private final PaperThermalEnvironmentProvider environmentProvider;
     private final PlayerThermalRuntimeService runtime;
     private final ThermalFeedbackCoordinator feedback;
+    private final ThermalRuntimeReadoutStore readouts;
+    private final ThermalRuntimeReadoutAssembler readoutAssembler;
     private final LongSupplier clock;
     private final EnvironmentalPerformanceMetrics performanceMetrics;
     private final LongSupplier performanceClock;
@@ -59,6 +65,7 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
                 environmentProvider,
                 runtime,
                 feedback,
+                new InMemoryThermalRuntimeReadoutStore(),
                 System::nanoTime,
                 new EnvironmentalPerformanceMetrics(),
                 System::nanoTime
@@ -79,6 +86,29 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
                 environmentProvider,
                 runtime,
                 feedback,
+                new InMemoryThermalRuntimeReadoutStore(),
+                System::nanoTime,
+                performanceMetrics,
+                System::nanoTime
+        );
+    }
+
+    public PaperThermalRuntimeModule(
+            Plugin plugin,
+            PaperThermalRuntimeSettings settings,
+            PaperThermalEnvironmentProvider environmentProvider,
+            PlayerThermalRuntimeService runtime,
+            ThermalFeedbackCoordinator feedback,
+            ThermalRuntimeReadoutStore readouts,
+            EnvironmentalPerformanceMetrics performanceMetrics
+    ) {
+        this(
+                plugin,
+                settings,
+                environmentProvider,
+                runtime,
+                feedback,
+                readouts,
                 System::nanoTime,
                 performanceMetrics,
                 System::nanoTime
@@ -99,6 +129,7 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
                 environmentProvider,
                 runtime,
                 feedback,
+                new InMemoryThermalRuntimeReadoutStore(),
                 clock,
                 new EnvironmentalPerformanceMetrics(),
                 System::nanoTime
@@ -115,6 +146,30 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
             EnvironmentalPerformanceMetrics performanceMetrics,
             LongSupplier performanceClock
     ) {
+        this(
+                plugin,
+                settings,
+                environmentProvider,
+                runtime,
+                feedback,
+                new InMemoryThermalRuntimeReadoutStore(),
+                clock,
+                performanceMetrics,
+                performanceClock
+        );
+    }
+
+    PaperThermalRuntimeModule(
+            Plugin plugin,
+            PaperThermalRuntimeSettings settings,
+            PaperThermalEnvironmentProvider environmentProvider,
+            PlayerThermalRuntimeService runtime,
+            ThermalFeedbackCoordinator feedback,
+            ThermalRuntimeReadoutStore readouts,
+            LongSupplier clock,
+            EnvironmentalPerformanceMetrics performanceMetrics,
+            LongSupplier performanceClock
+    ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(settings, "configuração térmica");
         this.environmentProvider = Objects.requireNonNull(
@@ -123,6 +178,8 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
         );
         this.runtime = Objects.requireNonNull(runtime, "runtime térmico");
         this.feedback = Objects.requireNonNull(feedback, "coordenador de feedback");
+        this.readouts = Objects.requireNonNull(readouts, "store de readout");
+        this.readoutAssembler = new ThermalRuntimeReadoutAssembler();
         this.clock = Objects.requireNonNull(clock, "relógio");
         this.performanceMetrics = Objects.requireNonNull(
                 performanceMetrics,
@@ -162,6 +219,7 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
             runtime.reset(playerId);
         }
         feedback.clear();
+        readouts.clear();
         trackedPlayers.clear();
         lastUpdateNanos.clear();
     }
@@ -188,6 +246,14 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
                             playerId,
                             environment,
                             Duration.ofNanos(now - previous)
+                    );
+                    var body = new PlayerThermalSnapshot(
+                            result.thermalState(),
+                            result.wetnessState()
+                    );
+                    readouts.save(
+                            playerId,
+                            readoutAssembler.assemble(body, environment)
                     );
                     feedback.observe(
                             playerId,
@@ -233,6 +299,7 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
         UUID playerId = event.getPlayer().getUniqueId();
         lastUpdateNanos.remove(playerId);
         feedback.reset(playerId);
+        readouts.remove(playerId);
     }
 
     private void reset(UUID playerId) {
@@ -240,5 +307,6 @@ public final class PaperThermalRuntimeModule implements LivingWorldModule, Liste
         trackedPlayers.remove(playerId);
         runtime.reset(playerId);
         feedback.reset(playerId);
+        readouts.remove(playerId);
     }
 }

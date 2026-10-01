@@ -20,6 +20,7 @@ import dev.signalshards.livingworld.features.calendar.domain.CalendarRules;
 import dev.signalshards.livingworld.features.climate.domain.ApparentTemperaturePolicy;
 import dev.signalshards.livingworld.features.climate.application.WeatherEventPlanner;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
+import dev.signalshards.livingworld.features.climate.application.InMemoryThermalRuntimeReadoutStore;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import dev.signalshards.livingworld.features.climate.domain.ClimatePolicy;
 import dev.signalshards.livingworld.features.climate.domain.ClimateProfileClassifier;
@@ -198,6 +199,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 thermalAmbient
         );
         var thermalRuntimeService = new PlayerThermalRuntimeService();
+        var thermalReadoutStore = new InMemoryThermalRuntimeReadoutStore();
         var thermalFeedback = new ThermalFeedbackCoordinator();
         var environmentalPerformance = new EnvironmentalPerformanceMetrics();
         var resourcePackSessions = new ResourcePackSessionStore();
@@ -234,6 +236,7 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 thermalEnvironment,
                 thermalRuntimeService,
                 thermalFeedback,
+                thermalReadoutStore,
                 environmentalPerformance
         );
         PaperThermalFeedbackModule thermalFeedbackModule =
@@ -247,7 +250,8 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 );
         var thermalReadoutProvider = new PaperThermalRuntimeReadoutProvider(
                 thermalEnvironment,
-                thermalRuntimeService
+                thermalRuntimeService,
+                thermalReadoutStore
         );
         PaperHudModule hud = new PaperHudModule(
                 this,

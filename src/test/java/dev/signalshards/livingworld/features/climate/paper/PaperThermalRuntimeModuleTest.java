@@ -3,6 +3,7 @@ package dev.signalshards.livingworld.features.climate.paper;
 import dev.signalshards.livingworld.core.status.EnvironmentalMetric;
 import dev.signalshards.livingworld.core.status.EnvironmentalPerformanceMetrics;
 import dev.signalshards.livingworld.features.climate.application.PlayerThermalRuntimeService;
+import dev.signalshards.livingworld.features.climate.application.InMemoryThermalRuntimeReadoutStore;
 import dev.signalshards.livingworld.features.climate.application.ThermalFeedbackCoordinator;
 import dev.signalshards.livingworld.features.climate.application.ThermalEnvironmentContext;
 import dev.signalshards.livingworld.features.climate.domain.AmbientTemperature;
@@ -46,6 +47,8 @@ class PaperThermalRuntimeModuleTest {
 
         var snapshot = f.runtime.snapshot(f.playerId).orElseThrow();
         assertTrue(snapshot.thermalState().thermalLoad() < 0.0D);
+        var readout = f.readouts.load(f.playerId).orElseThrow();
+        assertEquals(-20.0D, readout.ambientCelsius(), 1.0E-9D);
         assertTrue(f.feedback.profile(f.playerId).isPresent());
         assertEquals(1, f.environmentReads);
         assertEquals(1, f.registrations);
@@ -73,6 +76,7 @@ class PaperThermalRuntimeModuleTest {
                 PlayerQuitEvent.QuitReason.DISCONNECTED
         ));
         assertFalse(f.runtime.snapshot(f.playerId).isPresent());
+        assertTrue(f.readouts.load(f.playerId).isEmpty());
         assertTrue(f.feedback.profile(f.playerId).isEmpty());
 
         f.module.disable();
@@ -128,6 +132,8 @@ class PaperThermalRuntimeModuleTest {
         int cancellations;
         final UUID playerId = UUID.randomUUID();
         final PlayerThermalRuntimeService runtime = new PlayerThermalRuntimeService();
+        final InMemoryThermalRuntimeReadoutStore readouts =
+                new InMemoryThermalRuntimeReadoutStore();
         final ThermalFeedbackCoordinator feedback = new ThermalFeedbackCoordinator();
         final EnvironmentalPerformanceMetrics performance =
                 new EnvironmentalPerformanceMetrics();
@@ -199,6 +205,7 @@ class PaperThermalRuntimeModuleTest {
                     environment,
                     runtime,
                     feedback,
+                    readouts,
                     () -> now,
                     performance,
                     () -> now
