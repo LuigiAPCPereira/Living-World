@@ -30,7 +30,16 @@ class PaperHudActionBarRendererTest {
             return readout(12.6D);
         };
         var renderer = new PaperHudActionBarRenderer(
-                new PaperHudSettings(true, 10L, false, false, false, true),
+                new PaperHudSettings(
+                        true,
+                        10L,
+                        false,
+                        false,
+                        false,
+                        true,
+                        false,
+                        0.15D
+                ),
                 MessageCatalog.fromLanguageTag("pt-BR"),
                 new HeadingPolicy(),
                 thermal,
@@ -61,7 +70,16 @@ class PaperHudActionBarRendererTest {
             return readout(-30.0D);
         };
         var renderer = new PaperHudActionBarRenderer(
-                new PaperHudSettings(true, 10L, false, true, false, false),
+                new PaperHudSettings(
+                        true,
+                        10L,
+                        false,
+                        true,
+                        false,
+                        false,
+                        false,
+                        0.15D
+                ),
                 MessageCatalog.fromLanguageTag("pt-BR"),
                 new HeadingPolicy(),
                 thermal,
@@ -80,11 +98,110 @@ class PaperHudActionBarRendererTest {
         assertEquals(0, snapshots.get());
     }
 
+    @Test
+    void contextoTermicoUsaUmSnapshotParaCorpoTendenciaEWetness() {
+        AtomicInteger snapshots = new AtomicInteger();
+        ThermalRuntimeReadoutProvider thermal = player -> {
+            snapshots.incrementAndGet();
+            return readout(
+                    -12.4D,
+                    PlayerThermalBand.COLD,
+                    0.67D,
+                    0.002D
+            );
+        };
+        var renderer = new PaperHudActionBarRenderer(
+                new PaperHudSettings(
+                        true,
+                        10L,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        0.15D
+                ),
+                MessageCatalog.fromLanguageTag("pt-BR"),
+                new HeadingPolicy(),
+                thermal,
+                new TemperatureColorPolicy()
+        );
+
+        var rendered = renderer.render(playerAt(new Location(
+                null,
+                0.0D,
+                64.0D,
+                0.0D,
+                0.0F,
+                0.0F
+        )));
+
+        assertEquals(1, snapshots.get());
+        assertEquals(
+                "🌡 -12 °C  •  Frio ↑  •  💧 67%",
+                PlainTextComponentSerializer.plainText().serialize(rendered)
+        );
+    }
+
+    @Test
+    void contextoTermicoOmiteWetnessAbaixoDoLimiar() {
+        ThermalRuntimeReadoutProvider thermal = player -> readout(
+                5.4D,
+                PlayerThermalBand.COMFORTABLE,
+                0.10D,
+                0.0001D
+        );
+        var renderer = new PaperHudActionBarRenderer(
+                new PaperHudSettings(
+                        true,
+                        10L,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        0.15D
+                ),
+                MessageCatalog.fromLanguageTag("pt-BR"),
+                new HeadingPolicy(),
+                thermal,
+                new TemperatureColorPolicy()
+        );
+
+        var rendered = renderer.render(playerAt(new Location(
+                null,
+                0.0D,
+                64.0D,
+                0.0D,
+                0.0F,
+                0.0F
+        )));
+
+        assertEquals(
+                "🌡 5 °C  •  Confortável →",
+                PlainTextComponentSerializer.plainText().serialize(rendered)
+        );
+    }
+
     private ThermalRuntimeReadout readout(double ambientCelsius) {
-        return new ThermalRuntimeReadout(
+        return readout(
+                ambientCelsius,
                 PlayerThermalBand.COMFORTABLE,
                 0.0D,
+                0.0D
+        );
+    }
+
+    private ThermalRuntimeReadout readout(
+            double ambientCelsius,
+            PlayerThermalBand band,
+            double wetness,
+            double netRatePerSecond
+    ) {
+        return new ThermalRuntimeReadout(
+                band,
                 0.0D,
+                wetness,
                 ambientCelsius,
                 PlayerActivity.RESTING,
                 0.0D,
@@ -100,7 +217,7 @@ class PaperHudActionBarRendererTest {
                 0.0D,
                 0.0D,
                 0.0D,
-                0.0D,
+                netRatePerSecond,
                 0.0D,
                 new ThermalFeedbackProfile(BreathFeedback.none(), 0.0D)
         );

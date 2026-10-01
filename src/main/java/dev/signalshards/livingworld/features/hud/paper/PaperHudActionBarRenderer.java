@@ -1,7 +1,11 @@
 package dev.signalshards.livingworld.features.hud.paper;
 
 import dev.signalshards.livingworld.core.i18n.MessageCatalog;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadout;
 import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadoutProvider;
+import dev.signalshards.livingworld.features.climate.application.ThermalTrend;
+import dev.signalshards.livingworld.features.climate.application.ThermalTrendPolicy;
+import dev.signalshards.livingworld.features.climate.domain.PlayerThermalBand;
 import dev.signalshards.livingworld.features.hud.domain.CardinalDirection;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import net.kyori.adventure.text.Component;
@@ -23,6 +27,7 @@ final class PaperHudActionBarRenderer {
     private final HeadingPolicy headingPolicy;
     private final ThermalRuntimeReadoutProvider thermalReadoutProvider;
     private final TemperatureColorPolicy temperatureColorPolicy;
+    private final ThermalTrendPolicy thermalTrendPolicy = new ThermalTrendPolicy();
 
     PaperHudActionBarRenderer(
             PaperHudSettings settings,
@@ -76,9 +81,8 @@ final class PaperHudActionBarRenderer {
         }
 
         if (settings.temperatureEnabled()) {
-            int celsius = (int) Math.round(
-                    thermalReadoutProvider.snapshot(player).ambientCelsius()
-            );
+            ThermalRuntimeReadout thermal = thermalReadoutProvider.snapshot(player);
+            int celsius = (int) Math.round(thermal.ambientCelsius());
             result = appendSegment(
                     result,
                     Component.text(
@@ -87,6 +91,40 @@ final class PaperHudActionBarRenderer {
                     ),
                     hasSegment
             );
+
+            if (settings.thermalContextEnabled()) {
+                result = appendSegment(
+                        result,
+                        Component.text(
+                                thermalBandText(thermal.thermalBand())
+                                        + " "
+                                        + trendSymbol(
+                                                thermalTrendPolicy.classify(
+                                                        thermal.netRatePerSecond()
+                                                )
+                                        ),
+                                NamedTextColor.WHITE
+                        ),
+                        true
+                );
+
+                if (thermal.wetness() >= settings.wetnessMinimumDisplay()) {
+                    int wetnessPercent = (int) Math.round(
+                            thermal.wetness() * 100.0D
+                    );
+                    result = appendSegment(
+                            result,
+                            Component.text(
+                                    messages.text(
+                                            "hud.thermal.wetness",
+                                            wetnessPercent
+                                    ),
+                                    NamedTextColor.AQUA
+                            ),
+                            true
+                    );
+                }
+            }
         }
 
         return result;
@@ -116,5 +154,28 @@ final class PaperHudActionBarRenderer {
             case OESTE -> "direction.west";
             case NOROESTE -> "direction.northwest";
         });
+    }
+
+    private String thermalBandText(PlayerThermalBand band) {
+        return messages.text(switch (band) {
+            case EXTREME_COLD -> "thermal.band.extreme-cold";
+            case FREEZING -> "thermal.band.freezing";
+            case VERY_COLD -> "thermal.band.very-cold";
+            case COLD -> "thermal.band.cold";
+            case COOL -> "thermal.band.cool";
+            case COMFORTABLE -> "thermal.band.comfortable";
+            case WARM -> "thermal.band.warm";
+            case HOT -> "thermal.band.hot";
+            case OVERHEATING -> "thermal.band.overheating";
+            case EXTREME_HEAT -> "thermal.band.extreme-heat";
+        });
+    }
+
+    private String trendSymbol(ThermalTrend trend) {
+        return switch (trend) {
+            case COOLING -> "↓";
+            case STABLE -> "→";
+            case WARMING -> "↑";
+        };
     }
 }

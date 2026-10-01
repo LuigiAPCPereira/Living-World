@@ -7,8 +7,8 @@
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
 - **Current task:** LW-129 thermal HUD reconciliation, explicitly promoted by the user on 2026-10-01 from the accepted audit architecture and RealisticSeasons comparison
-- **Current acceptance:** the action-bar °C must come from the modern `ThermalRuntimeReadoutProvider` already used by `/lw thermal`; HUD must not own a parallel `World#getTemperature`/legacy apparent-temperature formula. Body state, wetness and net thermal rate remain distinct readout fields for later contextual presentation.
-- **Current validation:** LW-129 slice 1 is implemented-not-validated: focused `PaperHudActionBarRendererTest` and existing `PaperThermalRuntimeReadoutProviderTest` executed green; IntelliJ project build succeeded; HUD source search finds no `World#getTemperature`, `ApparentTemperaturePolicy` or `PaperTemperatureExposureResolver`. A forced full Gradle rerun was attempted but the IntelliJ MCP session terminated and is not counted. Runtime HUD smoke remains pending. Pre-existing cold-breath worktree changes are intentionally preserved outside LW-129. LW-127 remains implemented-not-validated and LW-128 representative benchmark remains explicitly deferred.
+- **Current acceptance:** the action bar must consume one modern `ThermalRuntimeReadoutProvider` snapshot per render. Ambient °C, body band, thermal trend and contextual wetness are presentation of that snapshot; HUD must not own a parallel environmental/thermal simulation formula.
+- **Current validation:** LW-129 slices 1-2 are implemented-not-validated. Slice 1 (`1ef1d16`) removed the legacy HUD temperature path. Slice 2 adds body band + three-state trend from existing `netRatePerSecond` + wetness visibility above a configurable threshold; focused renderer/trend tests execute green, IntelliJ build is green, lint is clean after the final flow cleanup and `git diff --check` is clean. For runtime isolation, an exact `1ef1d16` artifact was built in a detached worktree and started successfully on Paper 26.3 build 141; the restart disconnected the Fabric client before the action-bar comparison, so no live HUD claim is counted yet. Pre-existing cold-breath changes remain outside LW-129 and may be modified in a later selected slice per explicit user authorization. LW-127 remains implemented-not-validated and LW-128 representative benchmark remains explicitly deferred.
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for automated task-graph reconciliation. Runtime/client validation remains deferred for LW-122..LW-128 where noted; LW-126 visual proof and LW-128 benchmark data must not be invented
-- **Next action:** validate LW-129 in live Paper with HUD and `/lw thermal` observed at the same player/location, then continue the accepted thermal UX sequence with contextual body trend/wetness/heat visibility. Preserve the unrelated cold-breath WIP and the deferred LW-128 benchmark.
+- **Next action:** after the player reconnects, validate LW-129 in live Paper by comparing action-bar ambient °C/body trend/wetness with `/lw thermal` at the same player/location. If coherent, close the HUD runtime gate before promoting heat-source detail/readout-store work; the cold-breath WIP is authorized for later modification but is not part of this slice.
 
 ## M12.4 — checkpoint local
 

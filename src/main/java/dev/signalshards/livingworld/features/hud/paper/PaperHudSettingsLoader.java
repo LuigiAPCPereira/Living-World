@@ -30,6 +30,14 @@ public final class PaperHudSettingsLoader {
                 config.getBoolean(
                         "hud.action-bar.temperature",
                         defaults.temperatureEnabled()
+                ),
+                config.getBoolean(
+                        "hud.action-bar.thermal-context.enabled",
+                        defaults.thermalContextEnabled()
+                ),
+                config.getDouble(
+                        "hud.action-bar.thermal-context.wetness-minimum",
+                        defaults.wetnessMinimumDisplay()
                 )
         );
     }

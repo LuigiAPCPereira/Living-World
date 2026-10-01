@@ -76,6 +76,11 @@ hud:
     navigation: true
     coordinates: true
     temperature: true
+    thermal-context:
+      # Acrescenta faixa corporal e tendência usando o mesmo snapshot do /lw thermal.
+      enabled: true
+      # Fração 0..1. Wetness abaixo desse valor não ocupa espaço na action bar.
+      wetness-minimum: 0.15
 
 ecology:
   natural-growth:
