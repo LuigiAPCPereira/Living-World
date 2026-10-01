@@ -43,6 +43,18 @@ cliente; nenhuma aparência client-side foi comprovada ainda.
 - O run remoto #2 de `clean test build` também fechou verde. Isso valida compilação/compatibilidade automatizada do adapter, **não** a aparência no cliente.
 - O smoke visual do packet fica adiado junto das validações locais: quando retomado, usar fixture temporária/dev harness e comprovar tint/retorno ao biome real sem transformar o harness em feature permanente.
 
+## LW-126 — smoke parcial 2026-10-01
+
+- O worktree local foi fast-forward de `efa75a8` para `5bb685a`; alterações rastreadas permaneceram limpas e o diretório `bin/` não rastreado foi preservado.
+- IntelliJ build passou em `5bb685a`; Paper 26.3 build 141 iniciou com LivingWorld sem erro.
+- O harness antigo `LWVisualSmoke` foi rejeitado para este aceite porque usa `World#setBiome` e portanto altera verdade server-side.
+- Um harness temporário **não commitado** em `run/lw126-smoke` foi criado apenas para exercitar `Paper263SeasonalBiomeProjectionAdapter`; ele não chama `World#setBiome`.
+- Com zVaporius conectado no Overworld, o harness chamou `projectWholeChunk` no chunk atual com alvo `minecraft:swamp`; resultado observado: `SENT`.
+- No mesmo ponto, o biome server-side era `minecraft:savanna` antes e depois do packet, com `unchanged=true`.
+- O caminho de restauração executou `World#refreshChunk` no chunk projetado; retorno `true`, e o biome server-side permaneceu savanna com `unchanged=true`.
+- A aparência no cliente não pôde ser observada independentemente: `MCPFabric#get_status` falhou com `MCP SSE probe returned 404 from openai.org`. Portanto este smoke **não fecha** LW-126 sozinho.
+- O Paper permaneceu ativo após o smoke; o harness temporário deve continuar fora do produto/commit e pode ser removido após o aceite visual.
+
 ## Validação runtime adiada — LW-128
 
 A fundação de instrumentação do environmental performance gate foi consolidada
@@ -104,9 +116,9 @@ commit, preservando uma única instância compartilhada de métricas no composit
 
 ## Próxima ação executável
 
-1. Quando houver cliente/runtime disponível, executar o smoke visual/restoration de LW-126 sobre o adapter `217e791` e comprovar projeção + retorno à verdade de biome do servidor.
-2. Não ampliar LW-126 com scheduler/política/biomas inventados antes desse smoke; o adapter packet-level já existe e está compile/build-validado.
-3. Se o runtime continuar indisponível, selecionar outra fatia automatizável somente quando as fontes de produto aceitas fornecerem acceptance concreto; não inventar feature para ocupar a lacuna.
+1. Obter a confirmação visual que falta para o smoke LW-126 já executado: a projeção `minecraft:swamp` deve ter sido perceptível no cliente e o refresh subsequente deve ter restaurado a apresentação original.
+2. Se for necessário repetir com observação independente, começar por `MCPFabric#get_status` quando o bridge voltar e reutilizar o mesmo harness bounded; não criar scheduler/policy de produção para contornar a indisponibilidade do bridge.
+3. Não ampliar LW-126 com scheduler/política/biomas inventados antes desse aceite visual.
 4. Manter LW-128 na fila de validação adiada: quando retomado, usar workload/baseline reproduzível, começar em 1 jogador, registrar TPS/MSPT + deltas ambientais e só então fazer claims/otimizações.
 
 ## Restrições importantes
