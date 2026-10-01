@@ -6,9 +6,9 @@
 - **Task inventory:** `TASKLIST.md`
 - **Roadmap:** `ROADMAP.md`
 - **Architecture:** `DESIGN.md`
-- **Current task:** LW-123 cold-breath live visual/tuning smoke on the refined mouth-anchored presenter
-- **Current acceptance:** cold breath must originate at one head-local mouth point, expand only through a bounded forward velocity cone and avoid positional spread around the player's head. Existing cadence/intensity remain runtime-owned and bounded; frost remains a separate feedback path.
-- **Current validation:** LW-129 is validated. The exact `950e210` code artifact was rebuilt with the Gradle `Build` run configuration because IntelliJ incremental compilation alone had left an older packaged JAR; the validated JAR hash is `505e60cbea416ad4a49174d779f9194bb3c276b1b9e77d1d0cd8edda9f59d8d4`. On Paper 26.3 build 141, empty-hand HUD showed `4 °C • Congelante ↓` without coordinates while `/lw thermal` reported ambient 4.2 °C, band Congelante, net rate -0.0033/s and wetness 0%; holding a compass exposed X/Y/Z and clearing it removed them again. LW-123 automated mouth-frame/yaw/pitch/origin/viewer regressions are green and the same runtime reports breath intensity 21% with 3.0–4.9 s cadence, but third-person visual proof of mouth attachment is still pending because MCPFabric exposes no perspective toggle. LW-127 remains implemented-not-validated and LW-128 representative benchmark remains explicitly deferred.
+- **Current task:** LW-127 physical-winter runtime smoke/tuning
+- **Current acceptance:** real ICE and SNOW must appear only under eligible climate, stay bounded/lazy around active loaded chunks, preserve ownership so natural/player state is not destroyed, and thaw only owned winter mutations under the configured hysteresis.
+- **Current validation:** LW-129 is validated. LW-123 is also validated on Paper 26.3 build 141. Final cold breath uses white `DUST`, 2 particles at low/medium intensity and 3 at high, a head-local mouth frame at 0.27 forward / 0.30 local-down, and a bounded directional cone. The `WHITE_SMOKE` runtime candidate was rejected because its intrinsic rise crossed the upper face/head. The final packaged JAR SHA-256 is `8f5a16da9075176e6a74ac6120544e1a1088cad068c8da19da50345e5a1e93af`; with frost temporarily disabled, third-person captures showed the puff at the lower/central face without surrounding-head spread, while `/lw status` reported `breath 31 • frost 0`. The pre-smoke runtime config was then restored exactly (including the intentionally active LW-127 physical-winter fixture), and the same candidate restarted healthy. Automated yaw/pitch/origin/viewer regressions, Gradle Build, lint and `git diff --check` are green. LW-127 remains implemented-not-validated and LW-128 representative benchmark remains explicitly deferred.
 - **Observed repository:** `/home/luigiapcp/IdeaProjects/Living World`
 - **Observed branch:** `ecology/m12-thermal-foundation`
 - **Observed integration merge commit:** `703528c` — Waystone navigation clarity + Discovery foundation merged locally before the branch rename to `main`
@@ -18,7 +18,7 @@
 - **Merge:** local `integration/m10-discovery` merged at `703528c` before branch alignment; GitHub remote configured as `origin` and `main` tracks `origin/main`
 - **Deploy:** not applicable
 - **Blockers:** none for automated task-graph reconciliation. Runtime/client validation remains deferred for LW-122..LW-128 where noted; LW-126 visual proof and LW-128 benchmark data must not be invented
-- **Next action:** with the current Paper candidate still running, switch the client to third person manually and capture the next natural cold-breath emissions from front/profile angles. Validate origin at the mouth, forward expansion and absence of particles around the rest of the head; if that passes, close LW-123 runtime smoke before returning to LW-127.
+- **Next action:** resume the paused LW-127 smoke from the preserved physical-winter fixture. Recover the exact probe-offset order first, determine why the prepared exposed source-water targets did not freeze while snow mutations did, then prove ICE + SNOW and a controlled THAW/ownership cleanup before closing LW-127. Keep the LW-128 representative benchmark deferred unless explicitly resumed.
 
 ## M12.4 — checkpoint local
 

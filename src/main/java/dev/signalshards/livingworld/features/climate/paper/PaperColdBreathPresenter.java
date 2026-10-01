@@ -1,5 +1,6 @@
 package dev.signalshards.livingworld.features.climate.paper;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -13,8 +14,10 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class PaperColdBreathPresenter implements PaperThermalFeedbackPresenter {
     static final int MAX_VIEWERS = 16;
+    private static final Particle.DustOptions BREATH_DUST =
+            new Particle.DustOptions(Color.fromRGB(255, 255, 255), 1.0F);
     private static final double MOUTH_FORWARD_BLOCKS = 0.27D;
-    private static final double MOUTH_DOWN_BLOCKS = 0.18D;
+    private static final double MOUTH_DOWN_BLOCKS = 0.30D;
     private static final double CONE_LATERAL = 0.10D;
     private static final double CONE_VERTICAL = 0.055D;
     private static final double BASE_SPEED = 0.040D;
@@ -60,7 +63,7 @@ public final class PaperColdBreathPresenter implements PaperThermalFeedbackPrese
             );
         }
         if (intensity < 0.45D) {
-            return 1;
+            return 2;
         }
         return intensity < 0.80D ? 2 : 3;
     }
@@ -126,13 +129,14 @@ public final class PaperColdBreathPresenter implements PaperThermalFeedbackPrese
                     speed
             );
             viewer.spawnParticle(
-                    Particle.CLOUD,
+                    Particle.DUST,
                     frame.mouth(),
                     0,
                     velocity.getX(),
                     velocity.getY(),
                     velocity.getZ(),
-                    1.0D
+                    1.0D,
+                    BREATH_DUST
             );
         }
     }

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,7 +23,7 @@ class PaperColdBreathPresenterTest {
 
     @Test
     void intensidadeControlaContagemBounded() {
-        assertEquals(1, PaperColdBreathPresenter.particleCount(0.20D));
+        assertEquals(2, PaperColdBreathPresenter.particleCount(0.20D));
         assertEquals(2, PaperColdBreathPresenter.particleCount(0.60D));
         assertEquals(3, PaperColdBreathPresenter.particleCount(0.95D));
     }
@@ -68,7 +69,7 @@ class PaperColdBreathPresenterTest {
                         .subtract(eye.toVector());
 
                 assertEquals(0.27D, offset.dot(frame.forward()), EPSILON);
-                assertEquals(-0.18D, offset.dot(frame.up()), EPSILON);
+                assertEquals(-0.30D, offset.dot(frame.up()), EPSILON);
                 assertEquals(0.0D, offset.dot(frame.lateral()), EPSILON);
             }
         }
@@ -117,13 +118,14 @@ class PaperColdBreathPresenterTest {
         Location expected = PaperColdBreathPresenter.mouthFrame(eye).mouth();
         assertEquals(3, calls.size());
         for (Object[] call : calls) {
-            assertSame(Particle.CLOUD, call[0]);
+            assertSame(Particle.DUST, call[0]);
             Location actual = (Location) call[1];
             assertEquals(expected.getX(), actual.getX(), EPSILON);
             assertEquals(expected.getY(), actual.getY(), EPSILON);
             assertEquals(expected.getZ(), actual.getZ(), EPSILON);
             assertEquals(0, call[2]);
             assertEquals(1.0D, (double) call[6], EPSILON);
+            assertInstanceOf(Particle.DustOptions.class, call[7]);
         }
     }
 
