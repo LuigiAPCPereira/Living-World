@@ -4,15 +4,12 @@ import dev.signalshards.livingworld.core.i18n.MessageCatalog;
 import dev.signalshards.livingworld.core.module.LivingWorldModule;
 import dev.signalshards.livingworld.features.calendar.application.CalendarView;
 import dev.signalshards.livingworld.features.calendar.domain.CalendarDate;
-import dev.signalshards.livingworld.features.climate.domain.ApparentTemperaturePolicy;
-import dev.signalshards.livingworld.features.climate.paper.PaperTemperatureExposureResolver;
-import dev.signalshards.livingworld.features.hud.domain.CardinalDirection;
+import dev.signalshards.livingworld.features.climate.application.ThermalRuntimeReadoutProvider;
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import dev.signalshards.livingworld.features.seasons.domain.Season;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -32,9 +29,7 @@ public final class PaperHudModule implements LivingWorldModule, Listener {
     private final PaperHudSettings settings;
     private final CalendarView calendar;
     private final MessageCatalog messages;
-    private final HeadingPolicy headingPolicy;
-    private final ApparentTemperaturePolicy temperaturePolicy;
-    private final TemperatureColorPolicy temperatureColorPolicy;
+    private final PaperHudActionBarRenderer actionBarRenderer;
     private final Map<UUID, PlayerHudSession> sessions = new HashMap<>();
 
     private BukkitTask updateTask;
@@ -45,21 +40,19 @@ public final class PaperHudModule implements LivingWorldModule, Listener {
             CalendarView calendar,
             MessageCatalog messages,
             HeadingPolicy headingPolicy,
-            ApparentTemperaturePolicy temperaturePolicy,
+            ThermalRuntimeReadoutProvider thermalReadoutProvider,
             TemperatureColorPolicy temperatureColorPolicy
     ) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.settings = Objects.requireNonNull(settings, "configuração de HUD");
         this.calendar = Objects.requireNonNull(calendar, "calendário");
         this.messages = Objects.requireNonNull(messages, "catálogo de mensagens");
-        this.headingPolicy = Objects.requireNonNull(headingPolicy, "política de direção");
-        this.temperaturePolicy = Objects.requireNonNull(
-                temperaturePolicy,
-                "política de temperatura"
-        );
-        this.temperatureColorPolicy = Objects.requireNonNull(
-                temperatureColorPolicy,
-                "política visual da temperatura"
+        this.actionBarRenderer = new PaperHudActionBarRenderer(
+                settings,
+                messages,
+                headingPolicy,
+                thermalReadoutProvider,
+                temperatureColorPolicy
         );
     }
 
@@ -154,7 +147,7 @@ public final class PaperHudModule implements LivingWorldModule, Listener {
     private void update(Player player, PlayerHudSession session) {
         updateCalendarBar(session);
         if (settings.actionBarEnabled()) {
-            player.sendActionBar(actionBar(player));
+            player.sendActionBar(actionBarRenderer.render(player));
         }
     }
 
@@ -193,88 +186,12 @@ public final class PaperHudModule implements LivingWorldModule, Listener {
         session.lastCalendarKey = key;
     }
 
-    private Component actionBar(Player player) {
-        Location location = player.getLocation();
-        Component result = Component.empty();
-        boolean hasSegment = false;
-
-        if (settings.navigationEnabled()) {
-            result = Component.text(
-                    directionText(headingPolicy.directionFor(location.getYaw())),
-                    NamedTextColor.AQUA
-            );
-            hasSegment = true;
-        }
-
-        if (settings.coordinatesEnabled()) {
-            result = appendSegment(
-                    result,
-                    Component.text(
-                            messages.text(
-                                    "hud.coordinates",
-                                    location.getBlockX(),
-                                    location.getBlockY(),
-                                    location.getBlockZ()
-                            ),
-                            NamedTextColor.GRAY
-                    ),
-                    hasSegment
-            );
-            hasSegment = true;
-        }
-
-        if (settings.temperatureEnabled()) {
-            double paperTemperature = player.getWorld().getTemperature(
-                    location.getBlockX(),
-                    location.getBlockY(),
-                    location.getBlockZ()
-            );
-            int celsius = temperaturePolicy.degreesCelsius(
-                    paperTemperature,
-                    calendar.currentSeason(),
-                    PaperTemperatureExposureResolver.forPlayer(player)
-            );
-            result = appendSegment(
-                    result,
-                    Component.text(
-                            messages.text("hud.temperature", celsius),
-                            temperatureColorPolicy.colorFor(celsius)
-                    ),
-                    hasSegment
-            );
-        }
-
-        return result;
-    }
-
-    private Component appendSegment(Component base, Component segment, boolean hasPrevious) {
-        if (hasPrevious) {
-            return base
-                    .append(Component.text("  •  ", NamedTextColor.DARK_GRAY))
-                    .append(segment);
-        }
-        return base.append(segment);
-    }
-
     private String seasonText(Season season) {
         return messages.text(switch (season) {
             case PRIMAVERA -> "season.spring";
             case VERAO -> "season.summer";
             case OUTONO -> "season.autumn";
             case INVERNO -> "season.winter";
-        });
-    }
-
-    private String directionText(CardinalDirection direction) {
-        return messages.text(switch (direction) {
-            case NORTE -> "direction.north";
-            case NORDESTE -> "direction.northeast";
-            case LESTE -> "direction.east";
-            case SUDESTE -> "direction.southeast";
-            case SUL -> "direction.south";
-            case SUDOESTE -> "direction.southwest";
-            case OESTE -> "direction.west";
-            case NOROESTE -> "direction.northwest";
         });
     }
 

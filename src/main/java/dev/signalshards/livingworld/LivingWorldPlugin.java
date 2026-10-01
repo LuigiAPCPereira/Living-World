@@ -184,15 +184,6 @@ public final class LivingWorldPlugin extends JavaPlugin {
                 desireLines,
                 seasonAnnouncement
         );
-        PaperHudModule hud = new PaperHudModule(
-                this,
-                PaperHudSettingsLoader.load(getConfig()),
-                calendarModule,
-                messages,
-                new HeadingPolicy(),
-                new ApparentTemperaturePolicy(),
-                new TemperatureColorPolicy()
-        );
         PaperEcologySettings ecologySettings = PaperEcologySettingsLoader.load(getConfig());
         PaperLocalClimateResolver localClimate = new PaperLocalClimateResolver(
                 calendarWorld,
@@ -257,6 +248,15 @@ public final class LivingWorldPlugin extends JavaPlugin {
         var thermalReadoutProvider = new PaperThermalRuntimeReadoutProvider(
                 thermalEnvironment,
                 thermalRuntimeService
+        );
+        PaperHudModule hud = new PaperHudModule(
+                this,
+                PaperHudSettingsLoader.load(getConfig()),
+                calendarModule,
+                messages,
+                new HeadingPolicy(),
+                thermalReadoutProvider,
+                new TemperatureColorPolicy()
         );
         PaperNaturalGrowthModule naturalGrowth = new PaperNaturalGrowthModule(
                 this,
