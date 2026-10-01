@@ -11,6 +11,7 @@ import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -63,7 +64,10 @@ final class PaperHudActionBarRenderer {
             hasSegment = true;
         }
 
-        if (settings.coordinatesEnabled()) {
+        if (settings.coordinatesEnabled() && coordinatesVisible(
+                player.getInventory().getItemInMainHand().getType(),
+                player.getInventory().getItemInOffHand().getType()
+        )) {
             result = appendSegment(
                     result,
                     Component.text(
@@ -128,6 +132,15 @@ final class PaperHudActionBarRenderer {
         }
 
         return result;
+    }
+
+    static boolean coordinatesVisible(
+            Material mainHand,
+            Material offHand
+    ) {
+        Objects.requireNonNull(mainHand, "material da mão principal");
+        Objects.requireNonNull(offHand, "material da mão secundária");
+        return mainHand == Material.COMPASS || offHand == Material.COMPASS;
     }
 
     private Component appendSegment(

@@ -11,6 +11,7 @@ import dev.signalshards.livingworld.features.climate.domain.ThermalFeedbackProfi
 import dev.signalshards.livingworld.features.hud.domain.HeadingPolicy;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,8 @@ import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("unused")
 class PaperHudActionBarRendererTest {
@@ -96,6 +99,28 @@ class PaperHudActionBarRendererTest {
         )));
 
         assertEquals(0, snapshots.get());
+    }
+
+    @Test
+    void coordenadasExigemBussolaEmUmaDasMaos() {
+        assertFalse(
+                PaperHudActionBarRenderer.coordinatesVisible(
+                        Material.AIR,
+                        Material.AIR
+                )
+        );
+        assertTrue(
+                PaperHudActionBarRenderer.coordinatesVisible(
+                        Material.COMPASS,
+                        Material.AIR
+                )
+        );
+        assertTrue(
+                PaperHudActionBarRenderer.coordinatesVisible(
+                        Material.AIR,
+                        Material.COMPASS
+                )
+        );
     }
 
     @Test
