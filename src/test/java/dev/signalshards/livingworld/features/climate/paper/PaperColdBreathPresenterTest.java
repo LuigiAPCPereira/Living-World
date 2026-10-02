@@ -22,10 +22,21 @@ class PaperColdBreathPresenterTest {
     private static final double EPSILON = 1.0E-9D;
 
     @Test
-    void intensidadeControlaContagemBounded() {
-        assertEquals(2, PaperColdBreathPresenter.particleCount(0.20D));
-        assertEquals(2, PaperColdBreathPresenter.particleCount(0.60D));
-        assertEquals(3, PaperColdBreathPresenter.particleCount(0.95D));
+    void respiracaoUsaTresMicroPuffsEmZeroDoisQuatroTicks() {
+        RecordingScheduler scheduler = new RecordingScheduler();
+        AtomicInteger particles = new AtomicInteger();
+        Player subject = player(false, particles);
+
+        new PaperColdBreathPresenter(scheduler).emitBreath(subject, 0.60D);
+
+        assertEquals(List.of(0L, 2L, 4L), scheduler.delays());
+        assertEquals(1, particles.get());
+
+        scheduler.runDelay(2L);
+        assertEquals(2, particles.get());
+
+        scheduler.runDelay(4L);
+        assertEquals(3, particles.get());
     }
 
     @Test
@@ -33,7 +44,8 @@ class PaperColdBreathPresenterTest {
         AtomicInteger particles = new AtomicInteger();
         Player subject = player(true, particles);
 
-        new PaperColdBreathPresenter().emitBreath(subject, 0.80D);
+        new PaperColdBreathPresenter(new RecordingScheduler())
+                .emitBreath(subject, 0.80D);
 
         assertEquals(0, particles.get());
     }
@@ -43,7 +55,9 @@ class PaperColdBreathPresenterTest {
         AtomicInteger particles = new AtomicInteger();
         Player subject = player(false, particles);
 
-        new PaperColdBreathPresenter().emitBreath(subject, 0.80D);
+        RecordingScheduler scheduler = new RecordingScheduler();
+        new PaperColdBreathPresenter(scheduler).emitBreath(subject, 0.80D);
+        scheduler.runAllDelayed();
 
         assertEquals(3, particles.get());
     }
@@ -100,7 +114,7 @@ class PaperColdBreathPresenterTest {
     }
 
     @Test
-    void todasParticulasNascemNoMesmoPontoDaBocaEModoDirecional() {
+    void microPuffsAvancamSomenteParaFrenteECrescem() {
         AtomicInteger particles = new AtomicInteger();
         List<Object[]> calls = new ArrayList<>();
         Location eye = new Location(
@@ -112,21 +126,78 @@ class PaperColdBreathPresenterTest {
                 -20.0F
         );
         Player subject = player(false, particles, Set.of(), eye, calls);
+        RecordingScheduler scheduler = new RecordingScheduler();
 
-        new PaperColdBreathPresenter().emitBreath(subject, 0.95D);
+        new PaperColdBreathPresenter(scheduler).emitBreath(subject, 0.95D);
+        scheduler.runAllDelayed();
 
-        Location expected = PaperColdBreathPresenter.mouthFrame(eye).mouth();
+        var frame = PaperColdBreathPresenter.mouthFrame(eye);
+        Location mouth = frame.mouth();
         assertEquals(3, calls.size());
-        for (Object[] call : calls) {
+        double[] forwardOffsets = {0.0D, 0.08D, 0.16D};
+        float[] dustSizes = {0.8F, 1.1F, 1.4F};
+        for (int index = 0; index < calls.size(); index++) {
+            Object[] call = calls.get(index);
             assertSame(Particle.DUST, call[0]);
             Location actual = (Location) call[1];
-            assertEquals(expected.getX(), actual.getX(), EPSILON);
-            assertEquals(expected.getY(), actual.getY(), EPSILON);
-            assertEquals(expected.getZ(), actual.getZ(), EPSILON);
+            Vector offset = actual.toVector().subtract(mouth.toVector());
+            assertEquals(
+                    forwardOffsets[index],
+                    offset.dot(frame.forward()),
+                    EPSILON
+            );
+            assertEquals(0.0D, offset.dot(frame.lateral()), EPSILON);
+            assertEquals(0.0D, offset.dot(frame.up()), EPSILON);
             assertEquals(0, call[2]);
             assertEquals(1.0D, (double) call[6], EPSILON);
-            assertInstanceOf(Particle.DustOptions.class, call[7]);
+            Particle.DustOptions dust = assertInstanceOf(
+                    Particle.DustOptions.class,
+                    call[7]
+            );
+            assertEquals(dustSizes[index], dust.getSize(), 1.0E-6F);
         }
+    }
+
+    @Test
+    void microPuffsGanhamSubidaProgressivaSemPerderForward() {
+        Location eye = new Location(
+                null,
+                2.0D,
+                70.0D,
+                5.0D,
+                0.0F,
+                0.0F
+        );
+        var frame = PaperColdBreathPresenter.mouthFrame(eye);
+        var plans = PaperColdBreathPresenter.puffPlans();
+
+        Vector first = PaperColdBreathPresenter.puffVelocity(
+                frame,
+                plans.get(0),
+                0.0D,
+                0.0D,
+                0.06D
+        );
+        Vector second = PaperColdBreathPresenter.puffVelocity(
+                frame,
+                plans.get(1),
+                0.0D,
+                0.0D,
+                0.06D
+        );
+        Vector third = PaperColdBreathPresenter.puffVelocity(
+                frame,
+                plans.get(2),
+                0.0D,
+                0.0D,
+                0.06D
+        );
+
+        assertTrue(first.dot(frame.forward()) > 0.0D);
+        assertTrue(second.dot(frame.forward()) > 0.0D);
+        assertTrue(third.dot(frame.forward()) > 0.0D);
+        assertTrue(first.dot(frame.up()) < second.dot(frame.up()));
+        assertTrue(second.dot(frame.up()) < third.dot(frame.up()));
     }
 
     @Test
@@ -138,12 +209,49 @@ class PaperColdBreathPresenterTest {
         }
         Player subjectWithViewers = player(false, particles, viewers);
 
-        new PaperColdBreathPresenter().emitBreath(subjectWithViewers, 0.80D);
+        RecordingScheduler scheduler = new RecordingScheduler();
+        new PaperColdBreathPresenter(scheduler)
+                .emitBreath(subjectWithViewers, 0.80D);
+        scheduler.runAllDelayed();
 
         assertEquals(
                 PaperColdBreathPresenter.MAX_VIEWERS * 3,
                 particles.get()
         );
+    }
+
+    private static final class RecordingScheduler
+            implements PaperColdBreathScheduler {
+        private final List<ScheduledAction> actions = new ArrayList<>();
+
+        @Override
+        public void schedule(long delayTicks, Runnable action) {
+            actions.add(new ScheduledAction(delayTicks, action));
+            if (delayTicks == 0L) {
+                action.run();
+            }
+        }
+
+        List<Long> delays() {
+            return actions.stream()
+                    .map(ScheduledAction::delayTicks)
+                    .toList();
+        }
+
+        void runDelay(long delayTicks) {
+            actions.stream()
+                    .filter(action -> action.delayTicks() == delayTicks)
+                    .forEach(action -> action.action().run());
+        }
+
+        void runAllDelayed() {
+            actions.stream()
+                    .filter(action -> action.delayTicks() > 0L)
+                    .forEach(action -> action.action().run());
+        }
+    }
+
+    private record ScheduledAction(long delayTicks, Runnable action) {
     }
 
     private Player player(boolean invisible, AtomicInteger particles) {
