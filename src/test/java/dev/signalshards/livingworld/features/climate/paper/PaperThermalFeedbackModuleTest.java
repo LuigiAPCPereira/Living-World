@@ -13,7 +13,6 @@ import dev.signalshards.livingworld.features.climate.domain.WaterExposure;
 import dev.signalshards.livingworld.features.climate.domain.WindExposure;
 import org.bukkit.Server;
 import org.bukkit.GameMode;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -94,6 +93,28 @@ class PaperThermalFeedbackModuleTest {
                         EnvironmentalMetric.FROST_PRESENTATIONS
                 )
         );
+    }
+
+    @Test
+    void aquecerLimpaFrostVisualAnterior() {
+        Fixture f = new Fixture(true);
+        f.feedback.observe(
+                f.playerId,
+                new PlayerThermalState(-0.90D),
+                warmEnvironment()
+        );
+        f.module.enable();
+        f.module.pulse();
+
+        f.feedback.observe(
+                f.playerId,
+                PlayerThermalState.neutral(),
+                warmEnvironment()
+        );
+        f.module.pulse();
+
+        assertEquals(1, f.frostPresentations);
+        assertEquals(1, f.frostClears);
     }
 
     @Test
@@ -231,6 +252,7 @@ class PaperThermalFeedbackModuleTest {
         long now;
         int emissions;
         int frostPresentations;
+        int frostClears;
         int registrations;
         int schedules;
         int cancellations;
@@ -304,7 +326,17 @@ class PaperThermalFeedbackModuleTest {
                     settings,
                     feedback,
                     (ignored, intensity) -> emissions++,
-                    (ignored, intensity) -> frostPresentations++,
+                    new PaperFrostFeedbackPresenter() {
+                        @Override
+                        public void presentFrost(Player ignored, double intensity) {
+                            frostPresentations++;
+                        }
+
+                        @Override
+                        public void clearFrost(Player ignored) {
+                            frostClears++;
+                        }
+                    },
                     () -> now,
                     performance
             );

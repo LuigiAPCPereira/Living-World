@@ -144,6 +144,9 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
             task.cancel();
             task = null;
         }
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            clearFrostSafely(player);
+        }
         HandlerList.unregisterAll(this);
         lastPulseNanos.clear();
     }
@@ -154,14 +157,19 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
         }
         long now = clock.getAsLong();
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if (!player.isOnline()
-                    || player.isDead()
+            if (!player.isOnline()) {
+                continue;
+            }
+            if (player.isDead()
                     || player.getGameMode() == GameMode.SPECTATOR) {
+                clearFrostSafely(player);
+                lastPulseNanos.remove(player.getUniqueId());
                 continue;
             }
             UUID playerId = player.getUniqueId();
             var profile = feedback.profile(playerId);
             if (profile.isEmpty()) {
+                clearFrostSafely(player);
                 lastPulseNanos.remove(playerId);
                 continue;
             }
@@ -170,6 +178,7 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
             boolean frostActive = settings.frostEnabled()
                     && profile.orElseThrow().frostEnabled();
             if (!breathActive && !frostActive) {
+                clearFrostSafely(player);
                 lastPulseNanos.remove(playerId);
                 continue;
             }
@@ -197,6 +206,8 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
                         performanceMetrics.increment(
                                 EnvironmentalMetric.FROST_PRESENTATIONS
                         );
+                    } else {
+                        clearFrostSafely(player);
                     }
                 });
             } catch (RuntimeException exception) {
@@ -211,16 +222,32 @@ public final class PaperThermalFeedbackModule implements LivingWorldModule, List
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        clearFrostSafely(event.getPlayer());
         lastPulseNanos.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
+        clearFrostSafely(event.getPlayer());
         lastPulseNanos.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
     public void onChangedWorld(PlayerChangedWorldEvent event) {
+        clearFrostSafely(event.getPlayer());
         lastPulseNanos.remove(event.getPlayer().getUniqueId());
+    }
+
+    private void clearFrostSafely(Player player) {
+        try {
+            frostPresenter.clearFrost(player);
+        } catch (RuntimeException exception) {
+            plugin.getLogger().log(
+                    Level.WARNING,
+                    "Falha ao limpar frost visual do jogador "
+                            + player.getUniqueId(),
+                    exception
+            );
+        }
     }
 }

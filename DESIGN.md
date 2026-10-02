@@ -72,6 +72,8 @@ Paper entrypoint / composition root
 
 Features may use narrow core contracts and Paper APIs. A feature must not reach into another feature's implementation package. Shared behavior should move to core only when more than one real owner needs it.
 
+Client/network integration follows the same boundary discipline: public Paper API is the default. Living World does not depend on ProtocolLib and does not own a general-purpose Netty packet interceptor. When a required client-only capability is absent from the public API, a narrow, version-gated adapter may use NMS only for that capability, must fail closed outside its supported version, and must keep packet/version details out of domain/application code.
+
 ## Module lifecycle
 
 A module has an explicit identity and lifecycle. The manager enables registered modules in deterministic order and disables them in reverse order. If startup fails partway through, already-enabled modules are rolled back before the failure escapes.
@@ -325,9 +327,9 @@ LW-123 / primeiro slice: `ThermalFeedbackPolicy` é domínio puro e produz `Ther
 
 LW-123 / segundo slice: `ThermalFeedbackCadencePolicy` + `ThermalFeedbackRuntimeService` implementam jitter bounded por UUID/profile sem catch-up burst. `ThermalFeedbackCoordinator` cacheia profiles produzidos pelo runtime térmico coarse, portanto pulses visuais não repetem resolução ambiental. Countdown de breath existe apenas para profile elegível e é removido quando breath deixa de ser aplicável.
 
-LW-123 / terceiro slice: `PaperThermalFeedbackModule` pulsa apenas jogadores com algum profile térmico observado a cada 10 ticks por default. Breath usa `PaperColdBreathPresenter`: `CLOUD` provisório perto da boca, 1..3 partículas e no máximo 16 viewers já rastreando a entidade, filtrados por invisibilidade/`canSee`. Frost usa fallback self-only `SNOWFLAKE`, 1..3 partículas, sem freeze ticks. SPECTATOR não emite. O módulo não aplica dano e não possui probes ambientais próprios.
+LW-123 / terceiro slice histórico: `PaperThermalFeedbackModule` pulsa apenas jogadores com algum profile térmico observado a cada 10 ticks por default. O fallback inicial usava `CLOUD` para breath e `SNOWFLAKE` self-only para frost; ambos foram posteriormente substituídos pelas apresentações finais descritas abaixo. SPECTATOR não emite. O módulo não aplica dano e não possui probes ambientais próprios.
 
-LW-123 / quarto slice: frost-only profiles permanecem elegíveis mesmo quando breath está desligado por ar quente. `PaperSnowflakeFrostPresenter` é self-only e compartilha o mesmo pulse visual, mantendo `visualFreeze != thermalDamage` sem action bar, potion effects ou manipulação de freeze ticks.
+LW-123 / quarto slice histórico: frost-only profiles permanecem elegíveis mesmo quando breath está desligado por ar quente. O antigo `PaperSnowflakeFrostPresenter` comprovou a separação `visualFreeze != thermalDamage`, mas foi removido por não representar bem congelamento corporal.
 
 LW-123 / quinto slice: cold breath e frost possuem toggles independentes sob `climate.thermal-feedback`. `ThermalRuntimeReadout` inclui o profile puro de feedback e `/lw thermal` expõe breath intensity/cadence + frost intensity sem avançar o runtime. Isso permite tuning e smoke comparando decisão e apresentação sem transformar diagnóstico em gameplay.
 
@@ -352,6 +354,8 @@ Plugin, datapack e resourcepack seguem ownership unidirecional: o plugin control
 Compatibilidade ambiental deve funcionar por propriedades observáveis/namespaced fallback e não por uma tabela obrigatória de nomes. O target de smoke é Terralith + Tectonic (Overworld), Incendium (Nether) e Nullscape (End). Perfis específicos refinam precisão; namespace desconhecido não quebra a simulação.
 
 Feedback térmico deve progredir de frio perceptível a congelamento severo, incluindo cold breath e frost. Uso de freeze ticks vanilla é um spike: apresentação de frost e dano térmico permanecem conceitos separados para evitar dano acidental causado apenas por feedback visual.
+
+LW-123 / frost vanilla final: `frostIntensity` dirige `PaperVanillaFrostPresenter`, que usa `setFreezeTicks` apenas numa faixa visual segura abaixo de `getMaxFreezeTicks()` e nunca chama `lockFreezeTicks`. O presenter não assume ownership se já existem freeze ticks externos/vanilla e cede imediatamente em powdered snow. Um microtremor bounded usa apenas `setBodyYaw` (1,5°..4° acima do limiar de frost), sem alterar yaw/pitch da câmera. Ao aquecer, trocar de mundo, respawnar, sair, virar spectator/morrer ou desabilitar o módulo, o presenter limpa somente o estado que possui e restaura o body yaw. `SNOWFLAKE` corporal foi removido.
 
 Visual sazonal amplo pode ser projetado ao cliente; estado com colisão/gameplay, como gelo caminhável e snow layers físicas, deve existir no servidor. Biomas auxiliares sazonais/packets são hipótese técnica a validar antes de compromisso com NMS/registry machinery.
 
