@@ -1,141 +1,218 @@
 # Living World — Handoff
 
-Este arquivo é um checkpoint portátil de sessão. A verdade durável continua em
-`PRODUCT.md`, `DESIGN.md`, `ECOLOGY_AND_SEASONS.md`, `TASKLIST.md`,
-`ROADMAP.md` e `PROJECT_STATE.md`.
+Este arquivo é o checkpoint portátil para continuar em um novo chat. A verdade durável continua em `PRODUCT.md`, `DESIGN.md`, `ECOLOGY_AND_SEASONS.md`, `TASKLIST.md`, `ROADMAP.md` e `PROJECT_STATE.md`.
 
-## Fronteira exata
+## Repositório / protocolo
 
 - Repositório: `/home/luigiapcp/IdeaProjects/Living World`
 - Branch: `ecology/m12-thermal-foundation`
-- Base reconciliada no início desta continuação: `7092ed5`
-- Checkpoint de instrumentação LW-128: `383e5a1` — `perf: instrumenta gate ambiental LW-128`
-- Retomada após adiamento do benchmark: `8d530ac` — `docs: adia benchmark LW-128 e retoma LW-126`
-- Preparação de build NMS LW-126: `a552170` — `build: prepara userdev NMS para LW-126`
-- Gate remoto: `9946ac8` — `ci: adiciona gate Gradle Java 25`; run #1 verde em `clean test build`
-- Adapter NMS LW-126: `217e791` — `feat: adiciona adapter NMS de biome LW-126`; run #2 verde em `clean test build`
 - Upstream: `origin/ecology/m12-thermal-foundation`
-- O worktree sujo original do LW-128 foi preservado, inspecionado e commitado sem reset/revert.
-- Gate do checkpoint de instrumentação: focused tests verdes; IntelliJ build e inspections de produção limpos; `git diff --check` limpo; suíte completa reexecutada sem cache com 479 testes / 155 suítes / 0 falhas/erros/skips.
+- Protocolo: Agent Protocol.
+- No novo chat, começar com `skills://plugins/agent-protocol/continuing-development/skill.md`.
+- Para runtime, MCPFabric deve começar por `get_status`. Como o bridge roda no lado client, `serverPresent=false` / `playerCount=0` é normal em multiplayer remoto. Desconexão real é indicada por `get_self -> no_client_player`.
+- Deep Research só deve ser usado quando houver uma lacuna externa real. Para continuação normal, usar Agent Protocol + repo + `SomenteAnalise/`.
+- Não adotar ProtocolLib. Política aceita: Paper API primeiro; NMS apenas em adapters estreitos, version-gated e fail-closed quando a API pública não basta.
 
-## Último escopo publicado
+## Base publicada atual
 
-LW-127 está implementado-not-validated: ICE + SNOW físicos usam um único owner
-bounded, ownership persistente por chunk, histerese térmica, probes apenas em
-chunks carregados e proteção fail-closed de superfícies naturais/jogador.
-`PROJECT_STATE.md` registra o último gate publicado em 477 testes / 154 suítes,
-0 falhas/erros/skips. Smoke runtime/tuning continua pendente.
+Código de produção/tuning publicado:
+- `f0e8cd89af3d01f381fbee87bb4e70b95166d9ce` — `feat: usa frost visual vanilla`
+- `a5f1c213e3e638aadac54d37b8a950dda855cc18` — `feat: encadeia cold breath em tres puffs`
 
-LW-126 continua aberto como spike visual: o adapter NMS de produção
-`Paper263SeasonalBiomeProjectionAdapter` existe desde `217e791` e está
-compile/build-validado. Ele envia `ClientboundChunksBiomesPacket` apenas ao
-jogador-alvo usando cópias dos containers de biome, sem `World#setBiome` nem
-mutação do chunk real. O aceite restante é o smoke visual/restoration no
-cliente; nenhuma aparência client-side foi comprovada ainda.
+No encerramento desta sessão, os experimentos rejeitados foram removidos do worktree. A base de código do cold breath voltou exatamente ao commit `a5f1c213`. `SomenteAnalise/`, `bin/` e `logs/` permanecem não rastreados e não devem entrar em commits.
 
-## LW-126 — preparação NMS
+O runtime também foi realinhado para essa base publicada antes do handoff:
+- JAR empacotado: SHA-256 `ac87efc9e348e2b31f72442b450fe2fdc224415fe5b89fa3bba374ba8a71b813`
+- Paper 26.3 build 141 / Java 25
+- processo iniciado com `/tmp/lw-handoff-a5f1c213.jar`
+- o experimento CLOUD não ficou ativo no servidor de handoff.
 
-- `a552170` adiciona `io.papermc.paperweight.userdev` `2.0.0-beta.24` e usa `paperweight.paperDevBundle("26.3.build.+")`, substituindo o `compileOnly` principal de `paper-api`.
-- O artifact de produção foi explicitado como `MOJANG_PRODUCTION`, coerente com Paper 26.3; a dependência `paper-api` permanece no classpath de testes.
-- A decisão segue o caminho suportado pelo Paper para internals/NMS; reflection improvisada e mutação de biome server-side continuam proibidas.
-- `9946ac8` adicionou um GitHub Actions mínimo (Java 25, ações fixadas por SHA, `./gradlew clean test build --no-daemon`); o primeiro run fechou verde e validou o build userdev.
-- `217e791` adicionou `Paper263SeasonalBiomeProjectionAdapter`: boundary Paper 26.3 que exige main thread, jogador online/mesmo mundo, usa apenas chunk já carregado, resolve o biome alvo no registry, copia os containers 4×4×4 por seção, serializa as cópias e envia `ClientboundChunksBiomesPacket` somente ao jogador-alvo. Não chama `World#setBiome` e não muta o chunk real.
-- O run remoto #2 de `clean test build` também fechou verde. Isso valida compilação/compatibilidade automatizada do adapter, **não** a aparência no cliente.
-- O smoke visual do packet fica adiado junto das validações locais: quando retomado, usar fixture temporária/dev harness e comprovar tint/retorno ao biome real sem transformar o harness em feature permanente.
+## Missão ativa — LW-123 cold breath tuning
 
-## LW-126 — smoke parcial 2026-10-01
+### O que já está sólido
 
-- O worktree local foi fast-forward de `efa75a8` para `5bb685a`; alterações rastreadas permaneceram limpas e o diretório `bin/` não rastreado foi preservado.
-- IntelliJ build passou em `5bb685a`; Paper 26.3 build 141 iniciou com LivingWorld sem erro.
-- O harness antigo `LWVisualSmoke` foi rejeitado para este aceite porque usa `World#setBiome` e portanto altera verdade server-side.
-- Um harness temporário **não commitado** em `run/lw126-smoke` foi criado apenas para exercitar `Paper263SeasonalBiomeProjectionAdapter`; ele não chama `World#setBiome`.
-- Com zVaporius conectado no Overworld, o harness chamou `projectWholeChunk` no chunk atual com alvo `minecraft:swamp`; resultado observado: `SENT`.
-- No mesmo ponto, o biome server-side era `minecraft:savanna` antes e depois do packet, com `unchanged=true`.
-- O caminho de restauração executou `World#refreshChunk` no chunk projetado; retorno `true`, e o biome server-side permaneceu savanna com `unchanged=true`.
-- A observação independente via MCPFabric falhou porque `MCPFabric#get_status` retornou `MCP SSE probe returned 404 from openai.org`.
-- O usuário executou manualmente `/lw126visualtest project minecraft:swamp` e `/lw126visualtest restore` em ciclos repetidos; o log confirmou `SENT`, `refreshChunk=true` e biome server-side inalterado em cada ciclo.
-- O usuário confirmou explicitamente que a mudança visual funcionou. Com projeção observada, restauração executada e verdade server-side preservada, LW-126 está **validated**.
-- O Paper permaneceu ativo após o smoke; o harness temporário continua fora do produto/commit e pode ser removido após encerrar a sessão runtime.
+- A origem da boca usa referencial local da cabeça:
+  - `MOUTH_FORWARD_BLOCKS = 0.27`
+  - `MOUTH_DOWN_BLOCKS = 0.30`
+- O burst é bounded e temporal:
+  - puff 1 em tick 0
+  - puff 2 em tick 2
+  - puff 3 em tick 4
+- `PaperColdBreathScheduler` é um boundary estreito de scheduler Paper; não adiciona scan ambiental ou estado global.
+- A geometria yaw/pitch, limite de viewers, invisibilidade e scheduling têm regressões automatizadas.
+- A cadência de respiração continua pertencendo ao thermal feedback; um burst conta como uma respiração, não três métricas separadas.
 
-## Validação runtime adiada — LW-128
+### Implementação atual no commit a5f1c213
 
-A fundação de instrumentação do environmental performance gate foi consolidada
-e validada no commit `383e5a1`. Por decisão explícita do usuário em 2026-09-28,
-o benchmark local/runtime fica **adiado para retomada posterior** e não bloqueia
-a continuidade automatizada da frente ecológica. Nenhuma claim de performance
-é permitida até essa medição ser executada.
+`PaperColdBreathPresenter` usa DUST branco:
+- forward origin offsets: `0.00 / 0.08 / 0.16`
+- sizes: `0.8 / 1.1 / 1.4`
+- speed multipliers: `1.00 / 0.92 / 0.82`
+- upward bias: `0.00 / 0.06 / 0.14`
+- `count=0` com vetor de velocidade.
 
-Instrumentação consolidada:
+Essa versão está **implemented-not-validated** para o visual final de 3 puffs.
 
-- novos `EnvironmentalMetric`, `EnvironmentalPerformanceMetrics` e
-  `EnvironmentalPerformanceSnapshot`;
-- contadores cumulativos thread-safe via `LongAdder`;
-- métricas atuais:
-  - `THERMAL_PLAYER_UPDATES`
-  - `THERMAL_UPDATE_NANOS`
-  - `WINTER_PROBES`
-  - `WINTER_MUTATIONS`
-  - `WINTER_UPDATE_NANOS`
-  - `BREATH_PRESENTATIONS`
-  - `FROST_PRESENTATIONS`
-  - `RESOURCE_PACK_REQUESTS`
-  - `RESOURCE_PACK_STATUS_EVENTS`
-- um único `EnvironmentalPerformanceMetrics` é criado no composition root e
-  injetado em thermal runtime, thermal feedback, physical winter e resourcepack
-  delivery/status;
-- `LivingWorldStatusSnapshot` carrega o snapshot ambiental;
-- `/lw status` ganhou duas linhas i18n com trabalho ambiental e outputs;
-- testes existentes desses módulos/comando foram adaptados;
-- novo `EnvironmentalPerformanceMetricsTest` cobre cumulatividade, zeros e
-  rejeição de incremento negativo.
+### Fonte de inspiração real em SomenteAnalise
 
-Arquivos introduzidos pelo checkpoint:
+O RealisticSeasons decompilado está disponível em:
+- `SomenteAnalise/me/casperge/realisticseasons/particle/ParticleManager.java`
+- `SomenteAnalise/me/casperge/realisticseasons/particle/ParticleSpawner.java`
 
-- `src/main/java/dev/signalshards/livingworld/core/status/EnvironmentalMetric.java`
-- `src/main/java/dev/signalshards/livingworld/core/status/EnvironmentalPerformanceMetrics.java`
-- `src/main/java/dev/signalshards/livingworld/core/status/EnvironmentalPerformanceSnapshot.java`
-- `src/test/java/dev/signalshards/livingworld/core/status/EnvironmentalPerformanceMetricsTest.java`
+O código real do RealisticSeasons faz três respirações e cada `playBreathOnce` usa três DUST/REDSTONE brancos em 0/2/4 ticks, progressivamente mais à frente e maiores. O Living World **não precisa copiar o burst 3x3**; manter 1 respiração = 3 micro-puffs é a direção preferida por custo/clareza.
 
-Os adapters/runtime/status e testes relacionados foram atualizados no mesmo
-commit, preservando uma única instância compartilhada de métricas no composition root.
+### Experimentos runtime desta sessão — decisões importantes
 
-## Validação conhecida do LW-128
+1. **DUST temporal do commit a5f1c213**
+   - funciona tecnicamente, mas ainda precisava de tuning visual.
 
-- A fundação de instrumentação está **validada e commitada** em `383e5a1`.
-- O gate focado incluiu `EnvironmentalPerformanceMetricsTest`, `PaperThermalRuntimeModuleTest`, `PaperThermalFeedbackModuleTest`, `PaperPhysicalWinterModuleTest`, `PaperResourcePackDeliveryModuleTest` e `PaperWaystoneCommandTest`; `PaperResourcePackStatusModuleTest` também foi ampliado para verificar ownership da métrica de status.
-- IntelliJ build passou; inspections dos 11 arquivos de produção tocados vieram sem warnings/erros.
-- `git diff --check` passou.
-- `./gradlew clean test build` passou; como a suíte completa veio do cache, `./gradlew test --rerun-tasks` foi executado depois e passou com 479 testes / 155 suítes / 0 falhas/erros/skips.
-- Isso valida a **instrumentação**, não o gate de performance final. Nenhum workload representativo/baseline comparativo foi medido ainda.
+2. **DUST espacial temporário, não commitado**
+   - puffs em `0.15 / 0.45 / 0.75` bloco à frente;
+   - subida em `0.00 / 0.05 / 0.16`;
+   - sizes `0.55 / 0.80 / 1.05`;
+   - `count=1`, sem depender de velocity.
+   - Em terceira pessoa, o assistente inicialmente interpretou que ainda parecia perto do rosto.
+   - **Feedback final do usuário corrige isso:** o DUST era a direção melhor, os puffs não estavam necessariamente rente à boca; terceira pessoa dificultava a leitura. O usuário quer manter DUST e deixá-lo **um pouco maior**.
 
-## Tentativa de medição — 2026-09-28
+3. **CLOUD temporário, rejeitado**
+   - testado com origem única na boca e velocidades aproximadamente:
+     - forward `0.10 / 0.085 / 0.065`
+     - upward `0.000 / 0.012 / 0.025`
+   - **Usuário rejeitou explicitamente:** CLOUD vai para baixo; não usar essa direção no próximo chat.
+   - O experimento CLOUD foi descartado do worktree antes deste handoff.
 
-- MCPFabric foi consultado primeiro, conforme protocolo, e respondeu no lado client com `serverPresent=false`, `playerCount=0`; portanto não existe perfil real de 1 jogador disponível nesta sessão.
-- A run configuration `Run` do IntelliJ é `runServer`. Ela tentou iniciar Paper 26.3 build 135 com o jar atual, mas abortou porque `run/world/session.lock` já estava ocupado.
-- A porta 25565 pertence a um Paper 26.3 build 133 iniciado muitas horas antes do checkpoint `383e5a1`; esse processo carregou o plugin antes da instrumentação atual e não é evidência válida para o gate LW-128.
-- O servidor antigo foi preservado: não houve kill/restart destrutivo, justamente porque o cliente não estava conectado e reiniciar sozinho não desbloquearia a medição.
-- Nenhum TPS/MSPT/counter delta foi registrado como benchmark. Servidor vazio ou runtime pré-instrumentação não substituem o workload aceito.
+### Próxima ação exata para cold breath
 
-## Próxima ação executável
+Começar pelo DUST, não CLOUD.
 
-1. LW-126 está validado; não ampliar o spike com scheduler/policy/biomas auxiliares sem nova tarefa aceita.
-2. Recuperar os gaps restantes de M12 e selecionar **um** frontier item; preferir fechar trabalho já implementado antes de iniciar implementação nova.
-3. LW-127 physical winter permanece implemented-not-validated e é um candidato concreto para smoke runtime com jogador real.
-4. Manter LW-128 na fila de validação adiada: quando retomado, usar workload/baseline reproduzível, começar em 1 jogador, registrar TPS/MSPT + deltas ambientais e só então fazer claims/otimizações.
+Candidato recomendado para o próximo tuning:
+- manter ticks `0/2/4`;
+- manter mouth frame atual;
+- usar progressão espacial claramente visível, semelhante ao experimento `0.15 / 0.45 / 0.75` forward e `0.00 / 0.05 / 0.16` up;
+- aumentar os tamanhos em relação ao experimento `0.55 / 0.80 / 1.05` (por exemplo, partir perto de `0.75 / 1.0 / 1.25` ou testar os sizes atuais `0.8 / 1.1 / 1.4` com os offsets espaciais maiores);
+- não depender de velocity para DUST como principal sensação de movimento;
+- smoke em terceira pessoa e primeira pessoa; aceitar somente se a sequência parecer sair da boca, avançar e depois subir sem envolver a cabeça.
 
-## Restrições importantes
+Não commitar uma nova tentativa visual sem smoke observado.
 
-- Para repo/runtime, continuar usando IntelliJ IDEA e MCPFabric; MCPFabric deve
-  começar por `get_status` quando runtime for necessário.
-- Nenhuma claim de performance sem comparação medida.
-- Não alterar gameplay como “otimização” escondida.
-- A antiga restrição de não iniciar NMS enquanto o LW-128 estivesse sujo está satisfeita: a instrumentação foi reconciliada, validada e publicada. O benchmark runtime continua adiado, separado da implementação.
-- Trabalhar em **blocos pequenos/médios**: o chat anterior apresentou
-  `stream recovery polling timed out` / `Error in input stream` em blocos
-  grandes. Preferir uma ação principal e 1–2 chamadas curtas por bloco.
+## Frost / shiver — concluído
 
-## Skills sugeridos no próximo chat
+`f0e8cd8` substituiu o antigo SNOWFLAKE corporal por apresentação vanilla:
+- `PaperVanillaFrostPresenter`;
+- overlay de gelo via `freezeTicks` sempre abaixo de `maxFreezeTicks`;
+- nunca usa `lockFreezeTicks`;
+- não assume ownership se já houver freeze ticks vanilla/externos;
+- powdered snow tem prioridade;
+- cleanup em aquecimento, quit, respawn, world-change, spectator/death e disable;
+- shiver usa apenas `bodyYaw`, amplitude bounded de aproximadamente `1.5°..4°`, sem mexer yaw/pitch da câmera.
 
-- `agent-protocol/continuing-development`
-- `agent-protocol/investigating-performance`
-- `agent-protocol/managing-git-delivery` somente quando os gates estiverem verdes
+Runtime já validou:
+- overlay aparece;
+- overlay desaparece em frost 0%;
+- body shiver fica perceptível em frost ~59–60%;
+- câmera permanece estável;
+- SNOWFLAKE corporal foi removido.
+
+## HUD térmica — concluído
+
+LW-129 está validado:
+- action bar usa o mesmo `ThermalRuntimeReadoutProvider` de `/lw thermal`;
+- temperatura, band, tendência e wetness vêm do snapshot canônico;
+- coordenadas aparecem apenas ao segurar COMPASS em uma das mãos;
+- runtime validou HUD vs `/lw thermal`.
+
+## Próxima missão depois do cold breath — LW-127 physical winter
+
+LW-127 está implementado-not-validated.
+
+### Config runtime intencionalmente ativa
+
+`run/plugins/LivingWorld/config.yml` deve continuar assim enquanto o smoke LW-127 estiver em andamento:
+
+```yaml
+language: pt-BR
+
+ecology:
+  physical-winter:
+    enabled: true
+    update-period-ticks: 40
+    probes-per-player: 4
+    max-mutations-per-player: 1
+    radius-blocks: 8
+    freeze-at-or-below-celsius: 50.0
+    thaw-at-or-above-celsius: 60.0
+    max-owned-positions-per-chunk: 256
+    max-snow-layers: 4
+```
+
+Não restaurar `language: pt-BR` puro até terminar o LW-127.
+
+### Fixture LW-127
+
+Plataforma:
+- stone em y=199, x -134..-118, z -152..-136
+- pilar de glass em x=-126,z=-144 y=200..203
+
+Water source blocks:
+- (-118,200,-144)
+- (-134,200,-144)
+- (-126,200,-136)
+- (-126,200,-152)
+- (-118,200,-136)
+- (-134,200,-136)
+- (-134,200,-152)
+- (-118,200,-152)
+
+Posição de teste LW-127:
+- `/tp @s -125.5 200 -143.5`
+
+Observado antes da pausa:
+- SNOW apareceu nos half-radius probe points;
+- métricas chegaram a 123 probes / 8 mutations e depois 425 probes / 11 mutations;
+- server ~20 TPS;
+- os oito reservoirs preparados continuaram WATER;
+- exemplo (-118,200,-144): `water[level=0]`, acima AIR, suporte STONE.
+
+Próxima investigação LW-127:
+1. Ler a ordem exata de `buildProbeOffsets` em `PaperPhysicalWinterModule`.
+2. Confirmar se os quatro probes por pulse realmente atingem os water sources.
+3. Se atingem, diagnosticar o gate `block.getLightFromSky() >= 15` / exposed source-water sem alterar produção apenas para diagnóstico.
+4. Provar ICE + SNOW.
+5. Depois testar THAW mudando temporariamente thresholds para:
+   - freeze <= -100
+   - thaw >= -90
+6. Provar owned ICE -> WATER e owned SNOW -> AIR/layer reduction.
+7. Validar ownership: natural/player surfaces não devem ser destruídas.
+
+### Cleanup final LW-127
+
+Somente após fechar LW-127:
+- restaurar `run/plugins/LivingWorld/config.yml` para exatamente `language: pt-BR\n`;
+- remover fixture: `/fill -134 199 -152 -118 203 -136 minecraft:air`;
+- remover plataforma alta usada para cold-breath smoke: `/fill -128 309 -146 -122 309 -140 minecraft:air`;
+- `/weather clear`;
+- teleportar posição original: `/tp @s -126.13202213078024 68 -144.05820910475953`;
+- restart final para physical-winter voltar a disabled.
+
+## Runtime / build — armadilhas conhecidas
+
+- IntelliJ `build_project` pode compilar sem regenerar `build/libs/Living World-0.1.0-SNAPSHOT.jar`.
+- Antes de qualquer smoke de JAR, usar a run configuration `Build` e confirmar que `:jar`/timestamp/hash foram atualizados.
+- Paper alvo: 26.3 build 141, Java 25.
+- Não usar o fixture antigo `LWVisualSmoke` para LW-126; ele chama `World#setBiome` e altera verdade server-side.
+- `run/` é ambiente temporário; não transformar smoke harness em produto.
+
+## LW-126 / LW-128
+
+- LW-126 está validated; não reabrir sem nova tarefa.
+- LW-128: instrumentação validada, benchmark representativo **explicitamente adiado pelo usuário**. Não iniciar benchmark sem autorização explícita.
+
+## Restrições para o próximo chat
+
+- Trabalhar em slices pequenos/médios.
+- Agent Protocol primeiro.
+- Não usar Deep Research por reflexo.
+- Não adicionar ProtocolLib.
+- Preservar `SomenteAnalise/`, `bin/` e `logs/` fora de commits.
+- Não fazer claim de runtime sem observação direta.
+- Não misturar cold-breath tuning com LW-127 no mesmo commit.
